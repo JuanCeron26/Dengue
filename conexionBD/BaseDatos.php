@@ -6,7 +6,7 @@ class BaseDatos
     private $password;
     private $dbname;
     private $host;
-    public $conexion;
+    public $conectar;
 
     public function __construct($contra = "")
     {
@@ -16,13 +16,14 @@ class BaseDatos
             $this->dbname = "bd_dengue";
             $this->host = "localhost";
 
-            $this->conexion = new PDO(
+            $this->conectar = new PDO(
                 "pgsql:host={$this->host};dbname={$this->dbname}",
                 $this->user,
                 $this->password
             );
 
-            $this->conexion->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+            $this->conectar->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+            echo "funcionó";
         } catch (PDOException $error) {
             throw $error;
         }
@@ -110,7 +111,7 @@ class BaseDatos
         }
     }
 }
-
+/*
 $condiciones = [
     "WHERE" => [
         "nombre_zoo" => "San Fernando",
@@ -141,3 +142,4 @@ $id = [
 ];
 
 echo end($update);
+*/
