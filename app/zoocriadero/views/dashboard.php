@@ -1,3 +1,9 @@
+<?php
+include_once '../controllers/controllerZoo.php';
+$controllerZoo = new ControllerZoo();
+$vistaActual = $controllerZoo->vistaActual();
+?>
+
 <!DOCTYPE html>
 <html lang="es">
 
@@ -5,21 +11,24 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard - Zoocriadero de Guppys</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="../../../src/css/styles.css">
 </head>
 
-<body class="bg-[var(--color-east-bay-50)] text-[var(--color-east-bay-950)] min-h-screen">
+<body class="bg-(--color-east-bay-50) text-(--color-east-bay-950) min-h-screen">
+
+    <?php include_once '../../../src/includes/aside-zoo.php'; ?>
 
     <header class="sticky top-0 z-10 flex justify-between items-center px-8 py-4 bg-white/80 backdrop-blur-md shadow-lg border-b border-[var(--color-east-bay-100)] transition-shadow duration-300">
         <div class="flex items-center space-x-4">
-            <div class="p-2 rounded-xl bg-[var(--color-east-bay-700)] shadow-xl shadow-[var(--color-east-bay-200)] animate-pulse-slow">
+            <div class="p-2 rounded-xl bg-(--color-east-bay-700) shadow-(--color-east-bay-200) animate-pulse-slow">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-white" viewBox="0 0 20 20" fill="currentColor">
                     <path d="M7 3H2v5h5V3zM7 12H2v5h5v-5zM15 3h-5v5h5V3zM15 12h-5v5h5v-5z" />
                 </svg>
             </div>
             <div>
-                <h1 class="text-xl font-extrabold text-[var(--color-east-bay-900)] tracking-tight">SIG-GPCETV: Control Biológico de Guppys</h1>
-                <p class="text-sm text-[var(--color-east-bay-500)] font-medium">Zoocriadero San Carlos, Comuna 11 - Monitoreo de Tanques</p>
+                <h1 class="text-xl font-extrabold text-(--color-east-bay-900) tracking-tight">SIG-GPCETV: Control Biológico de Guppys</h1>
+                <p class="text-sm text-(--color-east-bay-500) font-medium">Zoocriadero San Carlos, Comuna 11 - Monitoreo de Tanques</p>
             </div>
         </div>
 
@@ -34,7 +43,7 @@
         </div>
     </header>
 
-    <main class="p-8 flex-grow flex flex-col space-y-12 max-w-7xl mx-auto w-full">
+    <main class="p-8 grow flex flex-col space-y-12 max-w-7xl mx-auto w-full">
 
         <section>
             <h2 class="text-3xl font-bold text-[var(--color-east-bay-800)] mb-2 border-l-4 border-emerald-400 pl-3">📈 Indicadores de Bioseguridad y Reproducción</h2>
@@ -219,6 +228,8 @@
     <footer class="text-center text-sm font-medium text-[var(--color-east-bay-500)] border-t border-[var(--color-east-bay-100)] py-6 mt-8 select-none bg-white/70 backdrop-blur-sm">
         Sistema SIG-GPCETV - Módulo de Zoocriaderos © 2025. Desarrollado por el SENA.
     </footer>
+
+    <script src="../../../src/js/aside.js"></script>
 
     <style>
         :root {

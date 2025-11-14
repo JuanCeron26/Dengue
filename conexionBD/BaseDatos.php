@@ -110,6 +110,12 @@ class BaseDatos
             $sql .= " LIMIT " . (int)$opciones["LIMIT"];
         }
     }
+
+    function CerrarSesion() {
+        session_destroy(); 
+        $_SESSION = [];
+        header("Location:../../login/index.php");
+    }
 }
 /*
 $condiciones = [
