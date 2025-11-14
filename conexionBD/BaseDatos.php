@@ -23,7 +23,6 @@ class BaseDatos
             );
 
             $this->conectar->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-            echo "funcionó";
         } catch (PDOException $error) {
             throw $error;
         }
@@ -111,8 +110,9 @@ class BaseDatos
         }
     }
 
-    function CerrarSesion() {
-        session_destroy(); 
+    function CerrarSesion()
+    {
+        session_destroy();
         $_SESSION = [];
         header("Location:../../login/index.php");
     }
