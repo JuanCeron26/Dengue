@@ -11,7 +11,7 @@
 
     <div class="flex flex-col items-center gap-10">
 
-        <a href="dashboard.php?view=inicio" class="group flex flex-col items-center">
+        <a href="../backend/api.php?view=inicio" class="group flex flex-col items-center">
             <i class="fa-solid fa-house text-2xl transition-all duration-300 <?php ($vistaActual == 'inicio') ? 'text-white' : ''; ?>
                 group-hover:scale-110 group-hover:rotate-3"></i>
 
@@ -21,7 +21,7 @@
             </span>
         </a>
 
-        <a href="#" class="group flex flex-col items-center">
+        <a href="../backend/api.php?view=registros" class="group flex flex-col items-center">
             <i class="fa-solid fa-mosquito text-2xl <?php ($vistaActual == 'registros') ? 'text-white' : ''; ?> transition-all duration-300 
                 group-hover:scale-110 group-hover:rotate-3"></i>
 
@@ -31,7 +31,7 @@
             </span>
         </a>
 
-        <a href="#" class="group flex flex-col items-center">
+        <a href="../backend/api.php?view=listar" class="group flex flex-col items-center">
             <i class="fa-solid fa-magnifying-glass text-2xl <?php ($vistaActual == 'consultas') ? 'text-white' : ''; ?> transition-all duration-300 
                 group-hover:scale-110 group-hover:rotate-3"></i>
 

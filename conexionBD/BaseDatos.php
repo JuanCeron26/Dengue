@@ -6,146 +6,169 @@ class BaseDatos
     private $password;
     private $dbname;
     private $host;
+    private $port;
     public $conectar;
 
     public function __construct($contra = "")
     {
-        try {
-            $this->user = "postgres";
-            $this->password = $contra;
-            $this->dbname = "bd_dengue";
-            $this->host = "localhost";
+        $this->user = 'postgres';
+        $this->password = $contra;
+        $this->dbname = 'bd_dengue';
+        $this->port = '5432';
+        $this->host = 'localhost';
 
-            $this->conectar = new PDO(
-                "pgsql:host={$this->host};dbname={$this->dbname}",
-                $this->user,
-                $this->password
-            );
+        $cadena = "host=$this->host port=$this->port dbname=$this->dbname user=$this->user password=$this->password";
+        $this->conectar = pg_connect($cadena);
 
-            $this->conectar->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-        } catch (PDOException $error) {
-            throw $error;
-        }
-    }
-
-    function Insert($tabla, $datos)
-    {
-
-        $campos = implode(",", array_keys($datos));
-        $valores = implode(",", array_values($datos));
-
-        $sql = "INSERT INTO " . $tabla . " (";
-        $sql .= $campos . ") VALUES (" . $valores . ")";
-
-        $registrar = $this->conexion->prepare($sql);
-        $registrar = $registrar->execute();
-        if ($registrar) {
-            return true;
+        if (!$this->conectar) {
+            die("Error de conexión a PostgreSQL");
         } else {
-            return false;
+            echo "conectado";
         }
     }
 
-    function Delete($tabla, $datos)
+    public function Insert($tabla, $datos)
+    {
+        // Campos: nombre, correo
+        $campos = array_keys($datos);
+
+        // Valores: ['Juan', 'a@a.com']
+        $valores = array_values($datos);
+
+        // $1, $2, $3...
+        $placeholders = [];
+        for ($i = 1; $i <= count($datos); $i++) {
+            $placeholders[] = '$' . $i;
+        }
+
+        $sql = "INSERT INTO $tabla (" . implode(",", $campos) . ") 
+            VALUES (" . implode(",", $placeholders) . ")";
+
+        $result = pg_query_params($this->conectar, $sql, $valores);
+
+        return $result ? true : false;
+    }
+
+
+    public function Delete($tabla, $datos)
     {
         $campo = key($datos);
-        $sql = "UPDATE " . $tabla . " WHERE " . $campo . " = " . $datos[0];
-        $update = $this->conexion->prepare($sql);
-        $update = $update->execute();
-        if ($update) {
-            return true;
-        } else {
-            return false;
-        }
+        $valor = $datos[$campo];
+
+        $sql = "DELETE FROM $tabla WHERE $campo = $1";
+
+        $result = pg_query_params($this->conectar, $sql, [$valor]);
+
+        return $result ? true : false;
     }
 
-    function Update($tabla, $datos, $id)
+
+    public function Update($tabla, $datos, $id)
     {
         $campo_id = key($id);
+        $valor_id = $id[$campo_id];
 
-        $sql = "UPDATE " . $tabla . " SET ";
+        $set = [];
+        $valores = [];
+
+        $i = 1;
         foreach ($datos as $campo => $valor) {
-            $sql .= $campo . " = " . $valor;
-            if ($valor != end($datos)) {
-                $sql .= ", ";
-            }
+            $set[] = "$campo = $$i";
+            $valores[] = $valor;
+            $i++;
         }
 
-        $sql .= "WHERE " . $campo_id . " = " . $id[0];
+        // Añadir el valor del ID como último parámetro
+        $valores[] = $valor_id;
+
+        $sql = "UPDATE $tabla SET " . implode(", ", $set) . " 
+            WHERE $campo_id = $" . $i;
+
+        $result = pg_query_params($this->conectar, $sql, $valores);
+
+        return $result ? true : false;
     }
 
-    function Select($tabla, $columnas = false, $condiciones = [])
-    {
-        $sql = "SELECT ";
-        if ($columnas == false) {
-            $sql .= " * FROM " . $tabla;
-        } else {
-            $sql .= implode(",", $columnas) . " FROM " . $tabla;
-        }
 
-        if (isset($opciones["WHERE"])) {
-            $whereParte = [];
-            foreach ($opciones["WHERE"] as $col => $val) {
-                if (is_array($val) && isset($val["LIKE"])) {
-                    $whereParte[] = "$col LIKE '{$val["LIKE"]}'";
-                } elseif (is_array($val) && isset($val["BETWEEN"])) {
-                    $whereParte[] = "$col BETWEEN '{$val["BETWEEN"][0]}' AND '{$val["BETWEEN"][1]}'";
-                } else {
-                    $whereParte[] = "$col = '$val'";
-                }
+    public function Select($tabla, $columnas = ["*"], $condiciones = [])
+    {
+        $sql = "SELECT " . implode(",", $columnas) . " FROM $tabla";
+
+        $params = [];
+        $whereParts = [];
+        $i = 1;
+
+        foreach ($condiciones as $campo => $valor) {
+
+            // LIKE
+            if (is_array($valor) && isset($valor["LIKE"])) {
+                $whereParts[] = "$campo LIKE $$i";
+                $params[] = $valor["LIKE"];
             }
-            $sql .= " WHERE " . implode(" AND ", $wherePart);
+            // BETWEEN
+            elseif (is_array($valor) && isset($valor["BETWEEN"])) {
+                $whereParts[] = "$campo BETWEEN $$i AND $" . ($i + 1);
+                $params[] = $valor["BETWEEN"][0];
+                $params[] = $valor["BETWEEN"][1];
+                $i++;
+            }
+            // Igualdad normal
+            else {
+                $whereParts[] = "$campo = $$i";
+                $params[] = $valor;
+            }
+
+            $i++;
         }
 
-        if (isset($opciones["GROUP BY"])) {
-            $sql .= " GROUP BY " . $opciones["GROUP BY"];
+        if (!empty($whereParts)) {
+            $sql .= " WHERE " . implode(" AND ", $whereParts);
         }
 
-        if (isset($opciones["ORDER BY"])) {
-            $sql .= " ORDER BY " . $opciones["ORDER BY"];
-        }
-
-        if (isset($opciones["LIMIT"])) {
-            $sql .= " LIMIT " . (int)$opciones["LIMIT"];
-        }
-    }
-
-    function CerrarSesion()
-    {
-        session_destroy();
-        $_SESSION = [];
-        header("Location:../../login/index.php");
+        $result = pg_query_params($this->conectar, $sql, $params);
+        return pg_fetch_all($result);
     }
 }
 /*
-$condiciones = [
-    "WHERE" => [
-        "nombre_zoo" => "San Fernando",
-        "ciudad" => ["LIKE" => "%Cali%"],
-        "fecha_creacion" => ["BETWEEN" => ["2020-01-01", "2023-01-01"]]
-    ],
-    "GROUP BY" => "ciudad",
-    "ORDER BY" => "nombre_zoo ASC",
-    "LIMIT" => 10
-];
+////////  1. Conectarse a la base de datos: ///////////
+
+    $obj = new BaseDatos("ceron123");
+
+////////  2. INSERT: /////////////////
+
+    $obj->Insert("tblzoocriadero", [
+        "cod_zoo" => 1,
+        "nom_zoo" => "El pondaje",
+        "dir_zoo"   => "$direccion"
+    ]);
+
+//////// 3. DELETE: /////////////////
+
+    $obj->Delete("tblusuarios", [
+        "id_usuarios" => 10
+    ]);
+
+/////// 4. UPDATE //////////////////
+
+    $db->Update("tblusuarios",
+        [
+            "nombre_usu" => "Carlos Núñez",
+            "contraseña_usu" => "1234"
+        ],
+        [  
+        "id" => 3  // El id del usuario que vamos a modificar.
+        ]
+    );
+
+//////// 5. SELECT ///////////////////////
+
+    - Si van a seleccionar TODO de alguna tabla:
+    $resultado = $obj->Select("tblusuarios");
 
 
+    - Si van a seleccionar ALGUNAS columnas o campos de alguna tabla:
+    $resultado = $obj->Select("tblusuarios", ["id_usuarios", "nombre_usu"]);
 
-echo isset($select);
 
-
-$eliminar = [
-    "cod_zoo" => 2,
-];
-
-$update = [
-    "desc_zoo" => "Hola",
-    "direccion_zoo" => "CALLE 90A"
-];
-
-$id = [
-    "cod_zoo" => 2
-];
-
-echo end($update);
 */
+?>

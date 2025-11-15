@@ -1,8 +1,4 @@
-<?php
-include_once '../controllers/controllerZoo.php';
-$controllerZoo = new ControllerZoo();
-$vistaActual = $controllerZoo->vistaActual();
-?>
+
 
 <!DOCTYPE html>
 <html lang="es">

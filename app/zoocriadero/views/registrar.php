@@ -1,11 +1,4 @@
-<?php
-include_once '../../../conexionBD/BaseDatos.php';
-include_once '../models/modelZoo.php';
-include_once '../controllers/controllerZoo.php';
-$objZoo = new ControllerZoo();
-$barrios = $objZoo->traerBarrios();
 
-?>
 
 <!DOCTYPE html>
 <html lang="es">
@@ -28,16 +21,12 @@ $barrios = $objZoo->traerBarrios();
         <form action="../backend/api.php?accion=registrar" method="POST" class="space-y-6">
 
             <!-- Nombre + Usuario -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 place-items-center self-center">
+                <div class="">
                     <label class="text-sm font-semibold">Nombre del Zoocriadero</label>
                     <input name="nombre" class="w-full bg-sky-100 rounded-xl px-4 py-3 text-sm" placeholder="Escribe el nombre">
                 </div>
 
-                <div>
-                    <label class="text-sm font-semibold">Usuario</label>
-                    <input name="usuario" class="w-full bg-sky-100 rounded-xl px-4 py-3 text-sm" placeholder="Usuario">
-                </div>
             </div>
 
             <!-- Barrio -->
