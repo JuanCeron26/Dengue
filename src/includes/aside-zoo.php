@@ -41,7 +41,7 @@
             </span>
         </a>
 
-        <a href="#" class="group flex flex-col items-center">
+        <a href="../backend/api.php?view=configuracion" class="group flex flex-col items-center">
             <i class="fa-solid fa-gear text-2xl <?php ($vistaActual == 'configuracion') ? 'text-white' : ''; ?> transition-all duration-300 
                 group-hover:scale-110 group-hover:rotate-3"></i>
 

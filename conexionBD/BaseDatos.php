@@ -22,8 +22,6 @@ class BaseDatos
 
         if (!$this->conectar) {
             die("Error de conexión a PostgreSQL");
-        } else {
-            echo "conectado";
         }
     }
 
@@ -171,4 +169,3 @@ class BaseDatos
 
 
 */
-?>
