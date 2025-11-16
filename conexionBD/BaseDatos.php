@@ -96,7 +96,17 @@ class BaseDatos
         $whereParts = [];
         $i = 1;
 
+        $orderBy = "";
+        $orderDir = "ASC";
+
         foreach ($condiciones as $campo => $valor) {
+
+            if (is_array($valor) && isset($valor["ORDER"])) {
+                $orden = strtoupper($valor["ORDER"]);
+                $orderBy = $campo;
+                $orderDir = ($orden === "DESC") ? "DESC" : "ASC";
+                continue; // saltamos para no meter en WHERE
+            }
 
             // LIKE
             if (is_array($valor) && isset($valor["LIKE"])) {
@@ -121,6 +131,11 @@ class BaseDatos
 
         if (!empty($whereParts)) {
             $sql .= " WHERE " . implode(" AND ", $whereParts);
+        }
+
+        // ORDER si se definió
+        if (!empty($orderBy)) {
+            $sql .= " ORDER BY $orderBy $orderDir";
         }
 
         $result = pg_query_params($this->conectar, $sql, $params);

@@ -1,4 +1,4 @@
-document.addEventListener('DOMContentLoaded', () => {
+window.addEventListener('load', () => {
 
     const divUsuarios = document.getElementById('divUsuarios')
     const btnCreateUser = document.getElementById('btnRegistrarUsuario')
@@ -9,15 +9,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const selectSegmentos = document.getElementById('selectSegmento')
     const btnCancelarRegistro = document.getElementById('cancelarRegistro')
     const formEditarUsuario = document.getElementById('formEditarUsuario')
-    const modalEditarUsuario = document.getElementById('modalEditarUsuario')
-    const btnCerrarModal = document.getElementById('cerrarModal')
-    const btnToggle = document.getElementById("togglePassword");
 
     btnCreateUser.addEventListener('click', () => {
         vistaGeneral.classList.add('-translate-x-full');
 
         setTimeout(() => {
             vistaGeneral.classList.add('hidden');
+
             vistaRegistroUser.classList.remove('hidden', 'opacity-0', 'translate-x-full');
         }, 700);
     });
@@ -27,26 +25,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
         setTimeout(() => {
             vistaGeneral.classList.remove('hidden');
-            vistaRegistroUser.classList.add('opacity-0', 'hidden');
+            vistaRegistroUser.classList.add('opacity-0');
+            vistaRegistroUser.classList.add('hidden');
+
             vistaGeneral.classList.remove('-translate-x-full');
         }, 500);
     });
 
-    btnCerrarModal.addEventListener('click', () => {
-        modalEditarUsuario.classList.add('hidden');
-        modalEditarUsuario.classList.remove('flex');
-    });
-
-    document.getElementById("cerrarDetalle").addEventListener("click", () => {
-        const modal = document.getElementById("modalDetalleUsuario");
-        const card = document.getElementById("cardDetalle");
-
-        card.classList.add("scale-90", "opacity-0");
-
-        setTimeout(() => {
-            modal.classList.add("hidden");
-            modal.classList.remove('flex')
-        }, 400);
+    document.getElementById('cerrarModal').addEventListener('click', () => {
+        document.getElementById('modalEditarUsuario').classList.add('hidden');
+        document.getElementById('modalEditarUsuario').classList.remove('flex');
     });
 
     pintarUsuarios();
@@ -54,14 +42,31 @@ document.addEventListener('DOMContentLoaded', () => {
     traerRoles(selectRol);
     traerSegmentos(selectSegmentos);
 
+    /*
+    fetch('../backend/api.php?ajax=documentos')
+        .then(res => res.text())
+        .then(texto => {
+            console.log("RESPUESTA DEL SERVIDOR:");
+            console.log(texto);
+        });
+    */
+
+
+
+
     function pintarUsuarios() {
         fetch('../backend/api.php?ajax=pintar_usuarios')
             .then(res => res.json())
             .then(usuarios => {
+
+                // LIMPIAR contenedor primero
                 divUsuarios.innerHTML = "";
+
+                // Crear fragmento para insertar TODO al final
                 const fragment = document.createDocumentFragment();
 
                 usuarios.forEach(usuario => {
+
                     const divUsuario = document.createElement('div');
                     divUsuario.className =
                         'bg-white rounded-2xl p-6 shadow-xl border border-gray-200 hover:shadow-blue-300/50 ' +
@@ -70,7 +75,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     divUsuario.innerHTML = `
                     <div class="flex items-center space-x-4 border-b border-gray-200 pb-4 mb-4">
                         <div class="bg-blue-600 text-white font-bold rounded-full h-14 w-14 flex items-center justify-center text-xl ring-2 ring-blue-400 select-none pulse-glow">
-                            ${usuario.nombre_usu.charAt(0)}${usuario.apellido_usu.charAt(0)}
+                            JC
                         </div>
                         <div>
                             <h3 class="text-xl font-extrabold text-gray-800 select-none">
@@ -119,17 +124,18 @@ document.addEventListener('DOMContentLoaded', () => {
                     fragment.appendChild(divUsuario);
                 });
 
+                // Inserta TODO de una sola vez
                 divUsuarios.appendChild(fragment);
                 asignarEventosBotones();
-            })
-            .catch(error => {
-                console.error('Error al cargar usuarios:', error);
             });
     }
 
+
     function asignarEventosBotones() {
         divUsuarios.addEventListener('click', (e) => {
+            // Buscar el botón más cercano (esto soluciona el problema de clicks en elementos hijos)
             const boton = e.target.closest('button');
+
             if (!boton) return;
 
             const id_user = boton.dataset.id;
@@ -145,19 +151,16 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function traerDocumentos(select) {
-        return fetch('../backend/api.php?ajax=documentos')
+        fetch('../backend/api.php?ajax=documentos')
             .then(respuesta => respuesta.json())
             .then(documentos => {
-                select.innerHTML = '';
+                select.innerHTML = ''; // Limpiar opciones previas
                 documentos.forEach((doc) => {
                     const option = document.createElement('option');
                     option.value = doc.cod_tipodocum;
                     option.textContent = doc.nombre_tipodocum;
                     select.appendChild(option);
                 });
-            })
-            .catch(error => {
-                console.error("Error cargando documentos:", error);
             });
     }
 
@@ -165,7 +168,7 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
             const respuesta = await fetch('../backend/api.php?ajax=roles');
             const roles = await respuesta.json();
-            select.innerHTML = '';
+            select.innerHTML = ''; // Limpiar opciones previas
             roles.forEach(rol => {
                 const option = document.createElement('option');
                 option.value = rol.cod_rol;
@@ -174,7 +177,6 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         } catch (error) {
             console.error("Error cargando roles:", error);
-            throw error;
         }
     }
 
@@ -182,7 +184,7 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
             const respuesta = await fetch('../backend/api.php?ajax=segmentos');
             const segmentos = await respuesta.json();
-            select.innerHTML = '';
+            select.innerHTML = ''; // Limpiar opciones previas
             segmentos.forEach(segmento => {
                 const option = document.createElement('option');
                 option.value = segmento.cod_segmento;
@@ -191,20 +193,18 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         } catch (error) {
             console.error("Error cargando segmentos:", error);
-            throw error;
         }
     }
 
     async function traerUsuario(id_user) {
-        const selectTipoDoc = document.getElementById('tipoDocUsuario');
-        const selectRol = document.getElementById('rolUsuario');
-        const selectSegmento = document.getElementById('segmentoUsuario');
+        const selectTipoDoc = formEditarUsuario.querySelector('#tipoDocUsuario');
+        const selectRol = formEditarUsuario.querySelector('#rolUsuario');
+        const selectSegmento = formEditarUsuario.querySelector('#segmentoUsuario');
 
         try {
+            // Primero traemos los datos del usuario
             const respuesta = await fetch(`../backend/api.php?ajax=traer_usuario&id=${id_user}`);
             const usuario = await respuesta.json();
-
-            console.log(usuario);
 
             // Llenar campos de texto primero
             document.getElementById('idUsuario').value = usuario.id_usuarios;
@@ -213,16 +213,18 @@ document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('correoUsuario').value = usuario.correo_electronico;
             document.getElementById('idCedulaUsuario').value = usuario.id_cedula;
 
+            // Cargar los selects y ESPERAR a que terminen
             await traerDocumentos(selectTipoDoc);
             await traerRoles(selectRol);
             await traerSegmentos(selectSegmento);
 
-            selectTipoDoc.value = usuario.cod_tipodocum;
-            selectRol.value = usuario.cod_rol;
-            selectSegmento.value = usuario.cod_segmento;
+            // AHORA SÍ asignar los valores (después de que los selects estén llenos)
+            selectTipoDoc.value = usuario.tipo_doc;
+            selectRol.value = usuario.rol;
+            selectSegmento.value = usuario.segmento;
 
-            modalEditarUsuario.classList.remove('hidden');
-            modalEditarUsuario.classList.add('flex');
+            // Mostrar modal
+            document.getElementById('modalEditarUsuario').classList.remove('hidden');
 
         } catch (error) {
             console.error('Error al cargar usuario:', error);
@@ -230,32 +232,16 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    btnToggle.addEventListener("click", () => {
-        if (document.getElementById('detallePassword').type === "password") {
-            document.getElementById('detallePassword').type = "text"
-        } else {
-            document.getElementById('detallePassword').type = "password";
-        }
-    })
-
     //////////////// CRUD /////////////////
 
     formEditarUsuario.addEventListener('submit', (e) => {
-        e.preventDefault();
-        editarUsuario(e.target);
-    });
+        e.preventDefault()
+        editarUsuario(e.target)
+
+    })
 
     function editarUsuario(form) {
-        const DataForm = new FormData(form);
-
-        const tipoDoc = DataForm.get('tipoDocUsuario');
-        const rol = DataForm.get('rolUsuario');
-        const segmento = DataForm.get('segmentoUsuario');
-
-        if (!tipoDoc || !rol || !segmento) {
-            iziToast.warning({ title: 'Atención', message: 'Por favor complete todos los campos obligatorios', position: 'topRight' });
-            return;
-        }
+        const DataForm = new FormData(form)
 
         fetch('../backend/api.php?accion=editar', {
             method: 'POST',
@@ -263,102 +249,19 @@ document.addEventListener('DOMContentLoaded', () => {
         })
             .then(respuesta => respuesta.text())
             .then(respuesta => {
-                console.log('Respuesta del servidor:', respuesta);
-
-                if (respuesta.includes('exito')) {
-                    iziToast.success({ title: 'Éxito', message: 'Usuario editado correctamente', position: 'topRight' });
-                    modalEditarUsuario.classList.add('hidden');
-                    modalEditarUsuario.classList.remove('flex');
-                    pintarUsuarios();
-                } else {
-                    iziToast.error({ title: 'Error', message: 'Error al editar usuario: ' + respuesta, position: 'topRight' });
+                if (respuesta == 'exito') {
+                    alert('usuario editado')
+                    document.getElementById('modalEditarUsuario').classList.add('hidden');
+                    pintarUsuarios()
                 }
             })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('Error de conexión al editar usuario');
-            });
     }
 
-    async function eliminarUsuario(id_user) {
-
-        iziToast.question({
-            timeout: 20000,
-            close: false,
-            overlay: true,
-            displayMode: 'once',
-            title: 'Confirmar eliminación',
-            message: '¿Estás seguro que deseas eliminar este usuario?',
-            position: 'center',
-            buttons: [
-                ['<button class="bg-red-600 text-white px-4 py-2 rounded">Eliminar</button>', async function (instance, toast) {
-                    // cerrar diálogo
-                    instance.hide({ transitionOut: 'fadeOut' }, toast, 'button');
-
-                    // mostrar toast de proceso
-                    iziToast.info({ title: 'Eliminando', message: 'Por favor espera...', position: 'topRight', timeout: 2000 });
-
-                    try {
-                        const form = new FormData();
-                        form.append('id_user', id_user);
-
-                        const resp = await fetch(`../backend/api.php?accion=eliminar`, {
-                            method: 'POST',
-                            body: form
-                        });
-
-                        const text = (await resp.text()).trim();
-
-                        if (text === 'exito') {
-                            iziToast.success({ title: 'Eliminado', message: 'Se eliminó correctamente', position: 'topRight' });
-                            pintarUsuarios();
-                        } else {
-                            iziToast.error({ title: 'Error', message: 'No se pudo eliminar: ' + text, position: 'topRight' });
-                            console.error('Fallo al eliminar:', text);
-                        }
-                    } catch (err) {
-                        console.error('Error al eliminar:', err);
-                    }
-                }, true],
-                ['<button class="bg-gray-300 px-4 py-2 rounded">Cancelar</button>', function (instance, toast) {
-                    instance.hide({ transitionOut: 'fadeOut' }, toast, 'button');
-                }]
-            ]
-        });
-    }
-
-    function verDetalleUsuario(id_user) {
-        fetch(`../backend/api.php?ajax=traer_usuario&id=${id_user}`)
-            .then(res => res.json())
-            .then(usuario => {
-
-                console.log(usuario);
-
-                // Llenar datos
-                const iniciales = usuario.nombre_usu.charAt(0) + usuario.apellido_usu.charAt(0);
-                document.getElementById("detalleIniciales").textContent = iniciales;
-                document.getElementById("detalleNombre").textContent = `${usuario.nombre_usu} ${usuario.apellido_usu}`;
-                document.getElementById("detalleRol").textContent = usuario.rol;
-                document.getElementById("detalleCorreo").textContent = usuario.correo_electronico;
-                document.getElementById("detalleCedula").textContent = `${usuario.tipo_doc} ${usuario.id_cedula}`;
-                document.getElementById("detalleSegmento").textContent = usuario.segmento;
-                document.getElementById("detallePassword").textContent = usuario.contraseña;
-
-                // Mostrar modal con animaciones
-                const modal = document.getElementById("modalDetalleUsuario");
-                const card = document.getElementById("cardDetalle");
-
-                modal.classList.remove("hidden");
-                modal.classList.add("flex")
-
-                // Tiempo para permitir animación
-                setTimeout(() => {
-                    card.classList.remove("scale-90", "opacity-0");
-                    card.classList.add("scale-100", "opacity-100");
-                }, 20);
-            });
+    function eliminarUsuario() {
+        
     }
 
 
 
-});
+
+})
