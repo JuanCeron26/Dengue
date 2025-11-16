@@ -342,7 +342,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 document.getElementById("detalleCorreo").textContent = usuario.correo_electronico;
                 document.getElementById("detalleCedula").textContent = `${usuario.tipo_doc} ${usuario.id_cedula}`;
                 document.getElementById("detalleSegmento").textContent = usuario.segmento;
-                document.getElementById("detallePassword").textContent = usuario.contraseña;
+                document.getElementById("detallePassword").value = usuario.contraseña;
 
                 // Mostrar modal con animaciones
                 const modal = document.getElementById("modalDetalleUsuario");
