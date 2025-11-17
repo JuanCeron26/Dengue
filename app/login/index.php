@@ -1,87 +1,91 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="../../src/css/styles.css">
-    <title>Document</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Inicio de Sesión</title>
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
 
-<body class="h-screen bg-gradient-to-tr from-blue-900 via-sky-700 to-sky-400
-flex justify-center items-center">
+<body class="min-h-screen bg-gradient-to-br from-[#0B5394] via-[#1E88E5] to-[#42A5F5] flex items-center justify-center p-4">
 
+    <!-- Contenedor -->
+    <div class="w-full max-w-6xl bg-white rounded-3xl shadow-2xl overflow-hidden flex flex-col md:flex-row">
 
-    <main class="my-[20vh] mx-[10vh] grid grid-cols-2 w-3/4 h-[80vh] bg-white rounded-full shadow-2xl animate-fade-in">
+        <!-- Panel Izquierdo -->
+        <div class="md:w-1/2 bg-gradient-to-br from-[#1e3a8a] via-[#1e40af] to-[#2563eb] p-10 relative overflow-hidden flex flex-col">
 
-        <!--MITAD 1-->
-        <div class=" bg-sky-400 col-span-1 relative overflow-hidden rounded-r-4xl rounded-l-4xl ">
-            <section class=" w-2/3 m-auto mt-20 relative z-50">
-                <h1 class="text-white text-5xl font-extrabold animate-zoom-in"> BIENVENIDOS </h1>
-                <h3 class="text-white text-2xl mt-3 font-semibold"> Llevemos un control del dengue que nos proteja a
-                    <span class="font-bold">TODOS</span>
-                </h3>
-            </section>
+            <!-- Decoraciones -->
+            <div class="absolute top-0 left-0 w-72 h-52 bg-blue-400/20 rounded-full -translate-x-1/2 -translate-y-1/2"></div>
+            <div class="absolute bottom-0 left-0 w-80 h-80 bg-blue-400/20 rounded-full -translate-x-1/3 translate-y-1/3"></div>
+            <div class="absolute bottom-16 left-16 w-30 h-40 bg-blue-500/30 rounded-full"></div>
 
-            <!--Primer circulo-->
-            <div
-                class="h-[780px] w-[780px] rounded-full absolute -top-80 -left-36 -z-0 bg-blue-800 animate-slide-in-top">
+            <!-- Texto centrado -->
+            <div class="relative z-10 flex flex-col justify-center items-center text-center flex-grow">
+
+                <h1 class="text-white text-7xl md:text-5xl mb-4 font-bold">
+                    BIENVENIDOS
+                </h1>
+
+                <p class="text-white text-sm md:text-base mb-10 leading-snug">
+                    Llevemos un control del dengue<br />
+                    que nos proteja a <span class="font-semibold">TODOS</span>
+                </p>
 
             </div>
-            <!--Segundo circulo-->
-            <div class=" h-72 w-72 absolute rounded-full -bottom-16 -left-20 z-0 bg-blue-500">
 
-            </div>
+        </div>
 
-            <!--Tercer circulo-->
-            <div class=" h-52 w-52 rounded-full absolute bottom-24 right-20 z-0 bg-blue-500">
+        <!-- Panel Derecho -->
+        <div class="md:w-1/2 p-10 flex flex-col justify-center items-center bg-gray-50">
+
+            <div class="w-full max-w-md">
+
+                <h2 class="text-2xl text-gray-400 text-center mb-2 font-semibold">INICIAR SESIÓN</h2>
+                <p class="text-center text-gray-600 mb-6 text-sm">Por favor inicia sesión</p>
+
+                <form class="space-y-5">
+
+                    <!-- Usuario -->
+                    <div class="relative">
+                        <div class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-600">
+                            <img src="../../src/icons/user-solid-full.svg" class="w-5 h-5" />
+                        </div>
+                        <input type="text" placeholder="Nombre de usuario"
+                            class="w-full pl-12 pr-4 py-2 border border-gray-300 rounded-full focus:outline-none focus:border-blue-500 transition" />
+                    </div>
+
+                    <!-- Contraseña -->
+                    <div class="relative">
+                        <div class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-600">
+                            <img src="../../src/icons/lock-solid-full.svg" class="w-5 h-5" />
+                        </div>
+                        <input type="password" placeholder="Escribe tu contraseña"
+                            class="w-full pl-12 pr-4 py-2 border border-gray-300 rounded-full focus:outline-none focus:border-blue-500 transition" />
+                    </div>
+
+                    <div class="text-center">
+                        <a href="#" class="text-blue-600 hover:text-blue-800 text-sm">¿Olvidó la contraseña?</a>
+                    </div>
+
+                    <button type="submit"
+                        class="w-full bg-[#1e3a8a] hover:bg-[#1e40af] text-white py-3 text-lg rounded-full transition">
+                        Iniciar Sesión
+                    </button>
+                </form>
+
+                <!-- Logo Alcaldía -->
+                <div class="mt-8 flex justify-center">
+                    <img src="../../src/img/logo-secretaria.png"
+                        alt="Alcaldía de Santiago de Cali"
+                        class="h-32 w-auto" />
+                </div>
 
             </div>
         </div>
 
-        <!--MITAD 2-->
-        <div class="bg-white col-span-1 flex justify-center rounded-r-4xl overflow-hidden">
-            <form action="" method="POST" class="w-3/4 p-5">
-                <div class="relative w-full">
-                    <h1 class="block text-gray-400 font-bold text-5xl mt-5 text-center">INICIAR SESION</h1>
-                </div>
-
-                <p class="font-semibold text-center mt-5">Por favor inicia sesión</p>
-                <div class=" relative mt-10">
-                    <span class="absolute left-3 top-2">
-                        <i class="fa-solid fa-user-tie text-2xl"></i>
-                    </span>
-                    <input type="text" name="" id="" placeholder="Nombre de usuario" class="border h-11
-                    rounded-4xl py-3 px-14 w-full font-semibold">
-                </div>
-                <div class=" relative mt-4">
-                    <span class="absolute left-3 top-2.5">
-                        <i class="fa-solid fa-lock text-2xl"></i>
-                    </span>
-                    <input type="text" name="" id="" placeholder="Escribe tu contraseña" class="border h-11
-                    rounded-4xl py-3 px-14 w-full font-semibold">
-                </div>
-                <a href="#" class="block mt-10 text-center text-blue-900 font-semibold text-xl">¿Olvidó la
-                    contraseña?</a>
-                <div class="flex items-center mt-2">
-                    <hr class="flex-grow border-t-4 border-gray-300">
-                    <span class="px-3 text-gray-400 text-sm font-bold">O</span>
-                    <hr class="flex-grow border-t-4 border-gray-300">
-                </div>
-                <button
-                    class="cursor-pointer block border w-4/5 mx-auto mt-3 h-12 rounded-full text-white bg-blue-900 font-semibold text-xl hover:scale-105 transition">Iniciar
-                    Sesion</button>
-
-                <div class="flex justify-center">
-                    <img src="./src/img/ChatGPT Image 21 ago 2025, 03_13_12 p.m..png" alt="" class="h-32 mt-4">
-                </div>
-
-            </form>
-        </div>
-
-    </main>
-
-
+    </div>
 
 </body>
 

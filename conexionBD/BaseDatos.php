@@ -1,34 +1,33 @@
 <?php 
 class Conexion
 {
+    private $servername = "localhost";
+    private $database = "bd_dengue";
+    private $username = "postgres";
+    private $password = "1234";
     private $conexion;
 
-    function Conexionpg()
+    //Método Conexión
+    public function __construct()
     {
-        //Párametros de conexión
-        $servername = "localhost";
-        $database = "bd_dengue";
-        $username = "postgres";
-        $password = "1234";
-
         //Cadena de conexión
-        $coon_string = "host=$servername dbname=$database user=$username password=a$password";
+        $conn_string = "host=$this->servername dbname=$this->database user=$this->username 
+        password=$this->password";
 
         //Conectar
-        $this->conexion = pg_connect($coon_string);
+        $this->conexion = pg_connect($conn_string);
 
-        //Validar conexión
+        //Validar Conexión
         if(!$this->conexion){
-            die("Error al conectar a PostgreSQL". pg_last_error());
+            die("¡Error de conexión! No se pudo conectar con PotsgreSQL". pg_last_error());
         }
-
         return $this->conexion;
     }
 
     //La cadena de conexión es un string (cadena de texto) que le permite a PostgreSQL cómo y en 
-    //dónde conectarse. "$coon_string" es solamente el nombre de la variable.
+    //dónde conectarse. "$conn_string" es solamente el nombre de la variable.
 }
 
-
+$obj = new Conexion();
 
 ?>
