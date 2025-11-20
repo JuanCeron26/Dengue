@@ -4,8 +4,10 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Inicio de Sesión</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="../../src/css/iziToast.min.css">
+    <title>Inicio de Sesión</title>
+    
 </head>
 
 <body class="min-h-screen bg-gradient-to-br from-[#0B5394] via-[#1E88E5] to-[#42A5F5] flex items-center justify-center p-4">
@@ -45,14 +47,14 @@
                 <h2 class="text-2xl text-gray-400 text-center mb-2 font-semibold">INICIAR SESIÓN</h2>
                 <p class="text-center text-gray-600 mb-6 text-sm">Por favor inicia sesión</p>
 
-                <form class="space-y-5">
+                <form class="space-y-5" id="formLogin">
 
                     <!-- Usuario -->
                     <div class="relative">
                         <div class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-600">
                             <img src="../../src/icons/user-solid-full.svg" class="w-5 h-5" />
                         </div>
-                        <input type="text" placeholder="Nombre de usuario"
+                        <input type="text" placeholder="Escribe tu documento" id="documento"
                             class="w-full pl-12 pr-4 py-2 border border-gray-300 rounded-full focus:outline-none focus:border-blue-500 transition" />
                     </div>
 
@@ -61,7 +63,7 @@
                         <div class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-600">
                             <img src="../../src/icons/lock-solid-full.svg" class="w-5 h-5" />
                         </div>
-                        <input type="password" placeholder="Escribe tu contraseña"
+                        <input type="password" placeholder="Escribe tu contraseña" id="password"
                             class="w-full pl-12 pr-4 py-2 border border-gray-300 rounded-full focus:outline-none focus:border-blue-500 transition" />
                     </div>
 
@@ -76,17 +78,19 @@
                 </form>
 
                 <!-- Logo Alcaldía -->
-                <div class="mt-8 flex justify-center">
+                <div class="mt-8 flex justify-center h-48">
                     <img src="../../src/img/logo-secretaria.png"
                         alt="Alcaldía de Santiago de Cali"
-                        class="h-32 w-auto" />
+                        class="h-full w-auto " />
                 </div>
 
             </div>
         </div>
 
     </div>
-
+    <!--JS-->
+    <script src="../../src/js/iziToast.min.js"></script>
+    <script src="../../src/js/login.js"></script>
 </body>
 
 </html>
