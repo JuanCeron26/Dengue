@@ -238,7 +238,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     })
 
-    //////////////// CRUD /////////////////
+    //////////////// CRUD //////////////////////////////////////////////////////////////////
 
     formEditarUsuario.addEventListener('submit', (e) => {
         e.preventDefault();

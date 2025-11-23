@@ -47,6 +47,34 @@ class BaseDatos
         return $result ? true : false;
     }
 
+    public function InsertReturning($tabla, $datos, $campoRetornar)
+    {
+        // Campos: nombre, correo
+        $campos = array_keys($datos);
+
+        // Valores: ['Juan', 'a@a.com']
+        $valores = array_values($datos);
+
+        // $1, $2, $3...
+        $placeholders = [];
+        for ($i = 1; $i <= count($datos); $i++) {
+            $placeholders[] = '$' . $i;
+        }
+
+        $sql = "INSERT INTO $tabla (" . implode(",", $campos) . ") 
+            VALUES (" . implode(",", $placeholders) . ")
+            RETURNING $campoRetornar";
+
+        $result = pg_query_params($this->conectar, $sql, $valores);
+
+        if ($result) {
+            $row = pg_fetch_assoc($result);
+            return $row[$campoRetornar]; // Retorna el ID generado
+        }
+
+        return false;
+    }
+
 
     public function Delete($tabla, $datos)
     {
@@ -58,6 +86,29 @@ class BaseDatos
         $result = pg_query_params($this->conectar, $sql, [$valor]);
 
         return $result ? true : false;
+    }
+
+    public function Anular($tabla, $datos, $cod)
+    {
+        $campo = key($datos);
+        $valor = $datos[$campo];
+        $pk = key($cod);
+
+        $sql = "UPDATE $tabla SET $campo = $valor WHERE $pk = $1";
+
+        $result = pg_query_params($this->conectar, $sql, [$cod[$pk]]);
+
+        return $result ? true : false;
+
+        /*
+        $datos = [
+        "cod_estado" => 2
+        ] 
+        
+        $cod = [
+        "cod_segzooact" => $id  -> el id de la fila que quiero editar
+        ]
+        */
     }
 
 

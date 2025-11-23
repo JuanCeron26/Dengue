@@ -2,10 +2,16 @@ document.addEventListener('DOMContentLoaded', () => {
     const tabButtons = document.querySelectorAll('.tab-button');
     const contentSections = document.querySelectorAll('.content-section');
     const mainContent = document.querySelector('main > div.relative');
+    const modalPermisos = document.getElementById('modalPermisos');
 
 
     const listaRoles = document.getElementById('listaRoles')
     const formCrearRol = document.getElementById('formCrearRol')
+
+    const filtroRoles = document.getElementById('filtroRol');
+    const filtroSegmentos = document.getElementById('filtroSegmento')
+
+    const listaPermisosPerfiles = document.getElementById('listaPermisosPerfiles')
 
     formCrearRol.addEventListener('submit', (e) => {
         e.preventDefault();
@@ -13,6 +19,9 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     pintarRoles();
+    pintarRolesFiltro();
+    pintarSegmentos();
+    pintarPerfilesPermisos();
 
 
 
@@ -58,6 +67,22 @@ document.addEventListener('DOMContentLoaded', () => {
             })
     }
 
+    function pintarRolesFiltro() {
+        fetch('../backend/ajax.php?api=traer_roles')
+            .then(respuesta => respuesta.json())
+            .then(roles => {
+                filtroRoles.innerHTML = ''
+                roles.forEach((rol) => {
+                    const option = document.createElement('option')
+                    option.value = rol.cod_rol
+                    option.textContent = rol.nombre_rol
+                    filtroRoles.appendChild(option)
+                })
+
+                EventosBotonesRol()
+            })
+    }
+
     function EventosBotonesRol() {
         // Botones de roles
         listaRoles.addEventListener('click', (e) => {
@@ -73,6 +98,104 @@ document.addEventListener('DOMContentLoaded', () => {
         })
     }
 
+    function pintarSegmentos() {
+        fetch('../backend/ajax.php?api=traer_segmentos')
+            .then(respuesta => respuesta.json())
+            .then(segmentos => {
+                filtroSegmentos.innerHTML = ''
+                segmentos.forEach((seg) => {
+                    const option = document.createElement('option')
+                    option.value = seg.cod_segmento
+                    option.textContent = seg.nomsegmento
+
+                    filtroSegmentos.appendChild(option)
+                })
+            })
+
+    }
+
+    async function pintarPerfilesPermisos() {
+        const solicito = await fetch('../backend/ajax.php?api=traer_perfiles')
+        const perfiles = await solicito.json()
+
+        console.log(perfiles);
+
+        perfiles.forEach((perfil) => {
+            const div = document.createElement('div')
+            div.className = "bg-gray-50 p-5 rounded-xl border border-gray-200 shadow-sm hover:shadow-lg transition duration-200 hover:bg-emerald-50 flex justify-between items-center"
+            div.innerHTML = `
+                <div class="space-y-2">
+
+                        <!-- ROL -->
+                        <p class="font-bold text-2xl text-gray-900">${perfil.nombre_rol}</p>
+
+                        <!-- Segmento y submodulo -->
+                        <div class="flex flex-wrap gap-2">
+                            <span class="bg-emerald-100 text-emerald-800 px-3 py-1 rounded-lg text-sm font-semibold">
+                                ${perfil.nomsegmento}
+                            </span>
+
+                            <span class="bg-emerald-100 text-emerald-800 px-3 py-1 rounded-lg text-sm font-semibold">
+                                ${perfil.nombre_modseg}
+                            </span>
+                        </div>
+
+                        <!-- Acciones permitidas -->
+                            <p class="text-sm text-gray-700 bg-white px-3 py-1 rounded-lg shadow-inner border inline-block mt-2">
+                                Acciones permitidas: <span class="font-semibold">15</span> / 20
+                            </p>
+                        </div>
+
+                        <!--Botones-->
+                        <div class="flex space-x-3">
+                            <button data-id="${perfil.cod_permiso}" type="button" class="btn-ver-permisos cursor-pointer px-4 py-2 rounded-xl bg-white border border-gray-300 text-gray-700 
+                                font-semibold hover:bg-gray-100 hover:border-gray-400 transition
+                                shadow-sm hover:shadow-md">
+                                    Ver Acciones
+                            </button>
+
+                            <button data-id="${perfil.cod_permiso}" type="button" class="btn-editar-permisos px-4 py-2 rounded-xl bg-emerald-600 text-white font-semibold 
+                            hover:bg-emerald-700 cursor-pointer transition transform 
+                            hover:scale-105 shadow-md">
+                                    Editar Permisos
+                            </button>
+                        </div>
+                </div>
+
+            `
+
+            listaPermisosPerfiles.appendChild(div)
+        })
+    }
+
+    function EventosBotonesPermisos() {
+        // Botones de Permisos
+        listaPermisosPerfiles.addEventListener('click', (e) => {
+            const boton = e.target.closest('button') // el elemento <button>
+            if (!boton) return; // para cuando haga click en el div de listaRoles
+            const cod_permiso = boton.dataset.id;
+
+            if (boton.classList.contains('btn-editar-permisos')) {
+                habilitarEdicionPermisos(cod_permiso)
+            } else if (boton.classList.contains('btn-ver-permisos')) {
+                AnularRol(id_rol)
+            }
+        })
+    }
+
+    function habilitarEdicionPermisos(cod_permiso) {
+        modalPermisos.classList.remove('hidden')
+        modalPermisos.classList.add('flex')
+
+        const listaAcciones = modalPermisos.querySelector('#listaAcciones');
+        fetch(`../backend/ajax.php?api=traer_acciones&permiso=${cod_permiso}`)
+        .then(respuesta => respuesta.json())
+        .then(acciones => {
+            acciones.forEach((accion) => {
+
+            })
+        })
+    }
 
     function habilitarEdicion(id_rol) {
 
@@ -269,7 +392,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // GESTIÓN DE MODALES (ANIMACIONES)
 
-    const modalPermisos = document.getElementById('modalPermisos');
+    
     const modalContent = document.getElementById('modalContent');
     const btnCancelarModal = document.getElementById('btnCancelarModal');
 
@@ -282,15 +405,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- Funciones de Modal de Permisos ---
 
-    window.abrirModalPermisos = (rol, segmento) => {
-        document.getElementById('modalInfo').textContent = `Perfil: ${rol} + ${segmento}`;
+    document.getElementById('btnModalEditarPermisos').addEventListener('click', () => {
         modalPermisos.classList.remove('hidden');
         modalPermisos.classList.add('flex');
 
         setTimeout(() => {
             modalContent.classList.remove('scale-95', 'opacity-0');
         }, 10);
-    };
+    })
 
     const cerrarModalPermisos = () => {
         modalContent.classList.add('scale-95', 'opacity-0');

@@ -11,6 +11,24 @@ class Permisos extends ModelPermisos
         return $traer;
     }
 
+    public function traerSegmentos()
+    {
+        $traer = $this->GetSegmentos();
+        return $traer;
+    }
+
+    public function traerPerfiles()
+    {
+        $traer = $this->GetPerfiles();
+        return $traer;
+    }
+
+    public function traerAcciones($cod_permiso)
+    {
+        // $traer = $this->GetAcciones($cod_permiso);
+        // return $traer;
+    }
+
     public function editarRol($post)
     {
 

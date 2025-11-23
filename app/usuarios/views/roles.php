@@ -150,11 +150,19 @@
 
                             <div id="listaSegmentos" class="space-y-3 h-64 overflow-y-auto pr-2">
                                 <div class="flex justify-between items-center p-3 bg-gray-50 border rounded-lg hover:bg-purple-50 transition duration-200">
-                                    <span class="font-medium text-gray-800">Zona Norte</span>
+                                    <span class="font-medium text-gray-800">CONTROL BIOLOGICO</span>
                                     <button class="text-xs text-purple-500 hover:text-purple-700">Editar</button>
                                 </div>
                                 <div class="flex justify-between items-center p-3 bg-gray-50 border rounded-lg hover:bg-purple-50 transition duration-200">
-                                    <span class="font-medium text-gray-800">Clientes VIP</span>
+                                    <span class="font-medium text-gray-800">ECOSALUD</span>
+                                    <button class="text-xs text-purple-500 hover:text-purple-700">Editar</button>
+                                </div>
+                                <div class="flex justify-between items-center p-3 bg-gray-50 border rounded-lg hover:bg-purple-50 transition duration-200">
+                                    <span class="font-medium text-gray-800">ADMINISTRACION</span>
+                                    <button class="text-xs text-purple-500 hover:text-purple-700">Editar</button>
+                                </div>
+                                <div class="flex justify-between items-center p-3 bg-gray-50 border rounded-lg hover:bg-purple-50 transition duration-200">
+                                    <span class="font-medium text-gray-800">JEFES DIRECTORIOS</span>
                                     <button class="text-xs text-purple-500 hover:text-purple-700">Editar</button>
                                 </div>
                             </div>
@@ -164,40 +172,87 @@
 
                 <section id="asignacion-permisos" class="content-section hidden-right space-y-6">
 
-                    <h1 class="text-3xl font-bold tracking-tight text-gray-800">Asignación de Permisos por Perfil</h1>
-                    <p class="text-gray-600">Define las acciones permitidas para cada combinación de Rol y Segmento (Perfil).</p>
+                    <h1 class="text-3xl font-extrabold tracking-tight text-gray-900">
+                        Asignación de Permisos por Perfil
+                    </h1>
 
-                    <div class="bg-white shadow-xl rounded-2xl p-6 border-t-4 border-emerald-600">
-                        <div class="flex flex-wrap gap-4 mb-6">
-                            <select id="filtroRol"
-                                class="px-4 py-2 border border-gray-300 rounded-xl focus:ring-emerald-500 focus:border-emerald-500 transition w-full md:w-auto">
-                                <option value="">Seleccionar Rol</option>
-                                <option value="admin">Administrador</option>
-                                <option value="user">Usuario</option>
-                            </select>
+                    <p class="text-gray-600">
+                        Administra las acciones disponibles según la combinación de Rol y Segmento.
+                    </p>
 
-                            <select id="filtroSegmento"
-                                class="px-4 py-2 border border-gray-300 rounded-xl focus:ring-emerald-500 focus:border-emerald-500 transition w-full md:w-auto">
-                                <option value="">Seleccionar Segmento</option>
-                                <option value="north">Norte</option>
-                                <option value="south">Sur</option>
-                            </select>
+                    <div class="bg-white shadow-2xl rounded-2xl p-8 border-t-4 border-emerald-600">
+
+                        <!-- filtros -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-1">Seleccionar Rol</label>
+                                <select id="filtroRol"
+                                    class="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-emerald-500 focus:border-emerald-500 transition">
+                                    <option value="">Seleccionar Rol</option>
+                                </select>
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-1">Seleccionar Segmento</label>
+                                <select id="filtroSegmento"
+                                    class="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-emerald-500 focus:border-emerald-500 transition">
+                                </select>
+                            </div>
+
                         </div>
 
+                        <!-- LISTA DE PERFILES -->
                         <div id="listaPermisosPerfiles" class="space-y-4 h-96 overflow-y-auto pr-2">
-                            <div class="bg-gray-50 p-4 rounded-lg border border-gray-200 hover:bg-emerald-50 transition duration-200 flex justify-between items-center">
-                                <div>
-                                    <p class="font-bold text-lg text-gray-800">Perfil: Administrador + Zona Norte</p>
-                                    <p class="text-sm text-gray-600">Acciones permitidas: 15 de 20</p>
+
+                            <div class="bg-gray-50 p-5 rounded-xl border border-gray-200 shadow-sm
+                                hover:shadow-lg transition duration-200 hover:bg-emerald-50 
+                                flex justify-between items-center">
+
+                                <div class="space-y-2">
+
+                                    <!-- ROL -->
+                                    <p class="font-bold text-2xl text-gray-900">Coordinador</p>
+
+                                    <!-- Segmento y submodulo -->
+                                    <div class="flex flex-wrap gap-2">
+                                        <span class="bg-emerald-100 text-emerald-800 px-3 py-1 rounded-lg text-sm font-semibold">
+                                            Control Biológico
+                                        </span>
+
+                                        <span class="bg-emerald-100 text-emerald-800 px-3 py-1 rounded-lg text-sm font-semibold">
+                                            Zoocriaderos
+                                        </span>
+                                    </div>
+
+                                    <!-- Acciones permitidas -->
+                                    <p class="text-sm text-gray-700 bg-white px-3 py-1 rounded-lg shadow-inner border inline-block mt-2">
+                                        Acciones permitidas: <span class="font-semibold">15</span> / 20
+                                    </p>
                                 </div>
-                                <button onclick="abrirModalPermisos('Administrador', 'Zona Norte')"
-                                    class="bg-emerald-600 text-white px-4 py-2 rounded-xl font-semibold hover:bg-emerald-700 cursor-pointer transition transform hover:scale-105 shadow-md">
-                                    Editar Permisos
-                                </button>
+
+                                <!--Botones-->
+                                <div class="flex space-x-3">
+                                    <button type="button" class="cursor-pointer px-4 py-2 rounded-xl bg-white border border-gray-300 text-gray-700 
+                                        font-semibold hover:bg-gray-100 hover:border-gray-400 transition
+                                        shadow-sm hover:shadow-md">
+                                        Ver Acciones
+                                    </button>
+
+                                    <button id="btnModalEditarPermisos" type="button" class="px-4 py-2 rounded-xl bg-emerald-600 text-white font-semibold 
+                                    hover:bg-emerald-700 cursor-pointer transition transform 
+                                        hover:scale-105 shadow-md">
+                                        Editar Permisos
+                                    </button>
+                                </div>
+
                             </div>
+
+
                         </div>
                     </div>
                 </section>
+
             </div>
         </main>
 

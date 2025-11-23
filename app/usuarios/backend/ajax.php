@@ -14,6 +14,21 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
                 echo json_encode($roles);
                 break;
 
+            case 'traer_segmentos':
+                $segmentos = $objPermiso->traerSegmentos();
+                echo json_encode($segmentos);
+                break;
+
+            case 'traer_perfiles':
+                $perfiles = $objPermiso->traerPerfiles();
+                echo json_encode($perfiles);
+                break;
+
+            case 'traer_acciones':
+                $acciones = $objPermiso->traerAcciones($_GET['permiso']);
+                echo json_encode($acciones);
+                break;
+
             default:
                 # code...
                 break;
@@ -37,13 +52,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     echo "exito";
                 }
                 break;
-            
+
             case 'eliminar':
                 $eliminar = $objPermiso->anularRol($_POST);
                 if ($eliminar) {
                     echo "exito";
                 }
-                break;  
+                break;
 
             default:
                 # code...
