@@ -8,25 +8,35 @@ class modelUser
 
     public function __construct()
     {
-        $this->objDB = new BaseDatos("ceron123"); // para usar las funciones genéricas
-        $this->conexion = $this->objDB->conectar; // para hacer funciones propias
+        $this->objDB = new BaseDatos("ceron123");
+        $this->conexion = $this->objDB->conectar;
     }
 
     public function GetUsuarios()
     {
         $conexion = $this->conexion;
 
-        $sql = "SELECT u.*, td.nombre_tipodocum as tipo_doc, s.nomsegmento as segmento, r.nombre_rol as rol 
+        $sql = "SELECT 
+                u.id_usuarios,
+                u.nombre_usu,
+                u.apellido_usu,
+                u.id_cedula,
+                u.correo_electronico,
+                td.nombre_tipodocum as tipo_doc,
+                r.nombre_rol,
+                s.nomsegmento,
+                ms.nombre_modseg
             FROM tblusuarios u 
             INNER JOIN tbltipodocum td ON td.cod_tipodocum = u.cod_tipodocum
-            INNER JOIN tblsegmentos s ON s.cod_segmento = u.cod_segmento
-            INNER JOIN tblroles r ON r.cod_rol = u.cod_rol
+            INNER JOIN tblpermisos p ON p.cod_permiso = u.cod_permiso
+            INNER JOIN tblroles r ON r.cod_rol = p.cod_rol
+            INNER JOIN tblsegmentos s ON s.cod_segmento = p.cod_segmento
+            LEFT JOIN tblmodulossegmentos ms ON ms.cod_modseg = p.cod_modseg
             ORDER BY u.id_usuarios DESC";
 
         $ejecucion = pg_query($conexion, $sql);
 
         if (!$ejecucion) {
-            // SIEMPRE devolver JSON aunque haya error 
             return [
                 "status" => "error",
                 "mensaje" => pg_last_error($conexion)
@@ -34,8 +44,6 @@ class modelUser
         }
 
         $filas = pg_fetch_all($ejecucion);
-
-        // Si viene false, devolver array vacío para no romper JSON
         return $filas ? $filas : [];
     }
 
@@ -45,28 +53,53 @@ class modelUser
         return $documentos;
     }
 
-    public function GetRoles()
+    public function GetPerfiles()
     {
-        $roles = $this->objDB->Select("tblroles");
-        return $roles;
-    }
+        $conexion = $this->conexion;
 
-    public function GetSegmentos()
-    {
-        $segmentos = $this->objDB->Select("tblsegmentos");
-        return $segmentos;
+        $sql = "SELECT 
+                p.cod_permiso,
+                p.nombre_permiso,
+                p.cod_segmento,
+                p.cod_rol,
+                p.cod_modseg,
+                r.nombre_rol,
+                s.nomsegmento,
+                ms.nombre_modseg
+            FROM tblpermisos p
+            INNER JOIN tblroles r ON r.cod_rol = p.cod_rol
+            INNER JOIN tblsegmentos s ON s.cod_segmento = p.cod_segmento
+            LEFT JOIN tblmodulossegmentos ms ON ms.cod_modseg = p.cod_modseg
+            ORDER BY p.cod_permiso";
+
+        $ejecucion = pg_query($conexion, $sql);
+
+        if (!$ejecucion) {
+            return [];
+        }
+
+        $filas = pg_fetch_all($ejecucion);
+        return $filas ? $filas : [];
     }
 
     public function GetUsuario($id_user)
     {
         $id = (int)$id_user;
         $conexion = $this->conexion;
-        $sql = "SELECT u.*, td.nombre_tipodocum as tipo_doc, s.nomsegmento as segmento, r.nombre_rol as rol 
+
+        $sql = "SELECT 
+                u.*,
+                td.nombre_tipodocum as tipo_doc,
+                r.nombre_rol,
+                s.nomsegmento,
+                ms.nombre_modseg
             FROM tblusuarios u 
             INNER JOIN tbltipodocum td ON td.cod_tipodocum = u.cod_tipodocum
-            INNER JOIN tblsegmentos s ON s.cod_segmento = u.cod_segmento
-            INNER JOIN tblroles r ON r.cod_rol = u.cod_rol 
-            WHERE id_usuarios = $1";
+            INNER JOIN tblpermisos p ON p.cod_permiso = u.cod_permiso
+            INNER JOIN tblroles r ON r.cod_rol = p.cod_rol
+            INNER JOIN tblsegmentos s ON s.cod_segmento = p.cod_segmento
+            LEFT JOIN tblmodulossegmentos ms ON ms.cod_modseg = p.cod_modseg
+            WHERE u.id_usuarios = $1";
 
         $ejecucion = pg_query_params($conexion, $sql, [$id]);
         if ($ejecucion) {
@@ -84,17 +117,10 @@ class modelUser
         return $insertar;
     }
 
-    public function UpdateUsuario($datos, $id)
+    public function UpdateUsuario($id, $datos)
     {
-        $id_user = [
-            "id_usuarios" => (int)$id
-        ];
-        $editar = $this->objDB->Update("tblusuarios", $datos, $id_user);
-        if ($editar) {
-            return true;
-        } else {
-            return false;
-        }
+        $actualizar = $this->objDB->Update("tblusuarios", $datos, ["id_usuarios" => $id]);
+        return $actualizar;
     }
 
     public function DeleteUser($id)

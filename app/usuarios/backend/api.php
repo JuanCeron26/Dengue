@@ -13,19 +13,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
                 echo json_encode($usuarios);
                 break;
 
+            case 'perfiles':
+                $perfiles = $objUser->traerPerfiles();
+                echo json_encode($perfiles);
+                break;
+
             case 'documentos':
                 $documentos = $objUser->traerTiposDocumento();
                 echo json_encode($documentos);
-                break;
-
-            case 'roles':
-                $roles = $objUser->traerRoles();
-                echo json_encode($roles);
-                break;
-
-            case 'segmentos':
-                $segmentos = $objUser->traerSegmentos();
-                echo json_encode($segmentos);
                 break;
 
             case 'traer_usuario':

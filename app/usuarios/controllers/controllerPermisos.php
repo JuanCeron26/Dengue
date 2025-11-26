@@ -25,8 +25,14 @@ class Permisos extends ModelPermisos
 
     public function traerAcciones($cod_permiso)
     {
-        // $traer = $this->GetAcciones($cod_permiso);
-        // return $traer;
+        $traer = $this->GetAccionesPermiso($cod_permiso);
+        return $traer;
+    }
+
+    public function traerAllModulosAcciones()
+    {
+        $traer = $this->GetAllModulosAcciones();
+        return $traer;
     }
 
     public function editarRol($post)
@@ -71,5 +77,10 @@ class Permisos extends ModelPermisos
         } else {
             return false;
         }
+    }
+
+    public function ActualizarPermisos($cod_permiso, $permisos)
+    {
+        return $this->UpdatePermisos($cod_permiso, $permisos);
     }
 }

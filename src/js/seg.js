@@ -1,6 +1,3 @@
-// ============================================================
-// JAVASCRIPT (segzoo-consultar.js)
-// ============================================================
 document.addEventListener("DOMContentLoaded", () => {
     const tablaSeguimientos = document.getElementById('tablaSeguimientos');
 

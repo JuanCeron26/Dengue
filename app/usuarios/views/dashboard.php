@@ -43,6 +43,7 @@
                 box-shadow: 0 0 20px rgba(34, 197, 94, 0.8);
             }
         }
+
     </style>
 </head>
 
@@ -165,24 +166,19 @@
 
             <form action="../backend/api.php?accion=registrar" method="POST" id="formRegistro" class="w-full max-w-4xl bg-white rounded-2xl p-10 shadow-2xl border border-gray-200 transform transition-all duration-500 hover:shadow-blue-300/50 float-soft">
 
-
                 <h2 class="text-3xl font-bold text-gray-800 mb-8 tracking-wide border-b-4 pb-2 border-blue-500">📝 Nuevo Registro</h2>
 
-
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-
 
                     <div class="group">
                         <label class="text-gray-700 font-bold">Nombre</label>
                         <input type="text" name="nombre" class="w-full mt-2 bg-gray-100 border border-gray-300 rounded-xl py-3 px-4 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300 group-hover:scale-[1.02]" />
                     </div>
 
-
                     <div class="group">
                         <label class="text-gray-700 font-bold">Apellido</label>
                         <input type="text" name="apellido" class="w-full mt-2 bg-gray-100 border border-gray-300 rounded-xl py-3 px-4 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300 group-hover:scale-[1.02]" />
                     </div>
-
 
                     <div class="group">
                         <label class="text-gray-700 font-bold">Tipo de Documento</label>
@@ -191,47 +187,33 @@
                         </select>
                     </div>
 
-
                     <div class="group">
                         <label class="text-gray-700 font-bold">Número Documento</label>
                         <input type="text" name="numero_documento" class="w-full mt-2 bg-gray-100 border border-gray-300 rounded-xl py-3 px-4 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300 group-hover:scale-[1.02]" />
                     </div>
 
-
-                    <div class="group">
+                    <div class="group md:col-span-2">
                         <label class="text-gray-700 font-bold">Correo Electrónico</label>
                         <input type="email" name="correo" class="w-full mt-2 bg-gray-100 border border-gray-300 rounded-xl py-3 px-4 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300 group-hover:scale-[1.02]" />
                     </div>
 
-
-                    <div class="group">
-                        <label class="text-gray-700 font-bold">Rol</label>
-                        <select id="selectRol"
-                            name="rol" class="w-full mt-2 bg-gray-100 border border-gray-300 rounded-xl py-3 px-4 cursor-pointer focus:ring-blue-500 focus:border-blue-500 transition-all duration-300 group-hover:scale-[1.02]">
-                            <!--Lo mismo-->
-                        </select>
-                    </div>
-
-
-                    <div class="group">
-                        <label class="text-gray-700 font-bold">Segmento</label>
-                        <select id="selectSegmento" name="segmento" class="w-full mt-2 bg-gray-100 border border-gray-300 rounded-xl py-3 px-4 cursor-pointer focus:ring-blue-500 focus:border-blue-500 transition-all duration-300 group-hover:scale-[1.02]">
-                            <!--Lo mismo-->
-                        </select>
-                    </div>
-
-                    <div class="group">
+                    <div class="group md:col-span-2">
                         <label class="text-gray-700 font-bold">Contraseña</label>
                         <input type="password" name="password" class="w-full mt-2 bg-gray-100 border border-gray-300 rounded-xl py-3 px-4 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300 group-hover:scale-[1.02]" />
                     </div>
 
+                    <div class="group col-span-full divselect">
+                        <label class="text-gray-700 font-bold">Perfil del Usuario</label>
+                        <select id="selectPerfil" name="perfil"
+                            class="block w-full mt-2 bg-gray-100 border border-gray-300 rounded-xl py-3 px-4 cursor-pointer focus:ring-blue-500 focus:border-blue-500 transition-all duration-300 group-hover:scale-[1.02]">
+                            <!--Perfiles-->
+                        </select>
+                    </div>
 
                 </div>
 
-
                 <div class="mt-12 flex justify-end space-x-4">
                     <button id="cancelarRegistro" type="button" class="cursor-pointer bg-gray-300 text-gray-700 font-semibold px-6 py-3 rounded-xl shadow-md hover:bg-gray-400 transition duration-300 transform hover:-rotate-2">Cancelar</button>
-
 
                     <button type="submit" class="cursor-pointer bg-blue-600 text-white font-bold px-8 py-3 rounded-xl shadow-lg hover:bg-blue-700 hover:shadow-blue-500/50 transition duration-300 transform hover:scale-105 hover:rotate-1">Guardar Usuario</button>
                 </div>
@@ -275,23 +257,15 @@
                     <div>
                         <label class="block text-sm font-medium">Tipo de Documento</label>
                         <select id="tipoDocUsuario" name="tipoDocUsuario" class="w-full border rounded-lg p-2">
-
+                            <!-- Se llena con JS -->
                         </select>
                     </div>
 
-                    <!-- Segmento -->
+                    <!-- Perfil del Usuario -->
                     <div>
-                        <label class="block text-sm font-medium">Segmento</label>
-                        <select id="segmentoUsuario" name="segmentoUsuario" class="w-full border rounded-lg p-2">
-
-                        </select>
-                    </div>
-
-                    <!-- Rol -->
-                    <div>
-                        <label class="block text-sm font-medium">Rol</label>
-                        <select id="rolUsuario" name="rolUsuario" class="w-full border rounded-lg p-2">
-
+                        <label class="block text-sm font-medium">Perfil del Usuario</label>
+                        <select id="perfilUsuario" name="perfilUsuario" class="w-full border rounded-lg p-2">
+                            <!-- Se llena con JS -->
                         </select>
                     </div>
 
@@ -311,7 +285,7 @@
             class="hidden fixed inset-0 items-center justify-center backdrop-blur-md bg-black/20 z-50 transition-all duration-300">
 
             <div class="relative bg-gray-500 backdrop-blur-xl rounded-3xl p-8 w-[420px] shadow-2xl border border-white/30
-                scale-90 opacity-0 transition-all duration-500" id="cardDetalle">
+        scale-90 opacity-0 transition-all duration-500" id="cardDetalle">
 
                 <!-- Cerrar -->
                 <button id="cerrarDetalle"
@@ -329,9 +303,6 @@
                         class="mt-4 text-2xl font-extrabold text-white drop-shadow-lg tracking-wide">
                         Nombre Apellido
                     </h2>
-                    <p id="detalleRol" class="text-blue-200 font-semibold -mt-1">
-                        Rol del usuario
-                    </p>
                 </div>
 
                 <!-- Datos -->
@@ -347,19 +318,30 @@
                     </div>
 
                     <div class="flex items-center space-x-3">
-                        <span class="text-xl">🏷</span>
-                        <p id="detalleSegmento" class="font-medium"></p>
+                        <span class="text-xl">👤</span>
+                        <p id="detalleRolSolo" class="font-medium"></p>
                     </div>
 
                     <div class="flex items-center space-x-3">
-                        <span class="text-xl">📄</span>
+                        <span class="text-xl">🏷️</span>
+                        <p id="detalleSegmentoSolo" class="font-medium"></p>
+                    </div>
+
+                    <!-- Subsegmento - Se muestra solo si existe -->
+                    <div id="divSubsegmento" class="flex items-center space-x-3 hidden">
+                        <span class="text-xl">🔖</span>
+                        <p id="detalleSubsegmento" class="font-medium"></p>
+                    </div>
+
+                    <div class="flex items-center space-x-3">
+                        <span class="text-xl">🔒</span>
 
                         <div class="relative flex items-center">
-                            <input readonly type="password" id="detallePassword" class="font-medium pr-10">
+                            <input readonly type="password" id="detallePassword" class="font-medium pr-10 bg-transparent border-none text-white">
 
                             <button id="togglePassword" type="button"
-                                class="cursor-pointer absolute right-2 text-gray-700 hover:text-gray-800">
-                                <img src="../../../src/icons/icono_eye.png" class=" w-7 h-7" alt="">
+                                class="cursor-pointer absolute right-2 text-gray-200 hover:text-white">
+                                <img src="../../../src/icons/icono_eye.png" class="w-7 h-7" alt="">
                             </button>
                         </div>
                     </div>

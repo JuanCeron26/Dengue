@@ -29,6 +29,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
                 echo json_encode($acciones);
                 break;
 
+            case 'traer_modulos_acciones':
+                $modulos = $objPermiso->traerAllModulosAcciones();
+                echo json_encode($modulos);
+                break;
+
+
+
             default:
                 # code...
                 break;
@@ -59,6 +66,28 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     echo "exito";
                 }
                 break;
+
+            default:
+                # code...
+                break;
+        }
+    }
+    if (isset($_GET['modulo']) && $_GET['modulo'] == 'permisos') {
+        switch ($_GET['accion']) {
+            case 'actualizar_permisos':
+                $data = json_decode(file_get_contents('php://input'), true);
+                if (isset($data['cod_permiso']) && isset($data['permisos'])) {
+                    $resultado = $objPermiso->ActualizarPermisos($data['cod_permiso'], $data['permisos']);
+                    header('Content-Type: application/json');
+                    echo json_encode(['status' => $resultado]); // ✅ Cambiar a JSON
+                    exit;
+                } else {
+                    header('Content-Type: application/json');
+                    echo json_encode(['status' => 'fallo', 'message' => 'Datos incompletos']);
+                    exit;
+                }
+                break;
+
 
             default:
                 # code...

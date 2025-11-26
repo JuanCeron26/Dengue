@@ -17,18 +17,6 @@ class User extends modelUser
         return $tipos;
     }
 
-    public function traerRoles()
-    {
-        $roles = $this->GetRoles();
-        return $roles;
-    }
-
-    public function traerSegmentos()
-    {
-        $segmentos = $this->GetSegmentos();
-        return $segmentos;
-    }
-
     public function traerUsuario($id)
     {
         $usuario = $this->GetUsuario($id);
@@ -41,14 +29,19 @@ class User extends modelUser
         }
     }
 
+    public function traerPerfiles()
+    {
+        $perfiles = $this->GetPerfiles();
+        return $perfiles;
+    }
+
     // Funciones de CRUD
 
     public function registrarUsuario($post)
     {
         $datos = [
             "cod_tipodocum" => $post['tipo_documento'],
-            "cod_segmento" => $post['segmento'],
-            "cod_rol" => $post['rol'],
+            "cod_permiso" => $post['perfil'],
             "nombre_usu" => $post['nombre'],
             "apellido_usu" => $post['apellido'],
             "id_cedula" => $post['numero_documento'],
@@ -67,22 +60,18 @@ class User extends modelUser
     public function editarUsuario($post)
     {
         $id = $post['idUsuario'];
+
         $datos = [
             "cod_tipodocum" => $post['tipoDocUsuario'],
-            "cod_segmento" => $post['segmentoUsuario'],
-            "cod_rol" => $post['rolUsuario'],
+            "cod_permiso" => $post['perfilUsuario'],
             "nombre_usu" => $post['nombreUsuario'],
             "apellido_usu" => $post['apellidoUsuario'],
             "id_cedula" => $post['idCedulaUsuario'],
-            "correo_electronico" => $post['correoUsuario'],
+            "correo_electronico" => $post['correoUsuario']
         ];
 
-        if (!empty($post['passUsuario'])) {
-            $datos['contraseña'] = $post['passUsuario'];
-        }
-
-        $ejecutar = $this->UpdateUsuario($datos, $id);
-        if ($ejecutar) {
+        $editar = $this->UpdateUsuario($id, $datos);
+        if ($editar) {
             return "exito";
         } else {
             return "fallo";

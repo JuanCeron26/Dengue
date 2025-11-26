@@ -5,8 +5,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const vistaRegistroUser = document.getElementById('ui-registrar-usuario')
     const vistaGeneral = document.getElementById('view')
     const selectTI = document.getElementById('selectTI')
-    const selectRol = document.getElementById('selectRol')
-    const selectSegmentos = document.getElementById('selectSegmento')
+    const selectPerfil = document.getElementById('selectPerfil')
     const btnCancelarRegistro = document.getElementById('cancelarRegistro')
     const formEditarUsuario = document.getElementById('formEditarUsuario')
     const modalEditarUsuario = document.getElementById('modalEditarUsuario')
@@ -51,70 +50,90 @@ document.addEventListener('DOMContentLoaded', () => {
 
     pintarUsuarios();
     traerDocumentos(selectTI);
-    traerRoles(selectRol);
-    traerSegmentos(selectSegmentos);
+    traerPerfiles(selectPerfil);
 
     function pintarUsuarios() {
         fetch('../backend/api.php?ajax=pintar_usuarios')
             .then(res => res.json())
             .then(usuarios => {
+                console.log('Usuarios recibidos:', usuarios);
+
                 divUsuarios.innerHTML = "";
                 const fragment = document.createDocumentFragment();
 
                 usuarios.forEach(usuario => {
+
+                    let textoPerfil = usuario.nombre_rol.toUpperCase();
+                    textoPerfil += ' ' + usuario.nomsegmento.toUpperCase();
+                    if (usuario.nombre_modseg && usuario.nombre_modseg !== null) {
+                        textoPerfil += ' ' + usuario.nombre_modseg.toUpperCase();
+                    }
+
                     const divUsuario = document.createElement('div');
                     divUsuario.className =
                         'bg-white rounded-2xl p-6 shadow-xl border border-gray-200 hover:shadow-blue-300/50 ' +
                         'transition-all duration-300 transform hover:scale-[1.03] float-soft';
 
+                    // Construir HTML con subsegmento condicional
+                    let htmlSubsegmento = '';
+                    if (usuario.nombre_modseg && usuario.nombre_modseg !== null) {
+                        htmlSubsegmento = `
+                        <p class="text-gray-600 flex items-center">
+                            <span class="text-blue-500 mr-3">🔖</span>
+                            <span class="bg-blue-100 text-blue-700 text-xs font-bold px-2 py-0.5 rounded-full uppercase tracking-wider border border-blue-300">${usuario.nombre_modseg}</span>
+                        </p>
+                    `;
+                    }
+
                     divUsuario.innerHTML = `
-                    <div class="flex items-center space-x-4 border-b border-gray-200 pb-4 mb-4">
-                        <div class="bg-blue-600 text-white font-bold rounded-full h-14 w-14 flex items-center justify-center text-xl ring-2 ring-blue-400 select-none pulse-glow">
-                            ${usuario.nombre_usu.charAt(0)}${usuario.apellido_usu.charAt(0)}
-                        </div>
-                        <div>
-                            <h3 class="text-xl font-extrabold text-gray-800 select-none">
-                                ${usuario.nombre_usu} ${usuario.apellido_usu}
-                            </h3>
-                            <p class="text-sm text-blue-600 font-semibold select-none">${usuario.rol}</p>
-                        </div>
+                <div class="flex items-center space-x-4 border-b border-gray-200 pb-4 mb-4">
+                    <div class="bg-blue-600 text-white font-bold rounded-full h-14 w-14 flex items-center justify-center text-xl ring-2 ring-blue-400 select-none pulse-glow">
+                        ${usuario.nombre_usu.charAt(0)}${usuario.apellido_usu.charAt(0)}
                     </div>
-
-                    <div class="space-y-3">
-                        <p class="text-gray-600 flex items-center">
-                            <span class="text-blue-500 mr-3">📧</span>
-                            <span class="font-medium truncate">${usuario.correo_electronico}</span>
-                        </p>
-                        <p class="text-gray-600 flex items-center">
-                            <span class="text-blue-500 mr-3">🆔</span>
-                            <span class="font-medium">${usuario.tipo_doc} ${usuario.id_cedula}</span>
-                        </p>
-                        <p class="text-gray-600 flex items-center">
-                            <span class="text-blue-500 mr-3">🏷️</span>
-                            <span class="bg-green-100 text-green-700 text-xs font-bold px-2 py-0.5 rounded-full uppercase tracking-wider border border-green-300">${usuario.segmento}</span>
-                        </p>
+                    <div>
+                        <h3 class="text-xl font-extrabold text-gray-800 select-none">
+                            ${usuario.nombre_usu} ${usuario.apellido_usu}
+                        </h3>
+                        <p class="text-sm text-blue-600 font-semibold select-none">${usuario.nombre_rol.toUpperCase()}</p>
                     </div>
+                </div>
 
-                    <div class="mt-6 flex justify-between space-x-3">
-                        <button
-                            class="btn-ver_detalle cursor-pointer flex-1 bg-blue-600 text-white py-2 rounded-lg font-semibold text-sm hover:bg-blue-700 transition"
-                            data-id="${usuario.id_usuarios}">
-                            Ver Detalle
-                        </button>
+                <div class="space-y-3">
+                    <p class="text-gray-600 flex items-center">
+                        <span class="text-blue-500 mr-3">📧</span>
+                        <span class="font-medium truncate">${usuario.correo_electronico}</span>
+                    </p>
+                    <p class="text-gray-600 flex items-center">
+                        <span class="text-blue-500 mr-3">🆔</span>
+                        <span class="font-medium">${usuario.tipo_doc} ${usuario.id_cedula}</span>
+                    </p>
+                    <p class="text-gray-600 flex items-center">
+                        <span class="text-blue-500 mr-3">🏷️</span>
+                        <span class="bg-green-100 text-green-700 text-xs font-bold px-2 py-0.5 rounded-full uppercase tracking-wider border border-green-300">${usuario.nomsegmento}</span>
+                    </p>
+                    ${htmlSubsegmento}
+                </div>
 
-                        <button
-                            class="btn-editar cursor-pointer bg-yellow-500 text-white p-2 rounded-lg hover:bg-yellow-600 transition"
-                            data-id="${usuario.id_usuarios}">
-                            <img src="../../../src/icons/icono_edit.png" class="w-5 h-5 pointer-events-none" alt="">
-                        </button>
+                <div class="mt-6 flex justify-between space-x-3">
+                    <button
+                        class="btn-ver_detalle cursor-pointer flex-1 bg-blue-600 text-white py-2 rounded-lg font-semibold text-sm hover:bg-blue-700 transition"
+                        data-id="${usuario.id_usuarios}">
+                        Ver Detalle
+                    </button>
 
-                        <button
-                            class="btn-eliminar cursor-pointer bg-red-600 text-white p-2 rounded-lg hover:bg-red-700 transition"
-                            data-id="${usuario.id_usuarios}">
-                            <img src="../../../src/icons/icono_delete.png" class="w-5 h-5 pointer-events-none" alt="">
-                        </button>
-                    </div>
-                `;
+                    <button
+                        class="btn-editar cursor-pointer bg-yellow-500 text-white p-2 rounded-lg hover:bg-yellow-600 transition"
+                        data-id="${usuario.id_usuarios}">
+                        <img src="../../../src/icons/icono_edit.png" class="w-5 h-5 pointer-events-none" alt="">
+                    </button>
+
+                    <button
+                        class="btn-eliminar cursor-pointer bg-red-600 text-white p-2 rounded-lg hover:bg-red-700 transition"
+                        data-id="${usuario.id_usuarios}">
+                        <img src="../../../src/icons/icono_delete.png" class="w-5 h-5 pointer-events-none" alt="">
+                    </button>
+                </div>
+            `;
 
                     fragment.appendChild(divUsuario);
                 });
@@ -161,44 +180,40 @@ document.addEventListener('DOMContentLoaded', () => {
             });
     }
 
-    async function traerRoles(select) {
+    async function traerPerfiles(select) {
         try {
-            const respuesta = await fetch('../backend/api.php?ajax=roles');
-            const roles = await respuesta.json();
-            select.innerHTML = '';
-            roles.forEach(rol => {
-                const option = document.createElement('option');
-                option.value = rol.cod_rol;
-                option.textContent = rol.nombre_rol;
-                select.appendChild(option);
-            });
-        } catch (error) {
-            console.error("Error cargando roles:", error);
-            throw error;
-        }
-    }
+            const respuesta = await fetch('../backend/api.php?ajax=perfiles');
+            const perfiles = await respuesta.json();
 
-    async function traerSegmentos(select) {
-        try {
-            const respuesta = await fetch('../backend/api.php?ajax=segmentos');
-            const segmentos = await respuesta.json();
+            console.log('Perfiles recibidos:', perfiles);
+
             select.innerHTML = '';
-            segmentos.forEach(segmento => {
+
+            perfiles.forEach(perfil => {
                 const option = document.createElement('option');
-                option.value = segmento.cod_segmento;
-                option.textContent = segmento.nomsegmento;
+                option.value = perfil.cod_permiso;
+
+                // Construir el texto: ROL SEGMENTO SUBSEGMENTO
+                let textoPerfil = perfil.nombre_rol.toUpperCase();
+                textoPerfil += ' ' + perfil.nomsegmento.toUpperCase();
+
+                // Agregar subsegmento solo si existe (nombre_modseg no null)
+                if (perfil.nombre_modseg && perfil.nombre_modseg !== null) {
+                    textoPerfil += ' ' + perfil.nombre_modseg.toUpperCase();
+                }
+
+                option.textContent = textoPerfil;
                 select.appendChild(option);
             });
         } catch (error) {
-            console.error("Error cargando segmentos:", error);
+            console.error("Error cargando perfiles:", error);
             throw error;
         }
     }
 
     async function traerUsuario(id_user) {
         const selectTipoDoc = document.getElementById('tipoDocUsuario');
-        const selectRol = document.getElementById('rolUsuario');
-        const selectSegmento = document.getElementById('segmentoUsuario');
+        const selectPerfil = document.getElementById('perfilUsuario');
 
         try {
             const respuesta = await fetch(`../backend/api.php?ajax=traer_usuario&id=${id_user}`);
@@ -214,12 +229,10 @@ document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('idCedulaUsuario').value = usuario.id_cedula;
 
             await traerDocumentos(selectTipoDoc);
-            await traerRoles(selectRol);
-            await traerSegmentos(selectSegmento);
+            await traerPerfiles(selectPerfil);
 
             selectTipoDoc.value = usuario.cod_tipodocum;
-            selectRol.value = usuario.cod_rol;
-            selectSegmento.value = usuario.cod_segmento;
+            selectPerfil.value = usuario.cod_permiso;
 
             modalEditarUsuario.classList.remove('hidden');
             modalEditarUsuario.classList.add('flex');
@@ -249,10 +262,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const DataForm = new FormData(form);
 
         const tipoDoc = DataForm.get('tipoDocUsuario');
-        const rol = DataForm.get('rolUsuario');
-        const segmento = DataForm.get('segmentoUsuario');
+        const perfil = DataForm.get('perfilUsuario');
 
-        if (!tipoDoc || !rol || !segmento) {
+        if (!tipoDoc || !perfil) {
             iziToast.warning({ title: 'Atención', message: 'Por favor complete todos los campos obligatorios', position: 'topRight' });
             return;
         }
@@ -334,14 +346,34 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 console.log(usuario);
 
+                // Construir texto del perfil completo
+                let textoPerfil = usuario.nombre_rol.toUpperCase();
+                textoPerfil += ' ' + usuario.nomsegmento.toUpperCase();
+                if (usuario.nombre_modseg && usuario.nombre_modseg !== null) {
+                    textoPerfil += ' ' + usuario.nombre_modseg.toUpperCase();
+                }
+
                 // Llenar datos
                 const iniciales = usuario.nombre_usu.charAt(0) + usuario.apellido_usu.charAt(0);
                 document.getElementById("detalleIniciales").textContent = iniciales;
                 document.getElementById("detalleNombre").textContent = `${usuario.nombre_usu} ${usuario.apellido_usu}`;
-                document.getElementById("detalleRol").textContent = usuario.rol;
+                //document.getElementById("detalleRol").textContent = textoPerfil;
                 document.getElementById("detalleCorreo").textContent = usuario.correo_electronico;
                 document.getElementById("detalleCedula").textContent = `${usuario.tipo_doc} ${usuario.id_cedula}`;
-                document.getElementById("detalleSegmento").textContent = usuario.segmento;
+
+                // Mostrar rol, segmento y subsegmento por separado
+                document.getElementById("detalleRolSolo").textContent = usuario.nombre_rol;
+                document.getElementById("detalleSegmentoSolo").textContent = usuario.nomsegmento;
+
+                // Manejar subsegmento (mostrar u ocultar)
+                const divSubsegmento = document.getElementById("divSubsegmento");
+                if (usuario.nombre_modseg && usuario.nombre_modseg !== null) {
+                    document.getElementById("detalleSubsegmento").textContent = usuario.nombre_modseg;
+                    divSubsegmento.classList.remove("hidden");
+                } else {
+                    divSubsegmento.classList.add("hidden");
+                }
+
                 document.getElementById("detallePassword").value = usuario.contraseña;
 
                 // Mostrar modal con animaciones
@@ -349,7 +381,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const card = document.getElementById("cardDetalle");
 
                 modal.classList.remove("hidden");
-                modal.classList.add("flex")
+                modal.classList.add("flex");
 
                 // Tiempo para permitir animación
                 setTimeout(() => {
@@ -358,7 +390,5 @@ document.addEventListener('DOMContentLoaded', () => {
                 }, 20);
             });
     }
-
-
 
 });

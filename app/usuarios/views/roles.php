@@ -268,17 +268,11 @@
 
                 <p id="modalInfo" class="text-sm text-gray-600 mb-6 border-b pb-3"></p>
 
-                <div id="listaAcciones" class="space-y-3 h-64 overflow-y-auto pr-2">
-                    <div class="flex items-center justify-between p-2 bg-gray-50 rounded-lg hover:bg-gray-100 transition">
-                        <label class="font-medium text-gray-700">Crear Usuarios</label>
-                        <input type="checkbox" checked
-                            class="h-5 w-5 text-emerald-600 rounded border-gray-300 focus:ring-emerald-500 cursor-pointer">
-                    </div>
-                    <div class="flex items-center justify-between p-2 bg-gray-50 rounded-lg hover:bg-gray-100 transition">
-                        <label class="font-medium text-gray-700">Eliminar Registros</label>
-                        <input type="checkbox"
-                            class="h-5 w-5 text-emerald-600 rounded border-gray-300 focus:ring-emerald-500 cursor-pointer">
-                    </div>
+                <div id="listaAcciones" class="space-y-4 h-64 overflow-y-auto pr-2">
+
+                    <!-- Aqui van los modulos -->
+
+                    <!--fin-->
                 </div>
 
                 <div class="flex justify-end mt-8 space-x-3">
@@ -287,7 +281,7 @@
                         Cancelar
                     </button>
 
-                    <button id="btnGuardarPermisos"
+                    <button type="submit" id="btnGuardarPermisos"
                         class="px-5 py-2 rounded-xl bg-emerald-600 text-white font-semibold hover:bg-emerald-700 cursor-pointer transition shadow-lg shadow-emerald-500/50">
                         Guardar Cambios
                     </button>
@@ -325,6 +319,7 @@
 
     <script src="../../../src/js/iziToast.min.js"></script>
     <script src="../../../src/js/roles-main.js"></script>
+    <script src="../../../src/js/permisos.js"></script>
 </body>
 
 </html>
