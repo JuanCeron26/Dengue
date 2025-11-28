@@ -128,6 +128,28 @@ class BaseDatos
         $result = pg_query_params($this->conectar, $sql, $params);
         return pg_fetch_all($result);
     }
+
+    public function Anular($tabla, $datos, $cod)
+    {
+        $campo = key($datos);
+        $valor = $datos[$campo];
+        $pk = key($cod);
+
+        $sql = "UPDATE $tabla SET $campo = $valor WHERE $pk = $1";
+
+        $result = pg_query_params($this->conectar, $sql, [$cod[$pk]]);
+
+        return $result ? true : false;
+
+        /*
+        $datos = [
+        "cod_estado" => 2
+        ] 
+        
+        $cod = [
+        "cod_segzooact" => $id  -> el id de la fila que quiero editar
+        ]
+        */}
 }
 /*
 ////////  1. Conectarse a la base de datos: ///////////
@@ -172,10 +194,4 @@ class BaseDatos
 
 */
 
-$obj = new BaseDatos("ceron123");
-$datos = [
-    "id_zooadmin" => 9,
-    "id_usuarios" => 10,
-    "cod_zoo" => 1
-];
-$obj->Insert("tblzooadmin", $datos);
+

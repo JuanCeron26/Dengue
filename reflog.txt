@@ -1,0 +1,19 @@
+b02a419 HEAD@{Fri Nov 28 16:58:28 2025}: checkout: moving from zoocriadero/CRUD to b02a419
+b02a419 HEAD@{Fri Nov 28 16:52:14 2025}: checkout: moving from 926001e8269ad287031c14f557ad4ff00cc6d9e8 to zoocriadero/CRUD
+926001e HEAD@{Fri Nov 28 16:49:47 2025}: checkout: moving from b02a4193667bae199f78bf0271daffba020110a3 to 926001e
+b02a419 HEAD@{Fri Nov 28 16:37:41 2025}: checkout: moving from zoocriadero/CRUD to b02a419
+b02a419 HEAD@{Fri Nov 28 15:53:19 2025}: reset: moving to b02a419
+b02a419 HEAD@{Fri Nov 28 15:47:52 2025}: reset: moving to HEAD
+b02a419 HEAD@{Fri Nov 28 15:35:02 2025}: commit: Recuperando archivos de zoocriadero
+926001e HEAD@{Fri Nov 28 15:25:07 2025}: checkout: moving from sitioECO/CRUD to zoocriadero/CRUD
+926001e HEAD@{Fri Nov 28 14:57:06 2025}: checkout: moving from zoocriadero/CRUD to sitioECO/CRUD
+926001e HEAD@{Fri Nov 28 14:47:03 2025}: checkout: moving from login/zahamara to zoocriadero/CRUD
+13bdb9b HEAD@{Fri Nov 28 14:46:35 2025}: reset: moving to HEAD
+13bdb9b HEAD@{Thu Nov 20 16:14:16 2025}: commit: El login ya se encuentra funcional: front, back y validaciones
+00a8381 HEAD@{Thu Nov 20 06:07:41 2025}: checkout: moving from login/zahamara to login/zahamara
+00a8381 HEAD@{Mon Nov 17 01:26:31 2025}: commit: Conexión lista con la base de datos y el front del login ya está listo
+58eefae HEAD@{Sat Nov 15 17:04:54 2025}: commit: La conexión de la base de datos bd_dengue ya está conectada con Php
+a6bc9df HEAD@{Sat Nov 15 14:57:53 2025}: commit: Aquí está el login
+3027b71 HEAD@{Sat Nov 15 14:51:18 2025}: checkout: moving from login/ceron to login/zahamara
+3027b71 HEAD@{Sat Nov 15 14:36:22 2025}: checkout: moving from exportar/zoocriadero to login/ceron
+378fae2 HEAD@{Thu Nov 13 16:50:57 2025}: commit (initial): Esta es la rama para exportar los reportes en PDF y Excel
