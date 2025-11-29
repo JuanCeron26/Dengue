@@ -1,370 +1,396 @@
 <?php
-include_once "../models/modelListar.php";
-include_once "../models/modelVerDetalle.php";
-include_once "../models/modelEditar.php";
+include_once '../controllers/controllerListar.php';
 
-// Instanciar modelos
-$modelListar = new modelListar();
-$modelEditar = new modelEditar();
-
-// Obtener datos para los filtros
-$zoocriaderos = $modelListar->SelectZoo();
-$encargados = $modelListar->SelectEncargado();
-$tiposTanque = $modelListar->SelectTiposTanque();
-
-// Aplicar filtros si existen
-$zoocriaderosFiltrados = $zoocriaderos;
-
-if (!empty($_GET)) {
-    $zoocriaderosFiltrados = array_filter($zoocriaderos, function($zoo) {
-        $cumpleFiltros = true;
-        
-        // Filtro por nombre
-        if (!empty($_GET['nombre']) && $_GET['nombre'] != $zoo['cod_zoo']) {
-            $cumpleFiltros = false;
-        }
-        
-        // Filtro por encargado
-        if (!empty($_GET['encargado']) && $_GET['encargado'] != $zoo['id_usuarios']) {
-            $cumpleFiltros = false;
-        }
-        
-        // Filtro por tipo de tanque
-        if (!empty($_GET['tipo_tanque']) && $_GET['tipo_tanque'] != $zoo['nomtiptan']) {
-            $cumpleFiltros = false;
-        }
-        
-        // Filtro por dirección
-        if (!empty($_GET['direccion']) && stripos($zoo['direccion_zoo'], $_GET['direccion']) === false) {
-            $cumpleFiltros = false;
-        }
-        
-        return $cumpleFiltros;
-    });
-}
-
-// Paginación
-$registrosPorPagina = 8;
-$paginaActual = isset($_GET['pagina']) ? (int)$_GET['pagina'] : 1;
-$totalRegistros = count($zoocriaderosFiltrados);
-$totalPaginas = ceil($totalRegistros / $registrosPorPagina);
-$offset = ($paginaActual - 1) * $registrosPorPagina;
-$zoocriaderosPaginados = array_slice($zoocriaderosFiltrados, $offset, $registrosPorPagina);
-
-// Obtener barrios para el modal de edición
-$barrios = $modelEditar->ObtenerBarrios();
-$encargadosEditar = $modelEditar->ObtenerEncargados();
+$obj = new ListarZoo();
+$zoocriaderos = $obj->MostrarLista();
+$admins = $obj->ObtenerEncargados();
+$tiposTanque = $obj->ObtenerTiposTanque();
 ?>
+
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
     <title>Gestión de Zoocriadero</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css"
+        integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
-<body class="bg-gray-50">
-    
-    <!-- Mensaje de éxito/error -->
-    <?php if(isset($_GET['success'])): ?>
-        <div class="container mx-auto px-4 pt-4">
-            <?php if($_GET['success'] == 'false'): ?>
-                <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
-                    <span class="block sm:inline"><?php echo isset($_GET['message']) ? htmlspecialchars($_GET['message']) : 'Error en la operación'; ?></span>
+
+<body class="bg-slate-50 text-slate-800">
+
+    <div class="max-w-7xl mx-auto p-6">
+
+        <h1 class="text-3xl font-bold text-sky-700 mb-6">
+            GESTIÓN DE ZOOCRIADERO
+        </h1>
+
+        <div class="flex gap-6">
+
+            <!-- PANEL IZQUIERDO -->
+            <aside class="w-80 bg-slate-100 rounded-lg p-5 shadow">
+
+                <div class="w-full flex justify-start">
+                    <a href="registrar.php" id="btnNew"
+                        class="w-10 h-10 bg-sky-600 text-white font-semibold rounded-full mb-5 flex items-center justify-center shadow-lg">
+                        <img src="../../../src/icons/plus-circle-fill.svg" class="w-5 h-5 invert" alt="agregar">
+                    </a>
                 </div>
-            <?php else: ?>
-                <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative" role="alert">
-                    <span class="block sm:inline"><?php echo isset($_GET['message']) ? htmlspecialchars($_GET['message']) : 'Operación exitosa'; ?></span>
-                </div>
-            <?php endif; ?>
-        </div>
-    <?php endif; ?>
 
-    <div class="container mx-auto px-4 py-8">
-        <!-- Título -->
-        <h1 class="text-3xl font-bold text-blue-600 mb-8">GESTIÓN DE ZOOCRIADERO</h1>
+                <form id="filterForm">
+                    <div class="bg-slate-200 rounded-md p-4">
+                        <h2 class="text-xl font-semibold text-slate-700 mb-3">Filtros</h2>
 
-        <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
-            <!-- Panel de Filtros -->
-            <div class="lg:col-span-1">
-                <div class="bg-white rounded-lg shadow-md p-6">
-                    <div class="flex items-center mb-6">
-                        <div class="bg-blue-500 text-white rounded-full p-3">
-                            <i class="fas fa-filter"></i>
-                        </div>
-                    </div>
-
-                    <h2 class="text-lg font-semibold mb-4">Filtros</h2>
-
-                    <form id="formFiltros" method="GET" action="listar.php">
-                        <!-- Filtro Nombre -->
-                        <div class="mb-4">
-                            <label class="block text-sm font-medium text-gray-700 mb-2">NOMBRE DE ZOOCRIADERO</label>
-                            <select name="nombre" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <!-- FILTRO: NOMBRE DE ZOOCRIADERO -->
+                        <label class="block mb-3">
+                            <span class="block text-sm font-medium text-slate-700">NOMBRE DE ZOOCRIADERO</span>
+                            <select id="filterName" class="mt-1 block w-full rounded-md border p-2">
                                 <option value="">-- Todos --</option>
-                                <?php foreach($zoocriaderos as $zoo): ?>
-                                    <option value="<?php echo $zoo['cod_zoo']; ?>" <?php echo (isset($_GET['nombre']) && $_GET['nombre'] == $zoo['cod_zoo']) ? 'selected' : ''; ?>>
-                                        <?php echo htmlspecialchars($zoo['nombre_zoo']); ?>
-                                    </option>
-                                <?php endforeach; ?>
-                            </select>
-                        </div>
 
-                        <!-- Filtro Encargado -->
-                        <div class="mb-4">
-                            <label class="block text-sm font-medium text-gray-700 mb-2">ENCARGADO</label>
-                            <select name="encargado" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                <?php if (!empty($zoocriaderos)) { ?>
+                                    <?php foreach ($zoocriaderos as $zoo) { ?>
+                                        <option value="<?= $zoo['cod_zoo'] ?>">
+                                            <?= htmlspecialchars($zoo['nombre_zoo']) ?>
+                                        </option>
+                                    <?php } ?>
+                                <?php } ?>
+
+                            </select>
+                        </label>
+
+                        <!-- FILTRO: ENCARGADO -->
+                        <label class="block mb-3">
+                            <span class="block text-sm font-medium text-slate-700">ENCARGADO</span>
+                            <select id="filterEncargado" name="filterEncargado" class="mt-1 block w-full rounded-md border p-2">
                                 <option value="">-- Todos --</option>
-                                <?php foreach($encargados as $encargado): ?>
-                                    <option value="<?php echo $encargado['id_usuarios']; ?>" <?php echo (isset($_GET['encargado']) && $_GET['encargado'] == $encargado['id_usuarios']) ? 'selected' : ''; ?>>
-                                        <?php echo htmlspecialchars($encargado['nombre_usu'] . ' ' . $encargado['apellido_usu']); ?>
-                                    </option>
-                                <?php endforeach; ?>
-                            </select>
-                        </div>
 
-                        <!-- Filtro Tipo de Tanque -->
-                        <div class="mb-4">
-                            <label class="block text-sm font-medium text-gray-700 mb-2">TIPO DE TANQUE</label>
-                            <select name="tipo_tanque" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                <?php if (!empty($admins)) { ?>
+                                    <?php foreach ($admins as $admin) { ?>
+                                        <option value="<?= $admin['id_usuarios'] ?>">
+                                            <?= htmlspecialchars($admin['nombre_usu'] . ' ' . $admin['apellido_usu']) ?>
+                                        </option>
+                                    <?php } ?>
+                                <?php } ?>
+
+                            </select>
+                        </label>
+
+                        <!-- TIPO DE TANQUE -->
+                        <label class="block mb-3">
+                            <span class="block text-sm font-medium text-slate-700">TIPO DE TANQUE</span>
+                            <select id="filterTipo" name="filterTipo" class="mt-1 block w-full rounded-md border p-2">
                                 <option value="">-- Todos --</option>
-                                <?php foreach($tiposTanque as $tipo): ?>
-                                    <option value="<?php echo htmlspecialchars($tipo['nomtiptan']); ?>" <?php echo (isset($_GET['tipo_tanque']) && $_GET['tipo_tanque'] == $tipo['nomtiptan']) ? 'selected' : ''; ?>>
-                                        <?php echo htmlspecialchars($tipo['nomtiptan']); ?>
-                                    </option>
-                                <?php endforeach; ?>
+
+                                <?php if (!empty($tiposTanque)) { ?>
+                                    <?php foreach ($tiposTanque as $tipo) { ?>
+                                        <option value="<?= htmlspecialchars($tipo['nomtiptan']) ?>">
+                                            <?= htmlspecialchars($tipo['nomtiptan']) ?>
+                                        </option>
+                                    <?php } ?>
+                                <?php } ?>
+
                             </select>
-                        </div>
+                        </label>
 
-                        <!-- Filtro Dirección -->
-                        <div class="mb-6">
-                            <label class="block text-sm font-medium text-gray-700 mb-2">DIRECCIÓN</label>
-                            <input type="text" name="direccion" value="<?php echo isset($_GET['direccion']) ? htmlspecialchars($_GET['direccion']) : ''; ?>" placeholder="Buscar por dirección" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
-                        </div>
+                        <!-- DIRECCION -->
+                        <label class="block mb-4">
+                            <span class="block text-sm font-medium text-slate-700">DIRECCIÓN</span>
+                            <input id="filterDireccion" type="text" placeholder="Buscar por dirección"
+                                class="mt-1 block w-full rounded-md border p-2" />
+                        </label>
 
-                        <!-- Botones -->
-                        <div class="flex gap-2">
-                            <button type="submit" class="flex-1 bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-md transition">
-                                Aplicar
-                            </button>
-                            <button type="button" onclick="limpiarFiltros()" class="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-700 font-medium py-2 px-4 rounded-md transition">
-                                Borrar filtros
-                            </button>
-                        </div>
-                    </form>
-
-                    <!-- Notas de validación -->
-                    <div class="mt-6 text-xs text-gray-600">
-                        <p class="font-semibold mb-2">Notas de validación:</p>
-                        <ul class="list-disc pl-5 space-y-1">
-                            <li>Se validan caracteres inválidos (&lt;*/, etc.).</li>
-                            <li>Si no hay resultados, se mostrará mensaje informativo.</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Tabla de Resultados -->
-            <div class="lg:col-span-3">
-                <div class="bg-white rounded-lg shadow-md overflow-hidden">
-                    <?php if(count($zoocriaderosPaginados) > 0): ?>
-                    <div class="overflow-x-auto">
-                        <table class="min-w-full divide-y divide-gray-200">
-                            <thead class="bg-blue-100">
-                                <tr>
-                                    <th class="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">#</th>
-                                    <th class="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">NOMBRE DE ZOOCRIADERO</th>
-                                    <th class="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">ENCARGADO</th>
-                                    <th class="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">DIRECCIÓN</th>
-                                    <th class="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">ACCIONES</th>
-                                </tr>
-                            </thead>
-                            <tbody class="bg-white divide-y divide-gray-200">
-                                <?php 
-                                $contador = $offset + 1;
-                                foreach($zoocriaderosPaginados as $zoo): 
-                                ?>
-                                <tr class="hover:bg-gray-50">
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900"><?php echo $contador++; ?></td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900"><?php echo htmlspecialchars($zoo['nombre_zoo']); ?></td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                        <?php 
-                                        if(!empty($zoo['nombre_usu'])) {
-                                            echo htmlspecialchars($zoo['nombre_usu'] . ' ' . $zoo['apellido_usu']); 
-                                        }
-                                        ?>
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900"><?php echo htmlspecialchars($zoo['direccion_zoo']); ?></td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm">
-                                        <div class="flex gap-2">
-                                            <button onclick="verZoocriadero(<?php echo $zoo['cod_zoo']; ?>)" class="text-blue-600 hover:text-blue-800" title="Ver">
-                                                <i class="fas fa-eye"></i>
-                                            </button>
-                                            <button onclick="editarZoocriadero(<?php echo $zoo['cod_zoo']; ?>)" class="text-green-600 hover:text-green-800" title="Editar">
-                                                <i class="fas fa-edit"></i>
-                                            </button>
-                                            <button onclick="eliminarZoocriadero(<?php echo $zoo['cod_zoo']; ?>)" class="text-red-600 hover:text-red-800" title="Eliminar">
-                                                <i class="fas fa-trash"></i>
-                                            </button>
-                                            <button onclick="exportarZoocriadero(<?php echo $zoo['cod_zoo']; ?>)" class="text-purple-600 hover:text-purple-800" title="Exportar">
-                                                <i class="fas fa-upload"></i>
-                                            </button>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <?php endforeach; ?>
-                            </tbody>
-                        </table>
-                    </div>
-
-                    <!-- Paginación -->
-                    <?php if($totalPaginas > 1): ?>
-                    <div class="bg-gray-50 px-4 py-3 flex items-center justify-between border-t border-gray-200 sm:px-6">
-                        <div class="flex-1 flex justify-between sm:hidden">
-                            <?php if($paginaActual > 1): ?>
-                            <a href="?pagina=<?php echo $paginaActual - 1; ?><?php echo http_build_query(array_merge($_GET, ['pagina' => $paginaActual - 1])); ?>" class="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
-                                Anterior
-                            </a>
-                            <?php endif; ?>
-                            <?php if($paginaActual < $totalPaginas): ?>
-                            <a href="?pagina=<?php echo $paginaActual + 1; ?><?php echo http_build_query(array_merge($_GET, ['pagina' => $paginaActual + 1])); ?>" class="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
-                                Siguiente
-                            </a>
-                            <?php endif; ?>
-                        </div>
-                        <div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
-                            <div>
-                                <p class="text-sm text-gray-700">
-                                    Página <span class="font-medium"><?php echo $paginaActual; ?></span> / <span class="font-medium"><?php echo $totalPaginas; ?></span>
-                                </p>
-                            </div>
-                            <div>
-                                <nav class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
-                                    <?php if($paginaActual > 1): ?>
-                                    <a href="?<?php echo http_build_query(array_merge($_GET, ['pagina' => $paginaActual - 1])); ?>" class="relative inline-flex items-center px-4 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50">
-                                        Anterior
-                                    </a>
-                                    <?php endif; ?>
-                                    <?php if($paginaActual < $totalPaginas): ?>
-                                    <a href="?<?php echo http_build_query(array_merge($_GET, ['pagina' => $paginaActual + 1])); ?>" class="relative inline-flex items-center px-4 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50">
-                                        Siguiente
-                                    </a>
-                                    <?php endif; ?>
-                                </nav>
-                            </div>
-                        </div>
-                    </div>
-                    <?php endif; ?>
-                    
-                    <?php else: ?>
-                    <div class="p-8 text-center text-gray-500">
-                        <i class="fas fa-inbox text-4xl mb-4"></i>
-                        <p class="text-lg">No se encontraron resultados</p>
-                    </div>
-                    <?php endif; ?>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Modal Ver Zoocriadero -->
-    <div id="modalVer" class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
-        <div class="relative top-20 mx-auto p-0 border w-full max-w-2xl shadow-lg rounded-lg bg-white">
-            <!-- Header -->
-            <div class="bg-blue-200 px-6 py-4 rounded-t-lg">
-                <div class="flex items-center justify-between">
-                    <div class="flex items-center gap-3">
-                        <div class="bg-blue-500 text-white rounded-full p-2">
-                            <i class="fas fa-eye"></i>
-                        </div>
-                        <div>
-                            <h3 class="text-lg font-semibold text-gray-900">Ver Zoocriadero</h3>
-                            <p class="text-sm text-gray-600">Información detallada</p>
-                        </div>
-                    </div>
-                    <button onclick="cerrarModal('modalVer')" class="text-gray-500 hover:text-gray-700">
-                        <i class="fas fa-times text-xl"></i>
-                    </button>
-                </div>
-            </div>
-
-            <!-- Body -->
-            <div class="px-6 py-6">
-                <div class="space-y-4" id="contenidoModalVer">
-                    <div class="text-center py-8">
-                        <i class="fas fa-spinner fa-spin text-4xl text-blue-500"></i>
-                        <p class="mt-4 text-gray-600">Cargando información...</p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Footer -->
-            <div class="bg-gray-50 px-6 py-4 rounded-b-lg flex justify-end gap-3">
-                <button onclick="cerrarModal('modalVer')" class="px-6 py-2 bg-gray-300 hover:bg-gray-400 text-gray-700 font-medium rounded-md transition">
-                    Cerrar
-                </button>
-                <button onclick="abrirModalEditarDesdeVer()" class="px-6 py-2 bg-blue-500 hover:bg-blue-600 text-white font-medium rounded-md transition flex items-center gap-2">
-                    <i class="fas fa-edit"></i>
-                    Editar
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Modal Editar Zoocriadero -->
-    <div id="modalEditar" class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
-        <div class="relative top-20 mx-auto p-0 border w-full max-w-2xl shadow-lg rounded-lg bg-white">
-            <!-- Header -->
-            <div class="bg-blue-200 px-6 py-4 rounded-t-lg">
-                <div class="flex items-center justify-between">
-                    <div class="flex items-center gap-3">
-                        <div class="bg-blue-500 text-white rounded-full p-2">
-                            <i class="fas fa-edit"></i>
-                        </div>
-                        <div>
-                            <h3 class="text-lg font-semibold text-gray-900">Editar Zoocriadero</h3>
-                            <p class="text-sm text-gray-600">Información detallada</p>
-                        </div>
-                    </div>
-                    <button onclick="cerrarModal('modalEditar')" class="text-gray-500 hover:text-gray-700">
-                        <i class="fas fa-times text-xl"></i>
-                    </button>
-                </div>
-            </div>
-
-            <!-- Body -->
-            <div class="px-6 py-6">
-                <form id="formEditar">
-                    <input type="hidden" id="edit_cod_zoo" name="cod_zoo">
-                    <div class="space-y-4" id="contenidoModalEditar">
-                        <div class="text-center py-8">
-                            <i class="fas fa-spinner fa-spin text-4xl text-blue-500"></i>
-                            <p class="mt-4 text-gray-600">Cargando información...</p>
+                        <div class="flex justify-between">
+                            <button id="btnApplyFilters" type="button" class="px-4 py-2 bg-sky-500 text-white rounded-md">Aplicar</button>
+                            <button id="btnClearFilters" type="button" class="px-4 py-2 bg-slate-300 rounded-md">Borrar filtros</button>
                         </div>
                     </div>
                 </form>
+
+                <div class="mt-4 text-sm text-slate-600">
+                    <p class="font-semibold">Notas de validación:</p>
+                    <ul class="list-disc list-inside mt-2">
+                        <li>Se validan caracteres inválidos (<>/; etc.).</li>
+                        <li>Si no hay resultados, se mostrará mensaje informativo.</li>
+                    </ul>
+                </div>
+            </aside>
+
+            <!-- PANEL DERECHO -->
+            <main class="flex-1 bg-slate-100 p-4 rounded-lg shadow">
+
+                <div class="overflow-x-auto rounded-lg w-full">
+
+                    <table id="tableZoos" class="w-full border-collapse bg-white rounded-lg shadow">
+
+                        <thead class="bg-sky-200 text-sky-900 text-sm font-semibold">
+                            <tr>
+                                <th class="py-3 px-2 text-center cursor-pointer hover:bg-sky-300" data-sort-key="index">#</th>
+                                <th class="py-3 px-2 text-center cursor-pointer hover:bg-sky-300" data-sort-key="nombre">NOMBRE DE ZOOCRIADERO</th>
+                                <th class="py-3 px-2 text-center cursor-pointer hover:bg-sky-300" data-sort-key="encargado">ENCARGADO</th>
+                                <th class="py-3 px-2 text-center cursor-pointer hover:bg-sky-300" data-sort-key="direccion">DIRECCIÓN</th>
+                                <th class="py-3 px-2 text-center">ACCIONES</th>
+                            </tr>
+                        </thead>
+
+                        <tbody id="tbody" class="text-sm divide-y divide-slate-200">
+
+                            <?php if (!empty($zoocriaderos)) { ?>
+
+                                <?php foreach ($zoocriaderos as $index => $zoo) { ?>
+                                    <tr class="hover:bg-slate-50"
+                                        data-cod="<?= $zoo['cod_zoo'] ?>"
+                                        data-nombre="<?= htmlspecialchars($zoo['nombre_zoo']) ?>"
+                                        data-encargado="<?= htmlspecialchars($zoo['nombre_usu'] . ' ' . $zoo['apellido_usu']) ?>"
+                                        data-encargado-id="<?= $zoo['id_usuarios'] ?>"
+                                        data-barrio="<?= htmlspecialchars($zoo['barrio_zoo'] ?? '') ?>"
+                                        data-direccion="<?= htmlspecialchars($zoo['direccion_zoo']) ?>"
+                                        data-tipo="<?= htmlspecialchars($zoo['tipo_tanque'] ?? '') ?>">
+
+                                        <td class="py-3 text-center font-medium"><?= $index + 1 ?></td>
+
+                                        <td class="py-3 text-center font-medium"><?= htmlspecialchars($zoo['nombre_zoo']) ?></td>
+
+                                        <td class="py-3 text-center font-medium">
+                                            <?= htmlspecialchars($zoo['nombre_usu'] . ' ' . $zoo['apellido_usu']) ?>
+                                        </td>
+
+                                        <td class="py-3 text-center font-medium"><?= htmlspecialchars($zoo['direccion_zoo']) ?></td>
+
+                                        <td class="py-3 text-center">
+                                            <div class="flex justify-center gap-2">
+                                                <img src="../../../src/icons/zoom.png" title="Ver" data-action="view"
+                                                    class="w-5 h-5 cursor-pointer hover:scale-110 transition">
+                                                <img src="../../../src/icons/edit.svg" title="Editar" data-action="edit"
+                                                    class="w-5 h-5 cursor-pointer hover:scale-110 transition">
+                                                <img src="../../../src/icons/trash-2.svg" title="Anular" data-action="delete"
+                                                    class="w-5 h-5 cursor-pointer hover:scale-110 transition">
+                                                <img src="../../../src/icons/upload.svg" title="Exportar" data-action="export"
+                                                    class="w-5 h-5 cursor-pointer hover:scale-110 transition">
+                                            </div>
+                                        </td>
+
+                                    </tr>
+                                <?php } ?>
+
+                            <?php } else { ?>
+
+                                <tr>
+                                    <td colspan="5" class="text-center py-4 text-slate-500">
+                                        No hay registros disponibles.
+                                    </td>
+                                </tr>
+
+                            <?php } ?>
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+                <!-- PAGINACIÓN -->
+                <div class="mt-4 flex items-center justify-between">
+                    <div>
+                        <button id="prevPage" class="px-3 py-1 bg-slate-200 rounded mr-2">Anterior</button>
+                        <button id="nextPage" class="px-3 py-1 bg-slate-200 rounded">Siguiente</button>
+                    </div>
+                    <div class="text-sm text-slate-600">
+                        Página <span id="currentPage">1</span> / <span id="totalPages">1</span>
+                    </div>
+                </div>
+
+            </main>
+
+        </div>
+    </div>
+
+    <!-- MODAL OVERLAY -->
+    <div id="modalOverlay" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50 p-4">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+
+            <!-- HEADER -->
+            <div class="bg-sky-400 p-4 flex items-center justify-between sticky top-0 z-10">
+                <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 bg-white rounded-full flex items-center justify-center">
+                        <svg class="w-5 h-5 text-sky-600" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
+                            <path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd" />
+                        </svg>
+                    </div>
+                    <div>
+                        <h3 id="modalTitle" class="text-white font-semibold text-lg">Ver Zoocriadero</h3>
+                        <p class="text-sky-100 text-xs">Información detallada</p>
+                    </div>
+                </div>
+                <button id="closeModal" class="text-white hover:text-sky-100 text-2xl font-bold leading-none">&times;</button>
             </div>
 
-            <!-- Footer -->
-            <div class="bg-gray-50 px-6 py-4 rounded-b-lg flex justify-end gap-3">
-                <button onclick="cerrarModal('modalEditar')" type="button" class="px-6 py-2 bg-gray-300 hover:bg-gray-400 text-gray-700 font-medium rounded-md transition">
-                    Cerrar
+            <!-- FORM -->
+            <form id="modalForm" action="editar.php" method="POST" class="p-6">
+                <input type="hidden" name="cod_zoo" id="modal_cod_zoo">
+
+                <div class="mb-4">
+                    <label class="flex items-center gap-2 text-sm font-medium text-sky-700 mb-2">
+                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M4 4a2 2 0 012-2h8a2 2 0 012 2v12a1 1 0 110 2h-3a1 1 0 01-1-1v-2a1 1 0 00-1-1H9a1 1 0 00-1 1v2a1 1 0 01-1 1H4a1 1 0 110-2V4zm3 1h2v2H7V5zm2 4H7v2h2V9zm2-4h2v2h-2V5zm2 4h-2v2h2V9z" clip-rule="evenodd" />
+                        </svg>
+                        Nombre del Zoocriadero
+                    </label>
+                    <input name="nombre" id="modal_nombre" class="w-full border border-sky-200 rounded-lg p-3 bg-sky-50 text-slate-800" readonly>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4 mb-4">
+                    <div>
+                        <label class="flex items-center gap-2 text-sm font-medium text-sky-700 mb-2">
+                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd" />
+                            </svg>
+                            Encargado
+                        </label>
+                        <input id="modal_encargado" class="w-full border border-sky-200 rounded-lg p-3 bg-sky-50 text-slate-800" readonly>
+                        <input type="hidden" name="id_usuarios" id="modal_encargado_id">
+                    </div>
+                    <div>
+                        <label class="flex items-center gap-2 text-sm font-medium text-sky-700 mb-2">
+                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd" />
+                            </svg>
+                            Barrio
+                        </label>
+                        <input name="barrio" id="modal_barrio" class="w-full border border-sky-500 rounded-lg p-3 bg-sky-200 text-slate-800" readonly>
+                    </div>
+                </div>
+
+                <div class="mb-4">
+                    <label class="flex items-center gap-2 text-sm font-medium text-sky-700 mb-2">
+                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd" />
+                        </svg>
+                        Dirección
+                    </label>
+                    <div class="flex gap-2">
+                        <input name="direccion" id="modal_direccion" class="flex-1 border border-sky-500 rounded-lg p-3 bg-sky-200 text-slate-800" readonly>
+                        <button id="btnEditarDireccion" type="button" class="px-4 py-2 bg-sky-500 text-white rounded-lg hover:bg-sky-600 transition font-medium hidden">
+                            Editar Dirección
+                        </button>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="flex items-center gap-2 text-sm font-medium text-sky-700 mb-2">
+                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M3 12v3c0 1.657 3.134 3 7 3s7-1.343 7-3v-3c0 1.657-3.134 3-7 3s-7-1.343-7-3z" />
+                            <path d="M3 7v3c0 1.657 3.134 3 7 3s7-1.343 7-3V7c0 1.657-3.134 3-7 3S3 8.657 3 7z" />
+                            <path d="M17 5c0 1.657-3.134 3-7 3S3 6.657 3 5s3.134-3 7-3 7 1.343 7 3z" />
+                        </svg>
+                        Tanques Asociados
+                    </label>
+                    <div class="bg-sky-50 rounded-lg border border-sky-200 overflow-hidden">
+                        <table class="w-full text-sm">
+                            <thead class="bg-sky-100 text-sky-800">
+                                <tr>
+                                    <th class="py-2 px-3 text-left font-medium">Tipo de Tanque</th>
+                                    <th class="py-2 px-3 text-left font-medium">Nombre</th>
+                                </tr>
+                            </thead>
+                            <tbody id="modal_tanques_list" class="divide-y divide-sky-100">
+                                <tr>
+                                    <td colspan="2" class="py-3 px-3 text-center text-slate-500">No hay tanques asociados</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- FOOTER -->
+                <div class="mt-6 flex justify-end gap-3">
+                    <button type="button" id="modalCancel" class="px-6 py-2 rounded-lg bg-slate-300 text-slate-700 font-medium hover:bg-slate-400 transition">Cerrar</button>
+                    <button type="submit" id="modalSave" class="px-8 py-2 rounded-lg bg-sky-500 text-white font-semibold hover:bg-sky-600 transition hidden">
+                        Guardar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL DE DIRECCIÓN -->
+    <div id="modalDireccion" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50 p-4">
+        <div class="bg-white rounded-2xl shadow-2xl p-8 w-full max-w-3xl">
+            <div class="flex justify-between items-center mb-8">
+                <h2 class="text-2xl font-bold text-blue-500">Ingreso de Dirección</h2>
+                <button type="button" id="btnCerrarModal" class="text-gray-400 hover:text-gray-600 text-3xl font-bold leading-none">×</button>
+            </div>
+
+            <!-- Grid de campos -->
+            <div class="grid grid-cols-3 gap-6 mb-6">
+
+                <!-- Tipo de Vía -->
+                <div>
+                    <label class="block text-sm font-medium text-blue-500 mb-2">Tipo de Vía</label>
+                    <select id="tipoVia" class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-cyan-500 bg-teal-50 text-gray-700">
+                        <option value="">-</option>
+                        <option value="Calle">Calle</option>
+                        <option value="Carrera">Carrera</option>
+                        <option value="Avenida">Avenida</option>
+                        <option value="Diagonal">Diagonal</option>
+                        <option value="Transversal">Transversal</option>
+                    </select>
+                </div>
+
+                <!-- Número Vía -->
+                <div>
+                    <label class="block text-sm font-medium text-blue-500 mb-2">Número Vía</label>
+                    <input type="text" id="numeroVia" class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-teal-500 bg-teal-50">
+                </div>
+
+                <!-- # -->
+                <div>
+                    <label class="block text-sm font-medium text-blue-500 mb-2">#</label>
+                    <input type="text" id="numeroSimbolo" value="#" class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-teal-500 bg-teal-50" readonly>
+                </div>
+
+                <!-- Sufijo / Letra -->
+                <div>
+                    <label class="block text-sm font-medium text-blue-500 mb-2">Sufijo / Letra</label>
+                    <input type="text" id="sufijo" maxlength="5" class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-teal-500 bg-teal-50">
+                </div>
+
+                <!-- Distancia -->
+                <div class="col-span-2">
+                    <label class="block text-sm font-medium text-blue-500 mb-2">Distancia</label>
+                    <input type="text" id="distancia" class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-teal-500 bg-teal-50">
+                </div>
+
+            </div>
+
+            <!-- Dirección Generada -->
+            <div class="mb-8">
+                <label class="block text-sm font-medium text-blue-500 mb-2">DIRECCIÓN GENERADA</label>
+                <div class="w-full px-4 py-4 border-2 border-gray-200 rounded-lg bg-teal-50 min-h-[60px] flex items-center">
+                    <p id="vistaPrevia" class="text-lg text-gray-700 font-medium">-</p>
+                </div>
+            </div>
+
+            <!-- Botones -->
+            <div class="flex justify-end gap-3">
+                <button type="button" id="btnBorrarModal" class="bg-red-100 text-red-600 font-semibold px-8 py-3 rounded-lg hover:bg-red-200 transition-all uppercase">
+                    BORRAR
                 </button>
-                <button onclick="guardarEdicion()" type="button" class="px-6 py-2 bg-blue-500 hover:bg-blue-600 text-white font-medium rounded-md transition flex items-center gap-2">
-                    <i class="fas fa-save"></i>
-                    Guardar
+                <button type="button" id="btnBorrarUltimoModal" class="bg-yellow-100 text-yellow-700 font-semibold px-8 py-3 rounded-lg hover:bg-yellow-200 transition-all uppercase">
+                    BORRAR ÚLTIMO
+                </button>
+                <button type="button" id="btnAplicarDireccion" class="bg-blue-400 text-white font-semibold px-8 py-3 rounded-lg hover:bg-blue-500 transition-all uppercase shadow-lg">
+                    GUARDAR
                 </button>
             </div>
         </div>
     </div>
 
-    <!-- Datos para JS -->
-    <script>
-        const BARRIOS = <?php echo json_encode($barrios); ?>;
-        const ENCARGADOS = <?php echo json_encode($encargadosEditar); ?>;
-    </script>
+    <script src="../../../src/js/zoo-listar.js"></script>
 
-    <script src="../js/zoo-listar.js"></script>
 </body>
+
 </html>

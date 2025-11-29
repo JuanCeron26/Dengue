@@ -1,0 +1,98 @@
+/* Ajustes de presentación de tabla */
+.table-fixed {
+    table-layout: fixed;
+    width: 100%;
+}
+
+.col-id {
+    width: 6%;
+    text-align: center;
+}
+
+.col-nombre {
+    width: 28%;
+    text-align: left;
+    padding-left: 1rem;
+}
+
+.col-encargado {
+    width: 18%;
+    text-align: left;
+    padding-left: 1rem;
+}
+
+.col-direccion {
+    width: 22%;
+    text-align: left;
+    padding-left: 1rem;
+}
+
+.col-tipo {
+    width: 12%;
+    text-align: left;
+    padding-left: 1rem;
+}
+
+.col-tanque {
+    width: 8%;
+    text-align: center;
+}
+
+.col-acciones {
+    width: 6%;
+    text-align: center;
+}
+
+/* encabezado color pastel */
+.thead-bg {
+    background: #8ed1f7;
+}
+
+/* cabecera layout */
+.header-icons {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    justify-content: flex-end;
+}
+
+/* filas íconos */
+.action-icon {
+    width: 20px;
+    height: 20px;
+    display: inline-block;
+    cursor: pointer;
+    opacity: 0.95;
+}
+
+.action-icon:hover {
+    opacity: 1;
+}
+
+/* Aplica flex horizontal directamente a la celda de acciones */
+/* Aplica flex horizontal a la celda de acciones */
+td.col-acciones,
+td.text-center:last-child {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    /* Espacio entre íconos */
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+}
+
+/* Asegura que los íconos tengan tamaño uniforme y se alineen */
+td.col-acciones img,
+td.text-center:last-child img {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    opacity: 0.95;
+    vertical-align: middle;
+}
+
+td.col-acciones img:hover,
+td.text-center:last-child img:hover {
+    opacity: 1;
+}
