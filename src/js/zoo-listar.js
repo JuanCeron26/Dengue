@@ -24,8 +24,10 @@ document.addEventListener('DOMContentLoaded', () => {
     cod: document.getElementById('modal_cod_zoo'),
     nombre: document.getElementById('modal_nombre'),
     encargadoText: document.getElementById('modal_encargado'),
+    encargadoSelect: document.getElementById('modal_encargado_select'),
     encargadoId: document.getElementById('modal_encargado_id'),
     barrio: document.getElementById('modal_barrio'),
+    barrioSelect: document.getElementById('modal_barrio_select'),
     direccion: document.getElementById('modal_direccion'),
     tanquesList: document.getElementById('modal_tanques_list')
   };
@@ -204,52 +206,38 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- EDITAR ---
     if (action === 'edit') {
-      state.isEditMode = true;
+      // Redirigir a la página de editar con el código del zoo
+      // Si tienes una página editar.php separada, usa esto:
+      // window.location.href = `editar.php?cod_zoo=${encodeURIComponent(d.cod)}`;
       
-      modalFields.cod.value = d.cod || '';
-      modalFields.nombre.value = d.nombre || '';
-      modalFields.encargadoText.value = d.encargado || '';
-      modalFields.encargadoId.value = d.encargadoId || '';
-      modalFields.barrio.value = d.barrio || '';
-      modalFields.direccion.value = d.direccion || '';
-
-      modalTitle.textContent = 'Editar Zoocriadero';
-
-      // Habilitar campos editables
-      modalFields.nombre.readOnly = false;
-      modalFields.nombre.classList.remove('bg-sky-50');
-      modalFields.nombre.classList.add('bg-white', 'focus:border-sky-500', 'focus:ring-2', 'focus:ring-sky-200');
-      
-      modalFields.barrio.readOnly = false;
-      modalFields.barrio.classList.remove('bg-sky-50');
-      modalFields.barrio.classList.add('bg-white', 'focus:border-sky-500', 'focus:ring-2', 'focus:ring-sky-200');
-
-      // Mostrar botones de edición
-      btnEditarDireccion.classList.remove('hidden');
-      modalSave.classList.remove('hidden');
-
-      // Cargar tanques (si tienes endpoint para ello)
-      modalFields.tanquesList.innerHTML = '<tr><td colspan="2" class="py-3 px-3 text-center text-slate-500">Cargando tanques...</td></tr>';
-
-      showModal();
+      // O si prefieres abrir un modal de edición en la misma página:
+      abrirModalEditar(d.cod);
       return;
     }
 
-    // DELETE
+    // DELETE/ANULAR
     if (action === 'delete') {
       if (!confirm('¿Estás seguro de anular este registro?')) return;
 
-      fetch('../controllers/controllerAnular.php?cod_zoo', {
+      // Llamar al controllerAnular.php
+      fetch('../controllers/controllerAnular.php', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ cod_zoo: d.cod })
+        body: JSON.stringify({ cod_zoo: parseInt(d.cod) })
       })
       .then(r => r.json())
       .then(json => {
-        alert(json.message || 'Operación completada');
-        location.reload();
+        if (json.success) {
+          alert(json.message || 'Zoocriadero anulado correctamente');
+          location.reload();
+        } else {
+          alert(json.message || 'Error al anular el zoocriadero');
+        }
       })
-      .catch(() => alert('Error al anular'));
+      .catch((error) => {
+        console.error('Error:', error);
+        alert('Error al anular el zoocriadero');
+      });
 
       return;
     }
@@ -296,16 +284,47 @@ document.addEventListener('DOMContentLoaded', () => {
 
   modalForm.addEventListener('submit', (e) => {
     e.preventDefault();
-    const formData = new FormData(modalForm);
+    
+    if (!state.isEditMode) {
+      hideModal();
+      return;
+    }
 
-    fetch(modalForm.action, { method: 'POST', body: formData })
-      .then(r => r.json())
-      .then(json => {
-        alert(json.message || 'Guardado');
+    // Preparar datos para enviar
+    const datosActualizar = {
+      cod_zoo: modalFields.cod.value,
+      nombre_zoo: modalFields.nombre.value.trim(),
+      direccion_zoo: modalFields.direccion.value.trim(),
+      cod_barrio: modalFields.barrio.value || null,
+      id_usuarios: modalFields.encargadoId.value
+    };
+
+    // Validaciones básicas
+    if (!datosActualizar.nombre_zoo || !datosActualizar.direccion_zoo) {
+      alert('Por favor complete todos los campos obligatorios');
+      return;
+    }
+
+    // Enviar al controlador
+    fetch('../controllers/controllerEditar.php', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(datosActualizar)
+    })
+    .then(r => r.json())
+    .then(json => {
+      if (json.success) {
+        alert(json.message || 'Zoocriadero actualizado correctamente');
         hideModal();
         location.reload();
-      })
-      .catch(() => alert('Error al guardar'));
+      } else {
+        alert(json.message || 'Error al actualizar el zoocriadero');
+      }
+    })
+    .catch((error) => {
+      console.error('Error:', error);
+      alert('Error al guardar los cambios');
+    });
   });
 
   /* ============================
@@ -323,7 +342,7 @@ document.addEventListener('DOMContentLoaded', () => {
           modalFields.nombre.value = data.zoo.nombre_zoo;
           modalFields.encargadoText.value = data.zoo.encargado;
           modalFields.encargadoId.value = data.zoo.id_usuarios;
-          modalFields.barrio.value = data.zoo.nombarrio;
+          modalFields.barrio.value = data.zoo.nombarrio || '';
           modalFields.direccion.value = data.zoo.direccion_zoo;
 
           modalTitle.textContent = 'Ver Zoocriadero';
@@ -332,12 +351,12 @@ document.addEventListener('DOMContentLoaded', () => {
           const list = modalFields.tanquesList;
           list.innerHTML = '';
 
-          if (data.tanques.length > 0) {
+          if (data.tanques && data.tanques.length > 0) {
             data.tanques.forEach(t => {
               list.innerHTML += `
                 <tr class="hover:bg-sky-100">
-                  <td class="py-2 px-3">${t.nomtiptan}</td>
-                  <td class="py-2 px-3">${t.nom_zootanque}</td>
+                  <td class="py-2 px-3">${t.nomtiptan || 'N/A'}</td>
+                  <td class="py-2 px-3">${t.nom_zootanque || 'N/A'}</td>
                 </tr>`;
             });
           } else {
@@ -357,9 +376,80 @@ document.addEventListener('DOMContentLoaded', () => {
 
           // Mostrar modal
           showModal();
+        } else {
+          alert(data.message || 'Error al cargar los datos del zoocriadero');
         }
       })
-      .catch(() => alert('Error al cargar los datos del zoocriadero'));
+      .catch((error) => {
+        console.error('Error:', error);
+        alert('Error al cargar los datos del zoocriadero');
+      });
+  };
+
+  /* ============================
+      MODAL EDITAR
+  ============================ */
+  window.abrirModalEditar = function (codZoo) {
+    fetch(`../controllers/controllerEditar.php?cod_zoo=${codZoo}`)
+      .then(r => r.json())
+      .then(data => {
+        if (data.success) {
+          state.isEditMode = true;
+          
+          // Datos principales
+          modalFields.cod.value = data.zoo.cod_zoo;
+          modalFields.nombre.value = data.zoo.nombre_zoo;
+          modalFields.encargadoText.value = data.zoo.encargado;
+          modalFields.encargadoId.value = data.zoo.id_usuarios;
+          modalFields.barrio.value = data.zoo.nombarrio || '';
+          modalFields.direccion.value = data.zoo.direccion_zoo;
+
+          modalTitle.textContent = 'Editar Zoocriadero';
+
+          // Habilitar campos editables
+          modalFields.nombre.readOnly = false;
+          modalFields.nombre.classList.remove('bg-sky-50');
+          modalFields.nombre.classList.add('bg-white', 'focus:border-sky-500', 'focus:ring-2', 'focus:ring-sky-200');
+          
+          modalFields.barrio.readOnly = false;
+          modalFields.barrio.classList.remove('bg-sky-50');
+          modalFields.barrio.classList.add('bg-white', 'focus:border-sky-500', 'focus:ring-2', 'focus:ring-sky-200');
+
+          // Tabla tanques
+          const list = modalFields.tanquesList;
+          list.innerHTML = '';
+
+          if (data.tanques && data.tanques.length > 0) {
+            data.tanques.forEach(t => {
+              list.innerHTML += `
+                <tr class="hover:bg-sky-100">
+                  <td class="py-2 px-3">${t.nomtiptan || 'N/A'}</td>
+                  <td class="py-2 px-3">${t.nom_zootanque || 'N/A'}</td>
+                </tr>`;
+            });
+          } else {
+            list.innerHTML = `
+              <tr>
+                <td colspan="2" class="py-3 px-3 text-center text-slate-500">
+                  No hay tanques asociados
+                </td>
+              </tr>`;
+          }
+
+          // Mostrar botones de edición
+          btnEditarDireccion.classList.remove('hidden');
+          modalSave.classList.remove('hidden');
+
+          // Mostrar modal
+          showModal();
+        } else {
+          alert(data.message || 'Error al cargar los datos del zoocriadero');
+        }
+      })
+      .catch((error) => {
+        console.error('Error:', error);
+        alert('Error al cargar los datos del zoocriadero');
+      });
   };
 
   /* ============================

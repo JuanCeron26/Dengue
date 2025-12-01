@@ -260,7 +260,7 @@ $tiposTanque = $obj->ObtenerTiposTanque();
                             </svg>
                             Barrio
                         </label>
-                        <input name="barrio" id="modal_barrio" class="w-full border border-sky-500 rounded-lg p-3 bg-sky-200 text-slate-800" readonly>
+                        <input name="barrio" id="modal_barrio" class="w-full border border-sky-200 rounded-lg p-3 bg-sky-50 text-slate-800" readonly>
                     </div>
                 </div>
 
@@ -272,7 +272,7 @@ $tiposTanque = $obj->ObtenerTiposTanque();
                         Dirección
                     </label>
                     <div class="flex gap-2">
-                        <input name="direccion" id="modal_direccion" class="flex-1 border border-sky-500 rounded-lg p-3 bg-sky-200 text-slate-800" readonly>
+                        <input name="direccion" id="modal_direccion" class="flex-1 border border-sky-200 rounded-lg p-3 bg-sky-50 text-slate-800" readonly>
                         <button id="btnEditarDireccion" type="button" class="px-4 py-2 bg-sky-500 text-white rounded-lg hover:bg-sky-600 transition font-medium hidden">
                             Editar Dirección
                         </button>
