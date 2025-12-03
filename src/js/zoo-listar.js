@@ -55,7 +55,11 @@ document.addEventListener('DOMContentLoaded', () => {
     sortKey: null,
     sortDir: 1,
     page: 1,
-    isEditMode: false
+    isEditMode: false,
+    encargados: [],
+    barrios: [],
+    tiposTanque: [],
+    tanquesDelZoo: []
   };
 
   /* ============================
@@ -198,51 +202,41 @@ document.addEventListener('DOMContentLoaded', () => {
     const action = btn.dataset.action;
     const d = tr.dataset;
 
-    // --- VIEW ---
     if (action === 'view') {
       abrirModalVer(d.cod);
       return;
     }
 
-    // --- EDITAR ---
     if (action === 'edit') {
-      // Redirigir a la página de editar con el código del zoo
-      // Si tienes una página editar.php separada, usa esto:
-      // window.location.href = `editar.php?cod_zoo=${encodeURIComponent(d.cod)}`;
-      
-      // O si prefieres abrir un modal de edición en la misma página:
       abrirModalEditar(d.cod);
       return;
     }
 
-    // DELETE/ANULAR
     if (action === 'delete') {
       if (!confirm('¿Estás seguro de anular este registro?')) return;
 
-      // Llamar al controllerAnular.php
       fetch('../controllers/controllerAnular.php', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ cod_zoo: parseInt(d.cod) })
       })
-      .then(r => r.json())
-      .then(json => {
-        if (json.success) {
-          alert(json.message || 'Zoocriadero anulado correctamente');
-          location.reload();
-        } else {
-          alert(json.message || 'Error al anular el zoocriadero');
-        }
-      })
-      .catch((error) => {
-        console.error('Error:', error);
-        alert('Error al anular el zoocriadero');
-      });
+        .then(r => r.json())
+        .then(json => {
+          if (json.success) {
+            alert(json.message || 'Zoocriadero anulado correctamente');
+            location.reload();
+          } else {
+            alert(json.message || 'Error al anular el zoocriadero');
+          }
+        })
+        .catch((error) => {
+          console.error('Error:', error);
+          alert('Error al anular el zoocriadero');
+        });
 
       return;
     }
 
-    // EXPORT
     if (action === 'export') {
       window.location.href = `exportar.php?cod_zoo=${encodeURIComponent(d.cod)}`;
       return;
@@ -261,16 +255,33 @@ document.addEventListener('DOMContentLoaded', () => {
     modalOverlay.classList.add('hidden');
     modalOverlay.classList.remove('flex');
     state.isEditMode = false;
-    
-    // Resetear campos a readonly
+
+    // Resetear campos
+    resetModalFields();
+  }
+
+  function resetModalFields() {
+    // Ocultar selects y mostrar inputs readonly
+    if (modalFields.encargadoSelect) {
+      modalFields.encargadoSelect.classList.add('hidden');
+    }
+    if (modalFields.encargadoText) {
+      modalFields.encargadoText.classList.remove('hidden');
+      modalFields.encargadoText.readOnly = true;
+    }
+
+    if (modalFields.barrioSelect) {
+      modalFields.barrioSelect.classList.add('hidden');
+    }
+    if (modalFields.barrio) {
+      modalFields.barrio.classList.remove('hidden');
+      modalFields.barrio.readOnly = true;
+    }
+
     modalFields.nombre.readOnly = true;
     modalFields.nombre.classList.add('bg-sky-50');
     modalFields.nombre.classList.remove('bg-white', 'focus:border-sky-500', 'focus:ring-2', 'focus:ring-sky-200');
-    
-    modalFields.barrio.readOnly = true;
-    modalFields.barrio.classList.add('bg-sky-50');
-    modalFields.barrio.classList.remove('bg-white', 'focus:border-sky-500', 'focus:ring-2', 'focus:ring-sky-200');
-    
+
     btnEditarDireccion.classList.add('hidden');
     modalSave.classList.add('hidden');
   }
@@ -284,26 +295,46 @@ document.addEventListener('DOMContentLoaded', () => {
 
   modalForm.addEventListener('submit', (e) => {
     e.preventDefault();
-    
+
     if (!state.isEditMode) {
       hideModal();
       return;
     }
 
-    // Preparar datos para enviar
-    const datosActualizar = {
-      cod_zoo: modalFields.cod.value,
-      nombre_zoo: modalFields.nombre.value.trim(),
-      direccion_zoo: modalFields.direccion.value.trim(),
-      cod_barrio: modalFields.barrio.value || null,
-      id_usuarios: modalFields.encargadoId.value
-    };
+    // Obtener valores de los campos
+    const nombreZoo = modalFields.nombre.value.trim();
+    const direccionZoo = modalFields.direccion.value.trim();
 
-    // Validaciones básicas
-    if (!datosActualizar.nombre_zoo || !datosActualizar.direccion_zoo) {
+    // Obtener cod_barrio del select o input
+    let codBarrio = null;
+    if (modalFields.barrioSelect && !modalFields.barrioSelect.classList.contains('hidden')) {
+      codBarrio = modalFields.barrioSelect.value || null;
+    }
+
+    // Obtener id_usuarios del select o hidden
+    let idUsuarios = null;
+    if (modalFields.encargadoSelect && !modalFields.encargadoSelect.classList.contains('hidden')) {
+      idUsuarios = modalFields.encargadoSelect.value;
+    } else {
+      idUsuarios = modalFields.encargadoId.value;
+    }
+
+    // Validaciones
+    if (!nombreZoo || !direccionZoo) {
       alert('Por favor complete todos los campos obligatorios');
       return;
     }
+
+    // Preparar datos
+    const datosActualizar = {
+      cod_zoo: parseInt(modalFields.cod.value),
+      nombre_zoo: nombreZoo,
+      direccion_zoo: direccionZoo,
+      cod_barrio: codBarrio ? parseInt(codBarrio) : null,
+      id_usuarios: parseInt(idUsuarios)
+    };
+
+    console.log('Datos a enviar:', datosActualizar);
 
     // Enviar al controlador
     fetch('../controllers/controllerEditar.php', {
@@ -311,43 +342,66 @@ document.addEventListener('DOMContentLoaded', () => {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(datosActualizar)
     })
-    .then(r => r.json())
-    .then(json => {
-      if (json.success) {
-        alert(json.message || 'Zoocriadero actualizado correctamente');
-        hideModal();
-        location.reload();
-      } else {
-        alert(json.message || 'Error al actualizar el zoocriadero');
-      }
-    })
-    .catch((error) => {
-      console.error('Error:', error);
-      alert('Error al guardar los cambios');
-    });
+      .then(r => r.json())
+      .then(json => {
+        console.log('Respuesta del servidor:', json);
+        if (json.success) {
+          alert(json.message || 'Zoocriadero actualizado correctamente');
+          hideModal();
+          location.reload();
+        } else {
+          alert(json.message || 'Error al actualizar el zoocriadero');
+        }
+      })
+      .catch((error) => {
+        console.error('Error:', error);
+        alert('Error al guardar los cambios: ' + error.message);
+      });
   });
 
   /* ============================
-      MODAL VER DETALLE
+      MODAL VER DETALLE 
   ============================ */
-  window.abrirModalVer = function (codZoo) {
+  document.getElementById('tbody').addEventListener('click', (e) => {
+    const boton = e.target.closest('img');
+    if (!boton) return;
+
+    const tr = e.target.closest('tr');
+    const d = tr.dataset;
+    if (boton.classList.contains('btn-editar')) {
+      abrirModalEditar(d.cod);
+    }
+  });
+
+  const abrirModalVer = function (codZoo) {
     fetch(`../controllers/controllerVerDetalle.php?cod_zoo=${codZoo}`)
       .then(r => r.json())
       .then(data => {
         if (data.success) {
           state.isEditMode = false;
-          
-          // Datos principales
+
           modalFields.cod.value = data.zoo.cod_zoo;
           modalFields.nombre.value = data.zoo.nombre_zoo;
+
+          // MODO VER: Mostrar texto readonly, ocultar selects
+          if (modalFields.encargadoSelect) {
+            modalFields.encargadoSelect.classList.add('hidden');
+          }
+          modalFields.encargadoText.classList.remove('hidden');
           modalFields.encargadoText.value = data.zoo.encargado;
           modalFields.encargadoId.value = data.zoo.id_usuarios;
+
+          if (modalFields.barrioSelect) {
+            modalFields.barrioSelect.classList.add('hidden');
+          }
+          modalFields.barrio.classList.remove('hidden');
           modalFields.barrio.value = data.zoo.nombarrio || '';
+
           modalFields.direccion.value = data.zoo.direccion_zoo;
 
           modalTitle.textContent = 'Ver Zoocriadero';
 
-          // Tabla tanques
+          // Tabla tanques - SOLO LECTURA (sin botón eliminar)
           const list = modalFields.tanquesList;
           list.innerHTML = '';
 
@@ -368,13 +422,7 @@ document.addEventListener('DOMContentLoaded', () => {
               </tr>`;
           }
 
-          // Asegurar campos readonly
-          modalFields.nombre.readOnly = true;
-          modalFields.barrio.readOnly = true;
-          btnEditarDireccion.classList.add('hidden');
-          modalSave.classList.add('hidden');
-
-          // Mostrar modal
+          resetModalFields();
           showModal();
         } else {
           alert(data.message || 'Error al cargar los datos del zoocriadero');
@@ -389,67 +437,253 @@ document.addEventListener('DOMContentLoaded', () => {
   /* ============================
       MODAL EDITAR
   ============================ */
-  window.abrirModalEditar = function (codZoo) {
-    fetch(`../controllers/controllerEditar.php?cod_zoo=${codZoo}`)
-      .then(r => r.json())
-      .then(data => {
-        if (data.success) {
-          state.isEditMode = true;
-          
-          // Datos principales
-          modalFields.cod.value = data.zoo.cod_zoo;
-          modalFields.nombre.value = data.zoo.nombre_zoo;
-          modalFields.encargadoText.value = data.zoo.encargado;
-          modalFields.encargadoId.value = data.zoo.id_usuarios;
-          modalFields.barrio.value = data.zoo.nombarrio || '';
-          modalFields.direccion.value = data.zoo.direccion_zoo;
+  const abrirModalEditar = function (codZoo) {
+    const cod = parseInt(codZoo);
 
-          modalTitle.textContent = 'Editar Zoocriadero';
-
-          // Habilitar campos editables
-          modalFields.nombre.readOnly = false;
-          modalFields.nombre.classList.remove('bg-sky-50');
-          modalFields.nombre.classList.add('bg-white', 'focus:border-sky-500', 'focus:ring-2', 'focus:ring-sky-200');
-          
-          modalFields.barrio.readOnly = false;
-          modalFields.barrio.classList.remove('bg-sky-50');
-          modalFields.barrio.classList.add('bg-white', 'focus:border-sky-500', 'focus:ring-2', 'focus:ring-sky-200');
-
-          // Tabla tanques
-          const list = modalFields.tanquesList;
-          list.innerHTML = '';
-
-          if (data.tanques && data.tanques.length > 0) {
-            data.tanques.forEach(t => {
-              list.innerHTML += `
-                <tr class="hover:bg-sky-100">
-                  <td class="py-2 px-3">${t.nomtiptan || 'N/A'}</td>
-                  <td class="py-2 px-3">${t.nom_zootanque || 'N/A'}</td>
-                </tr>`;
-            });
-          } else {
-            list.innerHTML = `
-              <tr>
-                <td colspan="2" class="py-3 px-3 text-center text-slate-500">
-                  No hay tanques asociados
-                </td>
-              </tr>`;
-          }
-
-          // Mostrar botones de edición
-          btnEditarDireccion.classList.remove('hidden');
-          modalSave.classList.remove('hidden');
-
-          // Mostrar modal
-          showModal();
-        } else {
-          alert(data.message || 'Error al cargar los datos del zoocriadero');
+    // Cargar datos auxiliares primero
+    Promise.all([
+      fetch('../controllers/controllerEditar.php?cod_zoo=' + cod).then(r => r.json()),
+      fetch('../controllers/controllerListar.php?action=getEncargados').then(r => r.json()),
+      fetch('../controllers/controllerListar.php?action=getBarrios').then(r => r.json())
+    ])
+      .then(([dataZoo, dataEncargados, dataBarrios]) => {
+        if (!dataZoo.success) {
+          alert(dataZoo.message || 'Error al cargar los datos del zoocriadero');
+          return;
         }
+
+        state.isEditMode = true;
+        state.encargados = dataEncargados.data || [];
+        state.barrios = dataBarrios.data || [];
+        state.tanquesDelZoo = dataZoo.tanques || [];
+
+        // Datos principales
+        modalFields.cod.value = dataZoo.zoo.cod_zoo;
+        modalFields.nombre.value = dataZoo.zoo.nombre_zoo;
+        modalFields.direccion.value = dataZoo.zoo.direccion_zoo;
+
+        modalTitle.textContent = 'Editar Zoocriadero';
+
+        // Habilitar campo nombre
+        modalFields.nombre.readOnly = false;
+        modalFields.nombre.classList.remove('bg-sky-50');
+        modalFields.nombre.classList.add('bg-white', 'focus:border-sky-500', 'focus:ring-2', 'focus:ring-sky-200');
+
+        // AGREGAR AL INICIO DEL ARCHIVO, DONDE INICIALIZAS EL STATE
+        const state = {
+          encargados: [],
+          barrios: [],
+          tiposTanque: []
+          // ... otros datos que tengas
+        };
+
+        // FUNCIÓN PARA CARGAR ENCARGADOS
+        async function cargarEncargados() {
+          try {
+            const response = await fetch('../controllers/controladorListar.php?action=getEncargados');
+            const data = await response.json();
+
+            if (data && Array.isArray(data)) {
+              state.encargados = data;
+              console.log('Encargados cargados:', state.encargados);
+            } else {
+              console.error('Error: datos de encargados no válidos', data);
+              state.encargados = [];
+            }
+          } catch (error) {
+            console.error('Error al cargar encargados:', error);
+            state.encargados = [];
+          }
+        }
+
+        // FUNCIÓN PARA CARGAR BARRIOS
+        async function cargarBarrios() {
+          try {
+            const response = await fetch('../controllers/controladorListar.php?action=getBarrios');
+            const data = await response.json();
+
+            if (data && Array.isArray(data)) {
+              state.barrios = data;
+              console.log('Barrios cargados:', state.barrios);
+            } else {
+              console.error('Error: datos de barrios no válidos', data);
+              state.barrios = [];
+            }
+          } catch (error) {
+            console.error('Error al cargar barrios:', error);
+            state.barrios = [];
+          }
+        }
+
+        // FUNCIÓN PARA INICIALIZAR TODOS LOS DATOS
+        async function inicializarDatos() {
+          await Promise.all([
+            cargarEncargados(),
+            cargarBarrios()
+          ]);
+          console.log('Datos inicializados correctamente');
+        }
+
+        // LLAMAR AL CARGAR LA PÁGINA
+        document.addEventListener('DOMContentLoaded', async () => {
+          await inicializarDatos();
+          // ... resto de tu código de inicialización
+        });
+
+        // FUNCIÓN PARA ABRIR MODAL EDITAR (ACTUALIZADA)
+        async function abrirModalEditar(codZoo) {
+          try {
+            // Asegurarse de que los datos estén cargados
+            if (state.encargados.length === 0 || state.barrios.length === 0) {
+              console.log('Recargando datos...');
+              await inicializarDatos();
+            }
+
+            // Obtener datos del zoocriadero
+            const response = await fetch(`../controllers/controladorEditar.php?cod_zoo=${codZoo}`);
+            const dataZoo = await response.json();
+
+            if (!dataZoo.success) {
+              alert(dataZoo.message || 'Error al obtener datos');
+              return;
+            }
+
+            console.log('Datos del zoo:', dataZoo);
+            console.log('Encargados disponibles:', state.encargados);
+            console.log('Barrios disponibles:', state.barrios);
+
+            // Llenar campos del modal
+            const modalFields = {
+              nombre: document.getElementById('modal_nombre'),
+              direccion: document.getElementById('modal_direccion'),
+              encargadoText: document.getElementById('modal_encargado'),
+              encargadoSelect: document.getElementById('modal_encargado_select'),
+              barrio: document.getElementById('modal_barrio'),
+              barrioSelect: document.getElementById('modal_barrio_select')
+            };
+
+            modalFields.nombre.value = dataZoo.zoo.nombre_zoo || '';
+            modalFields.direccion.value = dataZoo.zoo.direccion_zoo || '';
+
+            // CREAR SELECT DE ENCARGADOS
+            if (modalFields.encargadoText) modalFields.encargadoText.classList.add('hidden');
+
+            if (!modalFields.encargadoSelect) {
+              const selectEncargado = document.createElement('select');
+              selectEncargado.id = 'modal_encargado_select';
+              selectEncargado.name = 'id_usuarios';
+              selectEncargado.className = 'w-full border border-sky-200 rounded-lg p-3 bg-white text-slate-800 focus:border-sky-500 focus:ring-2 focus:ring-sky-200';
+              modalFields.encargadoText.parentNode.insertBefore(selectEncargado, modalFields.encargadoText.nextSibling);
+              modalFields.encargadoSelect = selectEncargado;
+            }
+
+            modalFields.encargadoSelect.innerHTML = '<option value="">-- Seleccione --</option>';
+
+            if (state.encargados.length > 0) {
+              state.encargados.forEach(enc => {
+                const option = document.createElement('option');
+                option.value = enc.id_usuarios;
+                option.textContent = `${enc.nombre_usu} ${enc.apellido_usu}`;
+                if (enc.id_usuarios == dataZoo.zoo.id_usuarios) {
+                  option.selected = true;
+                }
+                modalFields.encargadoSelect.appendChild(option);
+              });
+            } else {
+              console.warn('No hay encargados disponibles');
+            }
+
+            modalFields.encargadoSelect.classList.remove('hidden');
+
+            // CREAR SELECT DE BARRIOS
+            if (modalFields.barrio) modalFields.barrio.classList.add('hidden');
+
+            if (!modalFields.barrioSelect) {
+              const selectBarrio = document.createElement('select');
+              selectBarrio.id = 'modal_barrio_select';
+              selectBarrio.name = 'cod_barrio';
+              selectBarrio.className = 'w-full border border-sky-200 rounded-lg p-3 bg-white text-slate-800 focus:border-sky-500 focus:ring-2 focus:ring-sky-200';
+              modalFields.barrio.parentNode.insertBefore(selectBarrio, modalFields.barrio.nextSibling);
+              modalFields.barrioSelect = selectBarrio;
+            }
+
+            modalFields.barrioSelect.innerHTML = '<option value="">-- Seleccione --</option>';
+
+            if (state.barrios.length > 0) {
+              state.barrios.forEach(barrio => {
+                const option = document.createElement('option');
+                option.value = barrio.cod_barrio;
+                option.textContent = barrio.nombarrio;
+                if (barrio.cod_barrio == dataZoo.zoo.cod_barrio) {
+                  option.selected = true;
+                }
+                modalFields.barrioSelect.appendChild(option);
+              });
+            } else {
+              console.warn('No hay barrios disponibles');
+            }
+
+            modalFields.barrioSelect.classList.remove('hidden');
+
+            // Abrir el modal
+            // ... tu código para mostrar el modal
+
+          } catch (error) {
+            console.error('Error al abrir modal:', error);
+            alert('Error al cargar los datos del zoocriadero');
+          }
+        }
+
+        // Tabla tanques EDITABLE
+        renderTanquesEditables(dataZoo.tanques || []);
+
+        // Mostrar botones de edición
+        btnEditarDireccion.classList.remove('hidden');
+        modalSave.classList.remove('hidden');
+
+        showModal();
       })
       .catch((error) => {
         console.error('Error:', error);
-        alert('Error al cargar los datos del zoocriadero');
+        alert('Error al cargar los datos: ' + error.message);
       });
+  };
+
+  function renderTanquesEditables(tanques) {
+    const list = modalFields.tanquesList;
+    list.innerHTML = '';
+
+    if (tanques && tanques.length > 0) {
+      tanques.forEach((t, index) => {
+        const tr = document.createElement('tr');
+        tr.className = 'hover:bg-sky-100';
+        tr.innerHTML = `
+          <td class="py-2 px-3">${t.nomtiptan || 'N/A'}</td>
+          <td class="py-2 px-3">${t.nom_zootanque || 'N/A'}</td>
+          <td class="py-2 px-3 text-center">
+            <button type="button" class="text-red-600 hover:text-red-800" onclick="eliminarTanque(${index})">
+              ✕
+            </button>
+          </td>
+        `;
+        list.appendChild(tr);
+      });
+    } else {
+      list.innerHTML = `
+        <tr>
+          <td colspan="3" class="py-3 px-3 text-center text-slate-500">
+            No hay tanques asociados
+          </td>
+        </tr>`;
+    }
+  }
+
+  // Función global para eliminar tanque
+  window.eliminarTanque = function (index) {
+    if (confirm('¿Desea eliminar este tanque?')) {
+      state.tanquesDelZoo.splice(index, 1);
+      renderTanquesEditables(state.tanquesDelZoo);
+    }
   };
 
   /* ============================
@@ -476,15 +710,13 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   btnEditarDireccion.addEventListener('click', () => {
-    // Intentar parsear dirección actual
     const dirActual = modalFields.direccion.value.trim();
     if (dirActual && dirActual !== '-') {
       const partes = dirActual.split(' ');
       if (partes[0]) tipoVia.value = partes[0];
       if (partes[1]) numeroVia.value = partes[1];
-      // Parseo básico - mejorar según formato
     }
-    
+
     actualizarVistaPrevia();
     modalDireccion.classList.remove('hidden');
     modalDireccion.classList.add('flex');
@@ -508,15 +740,14 @@ document.addEventListener('DOMContentLoaded', () => {
     if (actual && actual !== '-') {
       const partes = actual.trim().split(' ');
       partes.pop();
-      
-      // Reconstruir campos (simplificado)
+
       if (partes.length > 0) {
         if (partes.length >= 1) tipoVia.value = partes[0];
         if (partes.length >= 2) numeroVia.value = partes[1];
         if (partes.length >= 3) sufijo.value = partes[2].replace('#', '');
         if (partes.length >= 4) distancia.value = partes[3];
       }
-      
+
       actualizarVistaPrevia();
     }
   });

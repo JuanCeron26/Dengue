@@ -5,6 +5,7 @@ $obj = new ListarZoo();
 $zoocriaderos = $obj->MostrarLista();
 $admins = $obj->ObtenerEncargados();
 $tiposTanque = $obj->ObtenerTiposTanque();
+
 ?>
 
 <!DOCTYPE html>
@@ -36,7 +37,7 @@ $tiposTanque = $obj->ObtenerTiposTanque();
                 <div class="w-full flex justify-start">
                     <a href="registrar.php" id="btnNew"
                         class="w-10 h-10 bg-sky-600 text-white font-semibold rounded-full mb-5 flex items-center justify-center shadow-lg">
-                        <img src="../../../src/icons/plus-circle-fill.svg" class="w-5 h-5 invert" alt="agregar">
+                        <img src="../../../src/icons/agregar.svg" class="w-5 h-5 invert" alt="agregar">
                     </a>
                 </div>
 
@@ -164,7 +165,7 @@ $tiposTanque = $obj->ObtenerTiposTanque();
                                                 <img src="../../../src/icons/zoom.png" title="Ver" data-action="view"
                                                     class="w-5 h-5 cursor-pointer hover:scale-110 transition">
                                                 <img src="../../../src/icons/edit.svg" title="Editar" data-action="edit"
-                                                    class="w-5 h-5 cursor-pointer hover:scale-110 transition">
+                                                    class="btn-editar w-5 h-5 cursor-pointer hover:scale-110 transition">
                                                 <img src="../../../src/icons/trash-2.svg" title="Anular" data-action="delete"
                                                     class="w-5 h-5 cursor-pointer hover:scale-110 transition">
                                                 <img src="../../../src/icons/upload.svg" title="Exportar" data-action="export"
@@ -286,32 +287,46 @@ $tiposTanque = $obj->ObtenerTiposTanque();
                             <path d="M3 7v3c0 1.657 3.134 3 7 3s7-1.343 7-3V7c0 1.657-3.134 3-7 3S3 8.657 3 7z" />
                             <path d="M17 5c0 1.657-3.134 3-7 3S3 6.657 3 5s3.134-3 7-3 7 1.343 7 3z" />
                         </svg>
-                        Tanques Asociados
-                    </label>
-                    <div class="bg-sky-50 rounded-lg border border-sky-200 overflow-hidden">
-                        <table class="w-full text-sm">
-                            <thead class="bg-sky-100 text-sky-800">
-                                <tr>
-                                    <th class="py-2 px-3 text-left font-medium">Tipo de Tanque</th>
-                                    <th class="py-2 px-3 text-left font-medium">Nombre</th>
-                                </tr>
-                            </thead>
-                            <tbody id="modal_tanques_list" class="divide-y divide-sky-100">
-                                <tr>
-                                    <td colspan="2" class="py-3 px-3 text-center text-slate-500">No hay tanques asociados</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
+                        <div>
+                            <div class="flex items-center justify-between mb-2">
+                                <label class="flex items-center gap-2 text-sm font-medium text-sky-700">
+                                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                        <path d="M3 12v3c0 1.657 3.134 3 7 3s7-1.343 7-3v-3c0 1.657-3.134 3-7 3s-7-1.343-7-3z" />
+                                        <path d="M3 7v3c0 1.657 3.134 3 7 3s7-1.343 7-3V7c0 1.657-3.134 3-7 3S3 8.657 3 7z" />
+                                        <path d="M17 5c0 1.657-3.134 3-7 3S3 6.657 3 5s3.134-3 7-3 7 1.343 7 3z" />
+                                    </svg>
+                                    Tanques Asociados
+                                </label>
+                                <button type="button" id="btnAgregarTanque"
+                                    class="hidden px-3 py-1 bg-green-500 text-white rounded-lg hover:bg-green-600 transition text-sm font-medium">
+                                    + Agregar Tanque
+                                </button>
+                            </div>
+                            <div class="bg-sky-50 rounded-lg border border-sky-200 overflow-hidden">
+                                <table class="w-full text-sm">
+                                    <thead class="bg-sky-100 text-sky-800">
+                                        <tr>
+                                            <th class="py-2 px-3 text-left font-medium">Tipo de Tanque</th>
+                                            <th class="py-2 px-3 text-left font-medium">Nombre</th>
+                                            <th class="py-2 px-3 text-center font-medium w-20">Acción</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="modal_tanques_list" class="divide-y divide-sky-100">
+                                        <tr>
+                                            <td colspan="3" class="py-3 px-3 text-center text-slate-500">No hay tanques asociados</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
 
-                <!-- FOOTER -->
-                <div class="mt-6 flex justify-end gap-3">
-                    <button type="button" id="modalCancel" class="px-6 py-2 rounded-lg bg-slate-300 text-slate-700 font-medium hover:bg-slate-400 transition">Cerrar</button>
-                    <button type="submit" id="modalSave" class="px-8 py-2 rounded-lg bg-sky-500 text-white font-semibold hover:bg-sky-600 transition hidden">
-                        Guardar
-                    </button>
-                </div>
+                        <!-- FOOTER -->
+                        <div class="mt-6 flex justify-end gap-3">
+                            <button type="button" id="modalCancel" class="px-6 py-2 rounded-lg bg-slate-300 text-slate-700 font-medium hover:bg-slate-400 transition">Cerrar</button>
+                            <button type="submit" id="modalSave" class="px-8 py-2 rounded-lg bg-sky-500 text-white font-semibold hover:bg-sky-600 transition hidden">
+                                Guardar
+                            </button>
+                        </div>
             </form>
         </div>
     </div>

@@ -20,6 +20,7 @@ class modelListar
         FROM tblzoocriadero z
         LEFT JOIN tbltipotanque tp ON z.cod_tipotanque = tp.cod_tipotanque
         LEFT JOIN tblusuarios u ON z.id_usuarios = u.id_usuarios
+        WHERE z.cod_estado = 1
         ORDER BY z.cod_zoo DESC";
 
 
@@ -47,6 +48,18 @@ class modelListar
         $sql = "SELECT DISTINCT cod_tipotanque, nomtiptan
             FROM tbltipotanque
             ORDER BY nomtiptan DESC";
+
+        $result = pg_query($this->conexion, $sql);
+
+        return $result ? pg_fetch_all($result) : [];
+    }
+
+    //Consulta SQL Barrios
+    public function SelectBarrios()
+    {
+        $sql= "SELECT cod_barrio, nombarrio
+        FROM tblbarrios
+        ORDER BY nombarrio";
 
         $result = pg_query($this->conexion, $sql);
 

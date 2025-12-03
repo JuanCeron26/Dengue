@@ -26,7 +26,8 @@ class RegistrarZoo
         $datosZoo = [
             "nombre_zoo"      => $_POST['nombreZoo'],
             "direccion_zoo"   => $_POST['direccion'],
-            "cod_barrio"      => $_POST['barrio']
+            "cod_barrio"      => $_POST['barrio'],
+            "cod_estado"      => 1
         ];
 
         $resultZoo = $this->model->RegistrarZoo($datosZoo);
