@@ -57,12 +57,54 @@ class modelListar
     //Consulta SQL Barrios
     public function SelectBarrios()
     {
-        $sql= "SELECT cod_barrio, nombarrio
+        $sql = "SELECT cod_barrio, nombarrio
         FROM tblbarrios
         ORDER BY nombarrio";
 
         $result = pg_query($this->conexion, $sql);
 
         return $result ? pg_fetch_all($result) : [];
+    }
+
+    public function InsertarTanque($cod_zoo, $cod_tipotanque, $nom_zootanque)
+    {
+        try {
+            // Escapar el nombre del tanque para prevenir SQL injection
+            $nom_zootanque_escaped = pg_escape_string($this->conexion, $nom_zootanque);
+
+            $sql = "INSERT INTO zootanques (cod_zoo, cod_tipotanque, nom_zootanque) 
+                VALUES ($cod_zoo, $cod_tipotanque, '$nom_zootanque_escaped')";
+
+            $resultado = pg_query($this->conexion, $sql);
+
+            if ($resultado) {
+                return true;
+            } else {
+                error_log("Error al insertar tanque: " . pg_last_error($this->conexion));
+                return false;
+            }
+        } catch (Exception $e) {
+            error_log("Error al insertar tanque: " . $e->getMessage());
+            return false;
+        }
+    }
+
+    public function EliminarTanque($cod_zootanque)
+    {
+        try {
+            $sql = "DELETE FROM zootanques WHERE cod_zootanque = $cod_zootanque";
+
+            $resultado = pg_query($this->conexion, $sql);
+
+            if ($resultado) {
+                return true;
+            } else {
+                error_log("Error al eliminar tanque: " . pg_last_error($this->conexion));
+                return false;
+            }
+        } catch (Exception $e) {
+            error_log("Error al eliminar tanque: " . $e->getMessage());
+            return false;
+        }
     }
 }

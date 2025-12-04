@@ -1,51 +1,72 @@
-document.addEventListener('DOMContentLoaded', () => {
-  const tbody = document.getElementById('tbody');
-  const initialRows = Array.from(tbody.querySelectorAll('tr[data-cod]'));
-  const filterForm = document.getElementById('filterForm');
-  const btnApply = document.getElementById('btnApplyFilters');
-  const btnClear = document.getElementById('btnClearFilters');
-  const currentPageEl = document.getElementById('currentPage');
-  const totalPagesEl = document.getElementById('totalPages');
-  const prevBtn = document.getElementById('prevPage');
-  const nextBtn = document.getElementById('nextPage');
-  const pageSize = 8;
-
-  // Modal elements
-  const modalOverlay = document.getElementById('modalOverlay');
-  const modal = modalOverlay.querySelector('.bg-white');
-  const modalTitle = document.getElementById('modalTitle');
-  const modalForm = document.getElementById('modalForm');
-  const modalCancel = document.getElementById('modalCancel');
-  const closeModalBtn = document.getElementById('closeModal');
-  const modalSave = document.getElementById('modalSave');
-  const btnEditarDireccion = document.getElementById('btnEditarDireccion');
-
-  const modalFields = {
-    cod: document.getElementById('modal_cod_zoo'),
-    nombre: document.getElementById('modal_nombre'),
-    encargadoText: document.getElementById('modal_encargado'),
-    encargadoSelect: document.getElementById('modal_encargado_select'),
-    encargadoId: document.getElementById('modal_encargado_id'),
-    barrio: document.getElementById('modal_barrio'),
-    barrioSelect: document.getElementById('modal_barrio_select'),
-    direccion: document.getElementById('modal_direccion'),
-    tanquesList: document.getElementById('modal_tanques_list')
+document.addEventListener('DOMContentLoaded', async () => {
+  // ============================================================================
+  // ELEMENTOS DEL DOM
+  // ============================================================================
+  
+  const elements = {
+    // Tabla y filtros
+    tbody: document.getElementById('tbody'),
+    filterForm: document.getElementById('filterForm'),
+    btnApply: document.getElementById('btnApplyFilters'),
+    btnClear: document.getElementById('btnClearFilters'),
+    
+    // Paginación
+    currentPage: document.getElementById('currentPage'),
+    totalPages: document.getElementById('totalPages'),
+    prevBtn: document.getElementById('prevPage'),
+    nextBtn: document.getElementById('nextPage'),
+    
+    // Modal principal
+    modalOverlay: document.getElementById('modalOverlay'),
+    modalTitle: document.getElementById('modalTitle'),
+    modalForm: document.getElementById('modalForm'),
+    modalCancel: document.getElementById('modalCancel'),
+    closeModal: document.getElementById('closeModal'),
+    modalSave: document.getElementById('modalSave'),
+    btnEditarDireccion: document.getElementById('btnEditarDireccion'),
+    btnAgregarTanque: document.getElementById('btnAgregarTanque'),
+    
+    // Campos del modal principal
+    fields: {
+      cod: document.getElementById('modal_cod_zoo'),
+      nombre: document.getElementById('modal_nombre'),
+      encargadoText: document.getElementById('modal_encargado'),
+      encargadoSelect: document.getElementById('modal_encargado_select'),
+      encargadoId: document.getElementById('modal_encargado_id'),
+      barrio: document.getElementById('modal_barrio'),
+      barrioSelect: document.getElementById('modal_barrio_select'),
+      direccion: document.getElementById('modal_direccion'),
+      tanquesList: document.getElementById('modal_tanques_list')
+    },
+    
+    // Modal dirección
+    modalDireccion: document.getElementById('modalDireccion'),
+    btnCerrarModalDir: document.getElementById('btnCerrarModal'),
+    tipoVia: document.getElementById('tipoVia'),
+    numeroVia: document.getElementById('numeroVia'),
+    sufijo: document.getElementById('sufijo'),
+    distancia: document.getElementById('distancia'),
+    vistaPrevia: document.getElementById('vistaPrevia'),
+    btnBorrarModal: document.getElementById('btnBorrarModal'),
+    btnBorrarUltimoModal: document.getElementById('btnBorrarUltimoModal'),
+    btnAplicarDireccion: document.getElementById('btnAplicarDireccion'),
+    
+    // Modal agregar tanque
+    modalAgregarTanque: document.getElementById('modalAgregarTanque'),
+    btnCerrarModalTanque: document.getElementById('btnCerrarModalTanque'),
+    btnGuardarTanque: document.getElementById('btnGuardarTanque'),
+    selectTipoTanque: document.getElementById('selectTipoTanque'),
+    inputNombreTanque: document.getElementById('inputNombreTanque')
   };
 
-  // Modal Dirección
-  const modalDireccion = document.getElementById('modalDireccion');
-  const btnCerrarModal = document.getElementById('btnCerrarModal');
-  const tipoVia = document.getElementById('tipoVia');
-  const numeroVia = document.getElementById('numeroVia');
-  const sufijo = document.getElementById('sufijo');
-  const distancia = document.getElementById('distancia');
-  const vistaPrevia = document.getElementById('vistaPrevia');
-  const btnBorrarModal = document.getElementById('btnBorrarModal');
-  const btnBorrarUltimoModal = document.getElementById('btnBorrarUltimoModal');
-  const btnAplicarDireccion = document.getElementById('btnAplicarDireccion');
-
-  // Estado
-  let state = {
+  // ============================================================================
+  // CONSTANTES Y ESTADO GLOBAL
+  // ============================================================================
+  
+  const PAGE_SIZE = 8;
+  const initialRows = Array.from(elements.tbody.querySelectorAll('tr[data-cod]'));
+  
+  const state = {
     filters: {
       filterName: '',
       filterEncargado: '',
@@ -59,12 +80,63 @@ document.addEventListener('DOMContentLoaded', () => {
     encargados: [],
     barrios: [],
     tiposTanque: [],
-    tanquesDelZoo: []
+    tanquesDelZoo: [],
+    currentCodZoo: null
   };
 
-  /* ============================
-        FILTROS
-  ============================ */
+  // ============================================================================
+  // API: CARGA DE DATOS INICIALES
+  // ============================================================================
+  
+  async function fetchData(action) {
+    try {
+      const response = await fetch(`../controllers/controllerListar.php?action=${action}`);
+      const data = await response.json();
+      
+      if (data.data && Array.isArray(data.data)) {
+        return data.data;
+      } else if (Array.isArray(data)) {
+        return data;
+      } else {
+        console.error(`Error: datos de ${action} no válidos`, data);
+        return [];
+      }
+    } catch (error) {
+      console.error(`Error al cargar ${action}:`, error);
+      return [];
+    }
+  }
+
+  async function cargarEncargados() {
+    state.encargados = await fetchData('getEncargados');
+    console.log('Encargados cargados:', state.encargados);
+  }
+
+  async function cargarBarrios() {
+    state.barrios = await fetchData('getBarrios');
+    console.log('Barrios cargados:', state.barrios);
+  }
+
+  async function cargarTiposTanque() {
+    state.tiposTanque = await fetchData('getTiposTanque');
+    console.log('Tipos de tanque cargados:', state.tiposTanque);
+  }
+
+  async function inicializarDatos() {
+    await Promise.all([
+      cargarEncargados(),
+      cargarBarrios(),
+      cargarTiposTanque()
+    ]);
+    console.log('Datos inicializados correctamente');
+  }
+
+  await inicializarDatos();
+
+  // ============================================================================
+  // FILTROS
+  // ============================================================================
+  
   function readFiltersFromForm() {
     state.filters.filterName = document.getElementById('filterName').value.trim();
     state.filters.filterEncargado = document.getElementById('filterEncargado').value.trim();
@@ -74,83 +146,57 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function clearFilters() {
-    filterForm.reset();
+    elements.filterForm.reset();
     state.filters = { filterName: '', filterEncargado: '', filterTipo: '', filterDireccion: '' };
     state.page = 1;
     render();
   }
 
-  btnApply.addEventListener('click', (e) => {
+  function getFilteredRows() {
+    return initialRows.filter(tr => {
+      const d = tr.dataset;
+      
+      if (state.filters.filterName && state.filters.filterName !== d.cod) return false;
+      if (state.filters.filterEncargado && state.filters.filterEncargado !== (d.encargadoId || '')) return false;
+      if (state.filters.filterTipo && state.filters.filterTipo.toLowerCase() !== (d.tipo || '').toLowerCase()) return false;
+      
+      if (state.filters.filterDireccion) {
+        const dir = (d.direccion || '').toLowerCase();
+        if (!dir.includes(state.filters.filterDireccion)) return false;
+      }
+      
+      return true;
+    });
+  }
+
+  elements.btnApply.addEventListener('click', (e) => {
     e.preventDefault();
     readFiltersFromForm();
     render();
   });
 
-  btnClear.addEventListener('click', (e) => {
+  elements.btnClear.addEventListener('click', (e) => {
     e.preventDefault();
     clearFilters();
   });
 
-  /* ============================
-        ORDENAMIENTO
-  ============================ */
-  document.querySelectorAll('#tableZoos thead th[data-sort-key]').forEach(th => {
-    th.addEventListener('click', () => {
-      const key = th.getAttribute('data-sort-key');
-      if (state.sortKey === key) {
-        state.sortDir = -state.sortDir;
-      } else {
-        state.sortKey = key;
-        state.sortDir = 1;
-      }
-      state.page = 1;
-      render();
-    });
-  });
-
-  /* ============================
-        PAGINACIÓN
-  ============================ */
-  prevBtn.addEventListener('click', () => {
-    if (state.page > 1) {
-      state.page--;
-      render();
-    }
-  });
-
-  nextBtn.addEventListener('click', () => {
-    const total = Math.max(1, Math.ceil(getFilteredRows().length / pageSize));
-    if (state.page < total) {
-      state.page++;
-      render();
-    }
-  });
-
-  function getFilteredRows() {
-    return initialRows.filter(tr => {
-      const d = tr.dataset;
-      if (state.filters.filterName && state.filters.filterName !== d.cod) return false;
-      if (state.filters.filterEncargado && state.filters.filterEncargado !== (d.encargadoId || '')) return false;
-      if (state.filters.filterTipo && state.filters.filterTipo.toLowerCase() !== (d.tipo || '').toLowerCase()) return false;
-
-      if (state.filters.filterDireccion) {
-        const dir = (d.direccion || '').toLowerCase();
-        if (!dir.includes(state.filters.filterDireccion)) return false;
-      }
-      return true;
-    });
-  }
+  // ============================================================================
+  // ORDENAMIENTO
+  // ============================================================================
+  
+  const sortGetters = {
+    'index': (tr, i) => i,
+    'nombre': tr => (tr.dataset.nombre || '').toLowerCase(),
+    'encargado': tr => (tr.dataset.encargado || '').toLowerCase(),
+    'direccion': tr => (tr.dataset.direccion || '').toLowerCase(),
+    'tipo': tr => (tr.dataset.tipo || '').toLowerCase()
+  };
 
   function sortRows(rows) {
     if (!state.sortKey) return rows;
-    const mapKey = {
-      'index': (tr, i) => i,
-      'nombre': tr => (tr.dataset.nombre || '').toLowerCase(),
-      'encargado': tr => (tr.dataset.encargado || '').toLowerCase(),
-      'direccion': tr => (tr.dataset.direccion || '').toLowerCase(),
-      'tipo': tr => (tr.dataset.tipo || '').toLowerCase()
-    };
-    const getter = mapKey[state.sortKey] || (tr => tr.textContent.toLowerCase());
+    
+    const getter = sortGetters[state.sortKey] || (tr => tr.textContent.toLowerCase());
+    
     return rows.slice().sort((a, b) => {
       const A = getter(a);
       const B = getter(b);
@@ -160,40 +206,72 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  /* ============================
-        RENDER PRINCIPAL
-  ============================ */
+  document.querySelectorAll('#tableZoos thead th[data-sort-key]').forEach(th => {
+    th.addEventListener('click', () => {
+      const key = th.getAttribute('data-sort-key');
+      state.sortKey = key;
+      state.sortDir = (state.sortKey === key) ? -state.sortDir : 1;
+      state.page = 1;
+      render();
+    });
+  });
+
+  // ============================================================================
+  // PAGINACIÓN
+  // ============================================================================
+  
+  elements.prevBtn.addEventListener('click', () => {
+    if (state.page > 1) {
+      state.page--;
+      render();
+    }
+  });
+
+  elements.nextBtn.addEventListener('click', () => {
+    const total = Math.max(1, Math.ceil(getFilteredRows().length / PAGE_SIZE));
+    if (state.page < total) {
+      state.page++;
+      render();
+    }
+  });
+
+  // ============================================================================
+  // RENDERIZADO
+  // ============================================================================
+  
   function render() {
     const filtered = getFilteredRows();
     const sorted = sortRows(filtered);
-    const totalPages = Math.max(1, Math.ceil(sorted.length / pageSize));
+    const totalPages = Math.max(1, Math.ceil(sorted.length / PAGE_SIZE));
 
     if (state.page > totalPages) state.page = totalPages;
 
-    const start = (state.page - 1) * pageSize;
-    const visible = sorted.slice(start, start + pageSize);
+    const start = (state.page - 1) * PAGE_SIZE;
+    const visible = sorted.slice(start, start + PAGE_SIZE);
 
-    tbody.innerHTML = '';
+    elements.tbody.innerHTML = '';
+    
     if (visible.length === 0) {
       const tr = document.createElement('tr');
       tr.innerHTML = `
         <td colspan="5" class="text-center py-4 text-slate-500">
           No hay registros disponibles.
         </td>`;
-      tbody.appendChild(tr);
+      elements.tbody.appendChild(tr);
     } else {
-      visible.forEach(origTr => tbody.appendChild(origTr.cloneNode(true)));
+      visible.forEach(origTr => elements.tbody.appendChild(origTr.cloneNode(true)));
     }
 
-    currentPageEl.textContent = state.page;
-    totalPagesEl.textContent = totalPages;
+    elements.currentPage.textContent = state.page;
+    elements.totalPages.textContent = totalPages;
   }
 
   render();
 
-  /* ============================
-        EVENTOS DE ACCIÓN
-  ============================ */
+  // ============================================================================
+  // EVENTOS DE ACCIÓN EN LA TABLA
+  // ============================================================================
+  
   document.getElementById('tableZoos').addEventListener('click', async (e) => {
     const btn = e.target.closest('[data-action]');
     if (!btn) return;
@@ -202,98 +280,107 @@ document.addEventListener('DOMContentLoaded', () => {
     const action = btn.dataset.action;
     const d = tr.dataset;
 
-    if (action === 'view') {
-      abrirModalVer(d.cod);
-      return;
-    }
-
-    if (action === 'edit') {
-      abrirModalEditar(d.cod);
-      return;
-    }
-
-    if (action === 'delete') {
-      if (!confirm('¿Estás seguro de anular este registro?')) return;
-
-      fetch('../controllers/controllerAnular.php', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ cod_zoo: parseInt(d.cod) })
-      })
-        .then(r => r.json())
-        .then(json => {
-          if (json.success) {
-            alert(json.message || 'Zoocriadero anulado correctamente');
-            location.reload();
-          } else {
-            alert(json.message || 'Error al anular el zoocriadero');
-          }
-        })
-        .catch((error) => {
-          console.error('Error:', error);
-          alert('Error al anular el zoocriadero');
-        });
-
-      return;
-    }
-
-    if (action === 'export') {
-      window.location.href = `exportar.php?cod_zoo=${encodeURIComponent(d.cod)}`;
-      return;
+    switch (action) {
+      case 'view':
+        abrirModalVer(d.cod);
+        break;
+        
+      case 'edit':
+        abrirModalEditar(d.cod);
+        break;
+        
+      case 'delete':
+        await eliminarZoocriadero(d.cod);
+        break;
+        
+      case 'export':
+        window.location.href = `exportar.php?cod_zoo=${encodeURIComponent(d.cod)}`;
+        break;
     }
   });
 
-  /* ============================
-        MODAL CONTROL
-  ============================ */
+  async function eliminarZoocriadero(codZoo) {
+    if (!confirm('¿Estás seguro de anular este registro?')) return;
+
+    try {
+      const response = await fetch('../controllers/controllerAnular.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ cod_zoo: parseInt(codZoo) })
+      });
+      
+      const json = await response.json();
+      
+      if (json.success) {
+        alert(json.message || 'Zoocriadero anulado correctamente');
+        location.reload();
+      } else {
+        alert(json.message || 'Error al anular el zoocriadero');
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      alert('Error al anular el zoocriadero');
+    }
+  }
+
+  // ============================================================================
+  // MODAL PRINCIPAL: CONTROL
+  // ============================================================================
+  
   function showModal() {
-    modalOverlay.classList.remove('hidden');
-    modalOverlay.classList.add('flex');
+    elements.modalOverlay.classList.remove('hidden');
+    elements.modalOverlay.classList.add('flex');
   }
 
   function hideModal() {
-    modalOverlay.classList.add('hidden');
-    modalOverlay.classList.remove('flex');
+    elements.modalOverlay.classList.add('hidden');
+    elements.modalOverlay.classList.remove('flex');
     state.isEditMode = false;
-
-    // Resetear campos
+    state.currentCodZoo = null;
     resetModalFields();
   }
 
   function resetModalFields() {
-    // Ocultar selects y mostrar inputs readonly
-    if (modalFields.encargadoSelect) {
-      modalFields.encargadoSelect.classList.add('hidden');
+    // Encargado
+    if (elements.fields.encargadoSelect) {
+      elements.fields.encargadoSelect.classList.add('hidden');
     }
-    if (modalFields.encargadoText) {
-      modalFields.encargadoText.classList.remove('hidden');
-      modalFields.encargadoText.readOnly = true;
-    }
-
-    if (modalFields.barrioSelect) {
-      modalFields.barrioSelect.classList.add('hidden');
-    }
-    if (modalFields.barrio) {
-      modalFields.barrio.classList.remove('hidden');
-      modalFields.barrio.readOnly = true;
+    if (elements.fields.encargadoText) {
+      elements.fields.encargadoText.classList.remove('hidden');
+      elements.fields.encargadoText.readOnly = true;
     }
 
-    modalFields.nombre.readOnly = true;
-    modalFields.nombre.classList.add('bg-sky-50');
-    modalFields.nombre.classList.remove('bg-white', 'focus:border-sky-500', 'focus:ring-2', 'focus:ring-sky-200');
+    // Barrio
+    if (elements.fields.barrioSelect) {
+      elements.fields.barrioSelect.classList.add('hidden');
+    }
+    if (elements.fields.barrio) {
+      elements.fields.barrio.classList.remove('hidden');
+      elements.fields.barrio.readOnly = true;
+    }
 
-    btnEditarDireccion.classList.add('hidden');
-    modalSave.classList.add('hidden');
+    // Nombre
+    elements.fields.nombre.readOnly = true;
+    elements.fields.nombre.classList.add('bg-sky-50');
+    elements.fields.nombre.classList.remove('bg-white', 'focus:border-sky-500', 'focus:ring-2', 'focus:ring-sky-200');
+
+    // Botones
+    elements.btnEditarDireccion.classList.add('hidden');
+    elements.btnAgregarTanque.classList.add('hidden');
+    elements.modalSave.classList.add('hidden');
   }
 
-  closeModalBtn.addEventListener('click', hideModal);
-  modalCancel.addEventListener('click', hideModal);
-
-  modalOverlay.addEventListener('click', (e) => {
-    if (e.target === modalOverlay) hideModal();
+  elements.closeModal.addEventListener('click', hideModal);
+  elements.modalCancel.addEventListener('click', hideModal);
+  elements.modalOverlay.addEventListener('click', (e) => {
+    if (e.target === elements.modalOverlay) hideModal();
   });
 
-  modalForm.addEventListener('submit', (e) => {
+  // ============================================================================
+  // MODAL PRINCIPAL: SUBMIT (GUARDAR EDICIÓN)
+  // ============================================================================
+  
+  elements.modalForm.addEventListener('submit', async (e) => {
     e.preventDefault();
 
     if (!state.isEditMode) {
@@ -301,33 +388,28 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
 
-    // Obtener valores de los campos
-    const nombreZoo = modalFields.nombre.value.trim();
-    const direccionZoo = modalFields.direccion.value.trim();
+    const nombreZoo = elements.fields.nombre.value.trim();
+    const direccionZoo = elements.fields.direccion.value.trim();
 
-    // Obtener cod_barrio del select o input
     let codBarrio = null;
-    if (modalFields.barrioSelect && !modalFields.barrioSelect.classList.contains('hidden')) {
-      codBarrio = modalFields.barrioSelect.value || null;
+    if (elements.fields.barrioSelect && !elements.fields.barrioSelect.classList.contains('hidden')) {
+      codBarrio = elements.fields.barrioSelect.value || null;
     }
 
-    // Obtener id_usuarios del select o hidden
     let idUsuarios = null;
-    if (modalFields.encargadoSelect && !modalFields.encargadoSelect.classList.contains('hidden')) {
-      idUsuarios = modalFields.encargadoSelect.value;
+    if (elements.fields.encargadoSelect && !elements.fields.encargadoSelect.classList.contains('hidden')) {
+      idUsuarios = elements.fields.encargadoSelect.value;
     } else {
-      idUsuarios = modalFields.encargadoId.value;
+      idUsuarios = elements.fields.encargadoId.value;
     }
 
-    // Validaciones
     if (!nombreZoo || !direccionZoo) {
       alert('Por favor complete todos los campos obligatorios');
       return;
     }
 
-    // Preparar datos
     const datosActualizar = {
-      cod_zoo: parseInt(modalFields.cod.value),
+      cod_zoo: parseInt(elements.fields.cod.value),
       nombre_zoo: nombreZoo,
       direccion_zoo: direccionZoo,
       cod_barrio: codBarrio ? parseInt(codBarrio) : null,
@@ -336,333 +418,257 @@ document.addEventListener('DOMContentLoaded', () => {
 
     console.log('Datos a enviar:', datosActualizar);
 
-    // Enviar al controlador
-    fetch('../controllers/controllerEditar.php', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(datosActualizar)
-    })
-      .then(r => r.json())
-      .then(json => {
-        console.log('Respuesta del servidor:', json);
-        if (json.success) {
-          alert(json.message || 'Zoocriadero actualizado correctamente');
-          hideModal();
-          location.reload();
-        } else {
-          alert(json.message || 'Error al actualizar el zoocriadero');
-        }
-      })
-      .catch((error) => {
-        console.error('Error:', error);
-        alert('Error al guardar los cambios: ' + error.message);
+    try {
+      const response = await fetch('../controllers/controllerEditar.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(datosActualizar)
       });
-  });
-
-  /* ============================
-      MODAL VER DETALLE 
-  ============================ */
-  document.getElementById('tbody').addEventListener('click', (e) => {
-    const boton = e.target.closest('img');
-    if (!boton) return;
-
-    const tr = e.target.closest('tr');
-    const d = tr.dataset;
-    if (boton.classList.contains('btn-editar')) {
-      abrirModalEditar(d.cod);
+      
+      const json = await response.json();
+      console.log('Respuesta del servidor:', json);
+      
+      if (json.success) {
+        alert(json.message || 'Zoocriadero actualizado correctamente');
+        hideModal();
+        location.reload();
+      } else {
+        alert(json.message || 'Error al actualizar el zoocriadero');
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      alert('Error al guardar los cambios: ' + error.message);
     }
   });
 
-  const abrirModalVer = function (codZoo) {
-    fetch(`../controllers/controllerVerDetalle.php?cod_zoo=${codZoo}`)
-      .then(r => r.json())
-      .then(data => {
-        if (data.success) {
-          state.isEditMode = false;
+  // ============================================================================
+  // MODAL VER DETALLE
+  // ============================================================================
+  
+  async function abrirModalVer(codZoo) {
+    try {
+      const response = await fetch(`../controllers/controllerVerDetalle.php?cod_zoo=${codZoo}`);
+      const data = await response.json();
 
-          modalFields.cod.value = data.zoo.cod_zoo;
-          modalFields.nombre.value = data.zoo.nombre_zoo;
+      if (!data.success) {
+        alert(data.message || 'Error al cargar los datos del zoocriadero');
+        return;
+      }
 
-          // MODO VER: Mostrar texto readonly, ocultar selects
-          if (modalFields.encargadoSelect) {
-            modalFields.encargadoSelect.classList.add('hidden');
-          }
-          modalFields.encargadoText.classList.remove('hidden');
-          modalFields.encargadoText.value = data.zoo.encargado;
-          modalFields.encargadoId.value = data.zoo.id_usuarios;
+      state.isEditMode = false;
 
-          if (modalFields.barrioSelect) {
-            modalFields.barrioSelect.classList.add('hidden');
-          }
-          modalFields.barrio.classList.remove('hidden');
-          modalFields.barrio.value = data.zoo.nombarrio || '';
+      elements.fields.cod.value = data.zoo.cod_zoo;
+      elements.fields.nombre.value = data.zoo.nombre_zoo;
 
-          modalFields.direccion.value = data.zoo.direccion_zoo;
+      if (elements.fields.encargadoSelect) {
+        elements.fields.encargadoSelect.classList.add('hidden');
+      }
+      elements.fields.encargadoText.classList.remove('hidden');
+      elements.fields.encargadoText.value = data.zoo.encargado;
+      elements.fields.encargadoId.value = data.zoo.id_usuarios;
 
-          modalTitle.textContent = 'Ver Zoocriadero';
+      if (elements.fields.barrioSelect) {
+        elements.fields.barrioSelect.classList.add('hidden');
+      }
+      elements.fields.barrio.classList.remove('hidden');
+      elements.fields.barrio.value = data.zoo.nombarrio || '';
 
-          // Tabla tanques - SOLO LECTURA (sin botón eliminar)
-          const list = modalFields.tanquesList;
-          list.innerHTML = '';
+      elements.fields.direccion.value = data.zoo.direccion_zoo;
+      elements.modalTitle.textContent = 'Ver Zoocriadero';
 
-          if (data.tanques && data.tanques.length > 0) {
-            data.tanques.forEach(t => {
-              list.innerHTML += `
-                <tr class="hover:bg-sky-100">
-                  <td class="py-2 px-3">${t.nomtiptan || 'N/A'}</td>
-                  <td class="py-2 px-3">${t.nom_zootanque || 'N/A'}</td>
-                </tr>`;
-            });
-          } else {
-            list.innerHTML = `
-              <tr>
-                <td colspan="2" class="py-3 px-3 text-center text-slate-500">
-                  No hay tanques asociados
-                </td>
-              </tr>`;
-          }
+      renderTanquesVista(data.tanques || []);
+      resetModalFields();
+      showModal();
+      
+    } catch (error) {
+      console.error('Error:', error);
+      alert('Error al cargar los datos del zoocriadero');
+    }
+  }
 
-          resetModalFields();
-          showModal();
-        } else {
-          alert(data.message || 'Error al cargar los datos del zoocriadero');
-        }
-      })
-      .catch((error) => {
-        console.error('Error:', error);
-        alert('Error al cargar los datos del zoocriadero');
-      });
-  };
-
-  /* ============================
-      MODAL EDITAR
-  ============================ */
-  const abrirModalEditar = function (codZoo) {
-    const cod = parseInt(codZoo);
-
-    // Cargar datos auxiliares primero
-    Promise.all([
-      fetch('../controllers/controllerEditar.php?cod_zoo=' + cod).then(r => r.json()),
-      fetch('../controllers/controllerListar.php?action=getEncargados').then(r => r.json()),
-      fetch('../controllers/controllerListar.php?action=getBarrios').then(r => r.json())
-    ])
-      .then(([dataZoo, dataEncargados, dataBarrios]) => {
-        if (!dataZoo.success) {
-          alert(dataZoo.message || 'Error al cargar los datos del zoocriadero');
-          return;
-        }
-
-        state.isEditMode = true;
-        state.encargados = dataEncargados.data || [];
-        state.barrios = dataBarrios.data || [];
-        state.tanquesDelZoo = dataZoo.tanques || [];
-
-        // Datos principales
-        modalFields.cod.value = dataZoo.zoo.cod_zoo;
-        modalFields.nombre.value = dataZoo.zoo.nombre_zoo;
-        modalFields.direccion.value = dataZoo.zoo.direccion_zoo;
-
-        modalTitle.textContent = 'Editar Zoocriadero';
-
-        // Habilitar campo nombre
-        modalFields.nombre.readOnly = false;
-        modalFields.nombre.classList.remove('bg-sky-50');
-        modalFields.nombre.classList.add('bg-white', 'focus:border-sky-500', 'focus:ring-2', 'focus:ring-sky-200');
-
-        // AGREGAR AL INICIO DEL ARCHIVO, DONDE INICIALIZAS EL STATE
-        const state = {
-          encargados: [],
-          barrios: [],
-          tiposTanque: []
-          // ... otros datos que tengas
-        };
-
-        // FUNCIÓN PARA CARGAR ENCARGADOS
-        async function cargarEncargados() {
-          try {
-            const response = await fetch('../controllers/controladorListar.php?action=getEncargados');
-            const data = await response.json();
-
-            if (data && Array.isArray(data)) {
-              state.encargados = data;
-              console.log('Encargados cargados:', state.encargados);
-            } else {
-              console.error('Error: datos de encargados no válidos', data);
-              state.encargados = [];
-            }
-          } catch (error) {
-            console.error('Error al cargar encargados:', error);
-            state.encargados = [];
-          }
-        }
-
-        // FUNCIÓN PARA CARGAR BARRIOS
-        async function cargarBarrios() {
-          try {
-            const response = await fetch('../controllers/controladorListar.php?action=getBarrios');
-            const data = await response.json();
-
-            if (data && Array.isArray(data)) {
-              state.barrios = data;
-              console.log('Barrios cargados:', state.barrios);
-            } else {
-              console.error('Error: datos de barrios no válidos', data);
-              state.barrios = [];
-            }
-          } catch (error) {
-            console.error('Error al cargar barrios:', error);
-            state.barrios = [];
-          }
-        }
-
-        // FUNCIÓN PARA INICIALIZAR TODOS LOS DATOS
-        async function inicializarDatos() {
-          await Promise.all([
-            cargarEncargados(),
-            cargarBarrios()
-          ]);
-          console.log('Datos inicializados correctamente');
-        }
-
-        // LLAMAR AL CARGAR LA PÁGINA
-        document.addEventListener('DOMContentLoaded', async () => {
-          await inicializarDatos();
-          // ... resto de tu código de inicialización
-        });
-
-        // FUNCIÓN PARA ABRIR MODAL EDITAR (ACTUALIZADA)
-        async function abrirModalEditar(codZoo) {
-          try {
-            // Asegurarse de que los datos estén cargados
-            if (state.encargados.length === 0 || state.barrios.length === 0) {
-              console.log('Recargando datos...');
-              await inicializarDatos();
-            }
-
-            // Obtener datos del zoocriadero
-            const response = await fetch(`../controllers/controladorEditar.php?cod_zoo=${codZoo}`);
-            const dataZoo = await response.json();
-
-            if (!dataZoo.success) {
-              alert(dataZoo.message || 'Error al obtener datos');
-              return;
-            }
-
-            console.log('Datos del zoo:', dataZoo);
-            console.log('Encargados disponibles:', state.encargados);
-            console.log('Barrios disponibles:', state.barrios);
-
-            // Llenar campos del modal
-            const modalFields = {
-              nombre: document.getElementById('modal_nombre'),
-              direccion: document.getElementById('modal_direccion'),
-              encargadoText: document.getElementById('modal_encargado'),
-              encargadoSelect: document.getElementById('modal_encargado_select'),
-              barrio: document.getElementById('modal_barrio'),
-              barrioSelect: document.getElementById('modal_barrio_select')
-            };
-
-            modalFields.nombre.value = dataZoo.zoo.nombre_zoo || '';
-            modalFields.direccion.value = dataZoo.zoo.direccion_zoo || '';
-
-            // CREAR SELECT DE ENCARGADOS
-            if (modalFields.encargadoText) modalFields.encargadoText.classList.add('hidden');
-
-            if (!modalFields.encargadoSelect) {
-              const selectEncargado = document.createElement('select');
-              selectEncargado.id = 'modal_encargado_select';
-              selectEncargado.name = 'id_usuarios';
-              selectEncargado.className = 'w-full border border-sky-200 rounded-lg p-3 bg-white text-slate-800 focus:border-sky-500 focus:ring-2 focus:ring-sky-200';
-              modalFields.encargadoText.parentNode.insertBefore(selectEncargado, modalFields.encargadoText.nextSibling);
-              modalFields.encargadoSelect = selectEncargado;
-            }
-
-            modalFields.encargadoSelect.innerHTML = '<option value="">-- Seleccione --</option>';
-
-            if (state.encargados.length > 0) {
-              state.encargados.forEach(enc => {
-                const option = document.createElement('option');
-                option.value = enc.id_usuarios;
-                option.textContent = `${enc.nombre_usu} ${enc.apellido_usu}`;
-                if (enc.id_usuarios == dataZoo.zoo.id_usuarios) {
-                  option.selected = true;
-                }
-                modalFields.encargadoSelect.appendChild(option);
-              });
-            } else {
-              console.warn('No hay encargados disponibles');
-            }
-
-            modalFields.encargadoSelect.classList.remove('hidden');
-
-            // CREAR SELECT DE BARRIOS
-            if (modalFields.barrio) modalFields.barrio.classList.add('hidden');
-
-            if (!modalFields.barrioSelect) {
-              const selectBarrio = document.createElement('select');
-              selectBarrio.id = 'modal_barrio_select';
-              selectBarrio.name = 'cod_barrio';
-              selectBarrio.className = 'w-full border border-sky-200 rounded-lg p-3 bg-white text-slate-800 focus:border-sky-500 focus:ring-2 focus:ring-sky-200';
-              modalFields.barrio.parentNode.insertBefore(selectBarrio, modalFields.barrio.nextSibling);
-              modalFields.barrioSelect = selectBarrio;
-            }
-
-            modalFields.barrioSelect.innerHTML = '<option value="">-- Seleccione --</option>';
-
-            if (state.barrios.length > 0) {
-              state.barrios.forEach(barrio => {
-                const option = document.createElement('option');
-                option.value = barrio.cod_barrio;
-                option.textContent = barrio.nombarrio;
-                if (barrio.cod_barrio == dataZoo.zoo.cod_barrio) {
-                  option.selected = true;
-                }
-                modalFields.barrioSelect.appendChild(option);
-              });
-            } else {
-              console.warn('No hay barrios disponibles');
-            }
-
-            modalFields.barrioSelect.classList.remove('hidden');
-
-            // Abrir el modal
-            // ... tu código para mostrar el modal
-
-          } catch (error) {
-            console.error('Error al abrir modal:', error);
-            alert('Error al cargar los datos del zoocriadero');
-          }
-        }
-
-        // Tabla tanques EDITABLE
-        renderTanquesEditables(dataZoo.tanques || []);
-
-        // Mostrar botones de edición
-        btnEditarDireccion.classList.remove('hidden');
-        modalSave.classList.remove('hidden');
-
-        showModal();
-      })
-      .catch((error) => {
-        console.error('Error:', error);
-        alert('Error al cargar los datos: ' + error.message);
-      });
-  };
-
-  function renderTanquesEditables(tanques) {
-    const list = modalFields.tanquesList;
+  function renderTanquesVista(tanques) {
+    const list = elements.fields.tanquesList;
     list.innerHTML = '';
 
     if (tanques && tanques.length > 0) {
       tanques.forEach((t, index) => {
         const tr = document.createElement('tr');
-        tr.className = 'hover:bg-sky-100';
+        tr.className = 'hover:bg-sky-50 transition-colors';
         tr.innerHTML = `
-          <td class="py-2 px-3">${t.nomtiptan || 'N/A'}</td>
-          <td class="py-2 px-3">${t.nom_zootanque || 'N/A'}</td>
-          <td class="py-2 px-3 text-center">
-            <button type="button" class="text-red-600 hover:text-red-800" onclick="eliminarTanque(${index})">
-              ✕
+          <td class="py-3 px-4 text-slate-700">
+            <div class="flex items-center gap-2">
+              <span class="w-2 h-2 bg-sky-500 rounded-full"></span>
+              ${t.nomtiptan || 'N/A'}
+            </div>
+          </td>
+          <td class="py-3 px-4 text-slate-700 font-medium">${t.nom_zootanque || 'N/A'}</td>
+        `;
+        list.appendChild(tr);
+      });
+    } else {
+      list.innerHTML = `
+        <tr>
+          <td colspan="2" class="py-6 px-4 text-center text-slate-500">
+            <div class="flex flex-col items-center gap-2">
+              <svg class="w-12 h-12 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
+              </svg>
+              <span class="text-sm">No hay tanques asociados</span>
+            </div>
+          </td>
+        </tr>`;
+    }
+  }
+
+  // ============================================================================
+  // MODAL EDITAR
+  // ============================================================================
+  
+  async function abrirModalEditar(codZoo) {
+    try {
+      if (state.encargados.length === 0 || state.barrios.length === 0) {
+        console.log('Recargando datos...');
+        await inicializarDatos();
+      }
+
+      const cod = parseInt(codZoo);
+      state.currentCodZoo = cod;
+
+      const response = await fetch(`../controllers/controllerEditar.php?cod_zoo=${cod}`);
+      const dataZoo = await response.json();
+
+      if (!dataZoo.success) {
+        alert(dataZoo.message || 'Error al cargar los datos del zoocriadero');
+        return;
+      }
+
+      console.log('Datos del zoo:', dataZoo);
+      console.log('Encargados disponibles:', state.encargados);
+      console.log('Barrios disponibles:', state.barrios);
+
+      state.isEditMode = true;
+      state.tanquesDelZoo = dataZoo.tanques || [];
+
+      elements.fields.cod.value = dataZoo.zoo.cod_zoo;
+      elements.fields.nombre.value = dataZoo.zoo.nombre_zoo;
+      elements.fields.direccion.value = dataZoo.zoo.direccion_zoo;
+      elements.modalTitle.textContent = 'Editar Zoocriadero';
+
+      // Habilitar edición del nombre
+      elements.fields.nombre.readOnly = false;
+      elements.fields.nombre.classList.remove('bg-sky-50');
+      elements.fields.nombre.classList.add('bg-white', 'focus:border-sky-500', 'focus:ring-2', 'focus:ring-sky-200');
+
+      // Configurar select de encargados
+      configurarSelectEncargados(dataZoo.zoo.id_usuarios);
+      
+      // Configurar select de barrios
+      configurarSelectBarrios(dataZoo.zoo.cod_barrio);
+
+      renderTanquesEditables(dataZoo.tanques || []);
+
+      elements.btnEditarDireccion.classList.remove('hidden');
+      elements.btnAgregarTanque.classList.remove('hidden');
+      elements.modalSave.classList.remove('hidden');
+
+      showModal();
+
+    } catch (error) {
+      console.error('Error al abrir modal:', error);
+      alert('Error al cargar los datos del zoocriadero: ' + error.message);
+    }
+  }
+
+  function configurarSelectEncargados(idUsuarioActual) {
+    if (elements.fields.encargadoText) {
+      elements.fields.encargadoText.classList.add('hidden');
+    }
+
+    if (!elements.fields.encargadoSelect) {
+      const selectEncargado = document.createElement('select');
+      selectEncargado.id = 'modal_encargado_select';
+      selectEncargado.name = 'id_usuarios';
+      selectEncargado.className = 'w-full border border-sky-200 rounded-lg p-3 bg-white text-slate-800 focus:border-sky-500 focus:ring-2 focus:ring-sky-200';
+      elements.fields.encargadoText.parentNode.insertBefore(selectEncargado, elements.fields.encargadoText.nextSibling);
+      elements.fields.encargadoSelect = selectEncargado;
+    }
+
+    elements.fields.encargadoSelect.innerHTML = '<option value="">-- Seleccione --</option>';
+
+    if (state.encargados.length > 0) {
+      state.encargados.forEach(enc => {
+        const option = document.createElement('option');
+        option.value = enc.id_usuarios;
+        option.textContent = `${enc.nombre_usu} ${enc.apellido_usu}`;
+        if (enc.id_usuarios == idUsuarioActual) {
+          option.selected = true;
+        }
+        elements.fields.encargadoSelect.appendChild(option);
+      });
+    } else {
+      console.warn('No hay encargados disponibles');
+    }
+
+    elements.fields.encargadoSelect.classList.remove('hidden');
+  }
+
+  function configurarSelectBarrios(codBarrioActual) {
+    if (elements.fields.barrio) {
+      elements.fields.barrio.classList.add('hidden');
+    }
+
+    if (!elements.fields.barrioSelect) {
+      const selectBarrio = document.createElement('select');
+      selectBarrio.id = 'modal_barrio_select';
+      selectBarrio.name = 'cod_barrio';
+      selectBarrio.className = 'w-full border border-sky-200 rounded-lg p-3 bg-white text-slate-800 focus:border-sky-500 focus:ring-2 focus:ring-sky-200';
+      elements.fields.barrio.parentNode.insertBefore(selectBarrio, elements.fields.barrio.nextSibling);
+      elements.fields.barrioSelect = selectBarrio;
+    }
+
+    elements.fields.barrioSelect.innerHTML = '<option value="">-- Seleccione --</option>';
+
+    if (state.barrios.length > 0) {
+      state.barrios.forEach(barrio => {
+        const option = document.createElement('option');
+        option.value = barrio.cod_barrio;
+        option.textContent = barrio.nombarrio;
+        if (barrio.cod_barrio == codBarrioActual) {
+          option.selected = true;
+        }
+        elements.fields.barrioSelect.appendChild(option);
+      });
+    } else {
+      console.warn('No hay barrios disponibles');
+    }
+
+    elements.fields.barrioSelect.classList.remove('hidden');
+  }
+
+  function renderTanquesEditables(tanques) {
+    const list = elements.fields.tanquesList;
+    list.innerHTML = '';
+
+    if (tanques && tanques.length > 0) {
+      tanques.forEach((t) => {
+        const tr = document.createElement('tr');
+        tr.className = 'hover:bg-sky-50 transition-colors';
+        tr.innerHTML = `
+          <td class="py-3 px-4 text-slate-700">
+            <div class="flex items-center gap-2">
+              <span class="w-2 h-2 bg-sky-500 rounded-full"></span>
+              ${t.nomtiptan || 'N/A'}
+            </div>
+          </td>
+          <td class="py-3 px-4 text-slate-700 font-medium">${t.nom_zootanque || 'N/A'}</td>
+          <td class="py-3 px-4 text-center">
+            <button type="button" 
+              class="inline-flex items-center justify-center w-8 h-8 text-red-600 hover:bg-red-50 rounded-full transition-all hover:scale-110" 
+              data-cod-tanque="${t.cod_zootanque}"
+              title="Eliminar tanque">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+              </svg>
             </button>
           </td>
         `;
@@ -671,29 +677,150 @@ document.addEventListener('DOMContentLoaded', () => {
     } else {
       list.innerHTML = `
         <tr>
-          <td colspan="3" class="py-3 px-3 text-center text-slate-500">
-            No hay tanques asociados
+          <td colspan="3" class="py-6 px-4 text-center text-slate-500">
+            <div class="flex flex-col items-center gap-2">
+              <svg class="w-12 h-12 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
+              </svg>
+              <span class="text-sm">No hay tanques asociados</span>
+            </div>
           </td>
         </tr>`;
     }
   }
 
-  // Función global para eliminar tanque
-  window.eliminarTanque = function (index) {
-    if (confirm('¿Desea eliminar este tanque?')) {
-      state.tanquesDelZoo.splice(index, 1);
-      renderTanquesEditables(state.tanquesDelZoo);
-    }
-  };
+  // Event delegation para eliminar tanques
+  elements.fields.tanquesList.addEventListener('click', async (e) => {
+    const btn = e.target.closest('button[data-cod-tanque]');
+    if (!btn) return;
 
-  /* ============================
-      MODAL DIRECCIÓN
-  ============================ */
+    const codTanque = btn.dataset.codTanque;
+    
+    if (!confirm('¿Desea eliminar este tanque?')) return;
+
+    try {
+      const response = await fetch('../controllers/controllerEliminarTanque.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ cod_zootanque: parseInt(codTanque) })
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        alert('Tanque eliminado correctamente');
+        abrirModalEditar(state.currentCodZoo);
+      } else {
+        alert(result.message || 'Error al eliminar el tanque');
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      alert('Error al eliminar el tanque: ' + error.message);
+    }
+  });
+
+  // ============================================================================
+  // MODAL AGREGAR TANQUE
+  // ============================================================================
+  
+  function cerrarModalAgregarTanque() {
+    if (elements.modalAgregarTanque) {
+      elements.modalAgregarTanque.classList.add('hidden');
+      elements.modalAgregarTanque.classList.remove('flex');
+    }
+  }
+
+  elements.btnAgregarTanque.addEventListener('click', () => {
+    if (!elements.modalAgregarTanque) {
+      console.error('Modal de agregar tanque no encontrado en el DOM');
+      alert('Error: El modal de agregar tanque no está disponible');
+      return;
+    }
+
+    elements.selectTipoTanque.innerHTML = '<option value="">-- Seleccione tipo --</option>';
+    
+    state.tiposTanque.forEach(tipo => {
+      const option = document.createElement('option');
+      option.value = tipo.cod_tipotanque;
+      option.textContent = tipo.nomtiptan;
+      elements.selectTipoTanque.appendChild(option);
+    });
+
+    elements.inputNombreTanque.value = '';
+    elements.modalAgregarTanque.classList.remove('hidden');
+    elements.modalAgregarTanque.classList.add('flex');
+  });
+
+  if (elements.btnCerrarModalTanque) {
+    elements.btnCerrarModalTanque.addEventListener('click', cerrarModalAgregarTanque);
+  }
+
+  // Botón cancelar adicional
+  const btnCancelarTanque = document.getElementById('btnCancelarTanque');
+  if (btnCancelarTanque) {
+    btnCancelarTanque.addEventListener('click', cerrarModalAgregarTanque);
+  }
+
+  if (elements.btnGuardarTanque) {
+    elements.btnGuardarTanque.addEventListener('click', async () => {
+      const codTipoTanque = elements.selectTipoTanque.value;
+      const nombreTanque = elements.inputNombreTanque.value.trim();
+
+      if (!codTipoTanque || !nombreTanque) {
+        alert('Por favor complete todos los campos');
+        return;
+      }
+
+      if (!state.currentCodZoo) {
+        alert('Error: No se ha seleccionado un zoocriadero');
+        return;
+      }
+
+      try {
+        const response = await fetch('../controllers/controllerListar.php', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            action: 'agregarTanque',
+            cod_zoo: state.currentCodZoo,
+            cod_tipotanque: parseInt(codTipoTanque),
+            nom_zootanque: nombreTanque
+          })
+        });
+
+        const result = await response.json();
+
+        if (result.success) {
+          alert('Tanque agregado correctamente');
+          cerrarModalAgregarTanque();
+          abrirModalEditar(state.currentCodZoo);
+        } else {
+          alert(result.message || 'Error al agregar el tanque');
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        alert('Error al agregar el tanque: ' + error.message);
+      }
+    });
+  }
+
+  if (elements.modalAgregarTanque) {
+    elements.modalAgregarTanque.addEventListener('click', (e) => {
+      if (e.target === elements.modalAgregarTanque) {
+        cerrarModalAgregarTanque();
+      }
+    });
+  }
+
+  // ============================================================================
+  // MODAL DIRECCIÓN
+  // ============================================================================
+  
   function actualizarVistaPrevia() {
-    const tipo = tipoVia.value;
-    const numero = numeroVia.value.trim();
-    const suf = sufijo.value.trim();
-    const dist = distancia.value.trim();
+    const tipo = elements.tipoVia.value;
+    const numero = elements.numeroVia.value.trim();
+    const suf = elements.sufijo.value.trim();
+    const dist = elements.distancia.value.trim();
 
     let direccion = [];
     if (tipo) direccion.push(tipo);
@@ -701,68 +828,73 @@ document.addEventListener('DOMContentLoaded', () => {
     if (suf) direccion.push('#' + suf);
     if (dist) direccion.push(dist);
 
-    vistaPrevia.textContent = direccion.length > 0 ? direccion.join(' ') : '-';
+    elements.vistaPrevia.textContent = direccion.length > 0 ? direccion.join(' ') : '-';
   }
 
-  [tipoVia, numeroVia, sufijo, distancia].forEach(input => {
+  [elements.tipoVia, elements.numeroVia, elements.sufijo, elements.distancia].forEach(input => {
     input.addEventListener('input', actualizarVistaPrevia);
     input.addEventListener('change', actualizarVistaPrevia);
   });
 
-  btnEditarDireccion.addEventListener('click', () => {
-    const dirActual = modalFields.direccion.value.trim();
+  elements.btnEditarDireccion.addEventListener('click', () => {
+    const dirActual = elements.fields.direccion.value.trim();
     if (dirActual && dirActual !== '-') {
       const partes = dirActual.split(' ');
-      if (partes[0]) tipoVia.value = partes[0];
-      if (partes[1]) numeroVia.value = partes[1];
+      if (partes[0]) elements.tipoVia.value = partes[0];
+      if (partes[1]) elements.numeroVia.value = partes[1];
     }
 
     actualizarVistaPrevia();
-    modalDireccion.classList.remove('hidden');
-    modalDireccion.classList.add('flex');
+    elements.modalDireccion.classList.remove('hidden');
+    elements.modalDireccion.classList.add('flex');
   });
 
-  btnCerrarModal.addEventListener('click', () => {
-    modalDireccion.classList.add('hidden');
-    modalDireccion.classList.remove('flex');
+  elements.btnCerrarModalDir.addEventListener('click', () => {
+    elements.modalDireccion.classList.add('hidden');
+    elements.modalDireccion.classList.remove('flex');
   });
 
-  btnBorrarModal.addEventListener('click', () => {
-    tipoVia.value = '';
-    numeroVia.value = '';
-    sufijo.value = '';
-    distancia.value = '';
+  elements.btnBorrarModal.addEventListener('click', () => {
+    elements.tipoVia.value = '';
+    elements.numeroVia.value = '';
+    elements.sufijo.value = '';
+    elements.distancia.value = '';
     actualizarVistaPrevia();
   });
 
-  btnBorrarUltimoModal.addEventListener('click', () => {
-    const actual = vistaPrevia.textContent;
+  elements.btnBorrarUltimoModal.addEventListener('click', () => {
+    const actual = elements.vistaPrevia.textContent;
     if (actual && actual !== '-') {
       const partes = actual.trim().split(' ');
       partes.pop();
 
       if (partes.length > 0) {
-        if (partes.length >= 1) tipoVia.value = partes[0];
-        if (partes.length >= 2) numeroVia.value = partes[1];
-        if (partes.length >= 3) sufijo.value = partes[2].replace('#', '');
-        if (partes.length >= 4) distancia.value = partes[3];
+        if (partes.length >= 1) elements.tipoVia.value = partes[0];
+        if (partes.length >= 2) elements.numeroVia.value = partes[1];
+        if (partes.length >= 3) elements.sufijo.value = partes[2].replace('#', '');
+        if (partes.length >= 4) elements.distancia.value = partes[3];
+      } else {
+        elements.tipoVia.value = '';
+        elements.numeroVia.value = '';
+        elements.sufijo.value = '';
+        elements.distancia.value = '';
       }
 
       actualizarVistaPrevia();
     }
   });
 
-  btnAplicarDireccion.addEventListener('click', () => {
-    const direccionGenerada = vistaPrevia.textContent;
-    modalFields.direccion.value = direccionGenerada;
-    modalDireccion.classList.add('hidden');
-    modalDireccion.classList.remove('flex');
+  elements.btnAplicarDireccion.addEventListener('click', () => {
+    const direccionGenerada = elements.vistaPrevia.textContent;
+    elements.fields.direccion.value = direccionGenerada;
+    elements.modalDireccion.classList.add('hidden');
+    elements.modalDireccion.classList.remove('flex');
   });
 
-  modalDireccion.addEventListener('click', (e) => {
-    if (e.target === modalDireccion) {
-      modalDireccion.classList.add('hidden');
-      modalDireccion.classList.remove('flex');
+  elements.modalDireccion.addEventListener('click', (e) => {
+    if (e.target === elements.modalDireccion) {
+      elements.modalDireccion.classList.add('hidden');
+      elements.modalDireccion.classList.remove('flex');
     }
   });
 

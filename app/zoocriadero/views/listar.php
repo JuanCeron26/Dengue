@@ -288,45 +288,58 @@ $tiposTanque = $obj->ObtenerTiposTanque();
                             <path d="M17 5c0 1.657-3.134 3-7 3S3 6.657 3 5s3.134-3 7-3 7 1.343 7 3z" />
                         </svg>
                         <div>
-                            <div class="flex items-center justify-between mb-2">
-                                <label class="flex items-center gap-2 text-sm font-medium text-sky-700">
-                                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                                        <path d="M3 12v3c0 1.657 3.134 3 7 3s7-1.343 7-3v-3c0 1.657-3.134 3-7 3s-7-1.343-7-3z" />
-                                        <path d="M3 7v3c0 1.657 3.134 3 7 3s7-1.343 7-3V7c0 1.657-3.134 3-7 3S3 8.657 3 7z" />
-                                        <path d="M17 5c0 1.657-3.134 3-7 3S3 6.657 3 5s3.134-3 7-3 7 1.343 7 3z" />
-                                    </svg>
-                                    Tanques Asociados
-                                </label>
-                                <button type="button" id="btnAgregarTanque"
-                                    class="hidden px-3 py-1 bg-green-500 text-white rounded-lg hover:bg-green-600 transition text-sm font-medium">
-                                    + Agregar Tanque
+                            <!-- Tanques Asociados -->
+                            <div class="mt-6">
+                                <div class="flex items-center justify-between mb-3">
+                                    <label class="flex items-center gap-2 text-sm font-medium text-sky-700">
+                                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                            <path d="M3 12v3c0 1.657 3.134 3 7 3s7-1.343 7-3v-3c0 1.657-3.134 3-7 3s-7-1.343-7-3z" />
+                                            <path d="M3 7v3c0 1.657 3.134 3 7 3s7-1.343 7-3V7c0 1.657-3.134 3-7 3S3 8.657 3 7z" />
+                                            <path d="M17 5c0 1.657-3.134 3-7 3S3 6.657 3 5s3.134-3 7-3 7 1.343 7 3z" />
+                                        </svg>
+                                        Tanques Asociados
+                                    </label>
+                                    <button type="button" id="btnAgregarTanque"
+                                        class="hidden px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition text-sm font-medium flex items-center gap-2 shadow-md">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                                        </svg>
+                                        Agregar Tanque
+                                    </button>
+                                </div>
+
+                                <div class="bg-sky-50 rounded-lg border-2 border-sky-200 overflow-hidden shadow-sm">
+                                    <table class="w-full text-sm">
+                                        <thead class="bg-gradient-to-r from-sky-100 to-sky-200">
+                                            <tr>
+                                                <th class="py-3 px-4 text-left font-semibold text-sky-800">Tipo de Tanque</th>
+                                                <th class="py-3 px-4 text-left font-semibold text-sky-800">Nombre</th>
+                                                <th class="py-3 px-4 text-center font-semibold text-sky-800 w-24">Acción</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="modal_tanques_list" class="divide-y divide-sky-200 bg-white">
+                                            <tr>
+                                                <td colspan="3" class="py-6 px-4 text-center text-slate-500">
+                                                    <div class="flex flex-col items-center gap-2">
+                                                        <svg class="w-12 h-12 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
+                                                        </svg>
+                                                        <span class="text-sm">No hay tanques asociados</span>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <!-- FOOTER -->
+                            <div class="mt-6 flex justify-end gap-3">
+                                <button type="button" id="modalCancel" class="px-6 py-2 rounded-lg bg-slate-300 text-slate-700 font-medium hover:bg-slate-400 transition">Cerrar</button>
+                                <button type="submit" id="modalSave" class="px-8 py-2 rounded-lg bg-sky-500 text-white font-semibold hover:bg-sky-600 transition hidden">
+                                    Guardar
                                 </button>
                             </div>
-                            <div class="bg-sky-50 rounded-lg border border-sky-200 overflow-hidden">
-                                <table class="w-full text-sm">
-                                    <thead class="bg-sky-100 text-sky-800">
-                                        <tr>
-                                            <th class="py-2 px-3 text-left font-medium">Tipo de Tanque</th>
-                                            <th class="py-2 px-3 text-left font-medium">Nombre</th>
-                                            <th class="py-2 px-3 text-center font-medium w-20">Acción</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="modal_tanques_list" class="divide-y divide-sky-100">
-                                        <tr>
-                                            <td colspan="3" class="py-3 px-3 text-center text-slate-500">No hay tanques asociados</td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-
-                        <!-- FOOTER -->
-                        <div class="mt-6 flex justify-end gap-3">
-                            <button type="button" id="modalCancel" class="px-6 py-2 rounded-lg bg-slate-300 text-slate-700 font-medium hover:bg-slate-400 transition">Cerrar</button>
-                            <button type="submit" id="modalSave" class="px-8 py-2 rounded-lg bg-sky-500 text-white font-semibold hover:bg-sky-600 transition hidden">
-                                Guardar
-                            </button>
-                        </div>
             </form>
         </div>
     </div>
