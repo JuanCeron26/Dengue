@@ -66,14 +66,14 @@ class modelListar
         return $result ? pg_fetch_all($result) : [];
     }
 
+    //Insertar nuevos tanques
     public function InsertarTanque($cod_zoo, $cod_tipotanque, $nom_zootanque)
     {
         try {
-            // Escapar el nombre del tanque para prevenir SQL injection
             $nom_zootanque_escaped = pg_escape_string($this->conexion, $nom_zootanque);
 
-            $sql = "INSERT INTO zootanques (cod_zoo, cod_tipotanque, nom_zootanque) 
-                VALUES ($cod_zoo, $cod_tipotanque, '$nom_zootanque_escaped')";
+            $sql = "INSERT INTO tblzootanque (cod_zoo, cod_tipotanque, nom_zootanque, cod_estado) 
+            VALUES ($cod_zoo, $cod_tipotanque, '$nom_zootanque_escaped', 1)";
 
             $resultado = pg_query($this->conexion, $sql);
 
@@ -88,22 +88,51 @@ class modelListar
             return false;
         }
     }
-
-    public function EliminarTanque($cod_zootanque)
+    
+    //Actualizar tipo de tanque y nombre del tanque
+    public function ActualizarTanque($cod_zootanque, $cod_tipotanque, $nom_zootanque)
     {
         try {
-            $sql = "DELETE FROM zootanques WHERE cod_zootanque = $cod_zootanque";
+            $nom_zootanque_escaped = pg_escape_string($this->conexion, $nom_zootanque);
+
+            $sql = "UPDATE tblzootanque 
+                SET cod_tipotanque = $cod_tipotanque, 
+                    nom_zootanque = '$nom_zootanque_escaped'
+                WHERE cod_zootanque = $cod_zootanque";
 
             $resultado = pg_query($this->conexion, $sql);
 
             if ($resultado) {
                 return true;
             } else {
-                error_log("Error al eliminar tanque: " . pg_last_error($this->conexion));
+                error_log("Error al actualizar tanque: " . pg_last_error($this->conexion));
                 return false;
             }
         } catch (Exception $e) {
-            error_log("Error al eliminar tanque: " . $e->getMessage());
+            error_log("Error al actualizar tanque: " . $e->getMessage());
+            return false;
+        }
+    }
+
+    
+    public function EliminarTanque($cod_zootanque)
+    {
+        try {
+            // Cambiar estado a 2 (inactivo) en lugar de eliminar
+            $sql = "UPDATE tblzootanque 
+                SET cod_estado = 2 
+                WHERE cod_zootanque = $cod_zootanque";
+
+            $resultado = pg_query($this->conexion, $sql);
+
+            if ($resultado) {
+                return true;
+            } else {
+                error_log("Error al inactivar tanque: " . pg_last_error($this->conexion));
+                return false;
+            }
+        } catch (Exception $e) {
+            error_log("Error al inactivar tanque: " . $e->getMessage());
             return false;
         }
     }

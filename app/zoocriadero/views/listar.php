@@ -208,141 +208,240 @@ $tiposTanque = $obj->ObtenerTiposTanque();
         </div>
     </div>
 
-    <!-- MODAL OVERLAY -->
-    <div id="modalOverlay" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50 p-4">
-        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
-
-            <!-- HEADER -->
-            <div class="bg-sky-400 p-4 flex items-center justify-between sticky top-0 z-10">
-                <div class="flex items-center gap-3">
-                    <div class="w-8 h-8 bg-white rounded-full flex items-center justify-center">
-                        <svg class="w-5 h-5 text-sky-600" fill="currentColor" viewBox="0 0 20 20">
-                            <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
-                            <path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd" />
-                        </svg>
-                    </div>
-                    <div>
-                        <h3 id="modalTitle" class="text-white font-semibold text-lg">Ver Zoocriadero</h3>
-                        <p class="text-sky-100 text-xs">Información detallada</p>
-                    </div>
+    <!-- MODAL VER DETALLE -->
+<div id="modalVerDetalle" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50 p-4">
+    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+        <!-- HEADER -->
+        <div class="bg-sky-400 p-4 flex items-center justify-between sticky top-0 z-10">
+            <div class="flex items-center gap-3">
+                <div class="w-8 h-8 bg-white rounded-full flex items-center justify-center">
+                    <svg class="w-5 h-5 text-sky-600" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
+                        <path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd" />
+                    </svg>
                 </div>
-                <button id="closeModal" class="text-white hover:text-sky-100 text-2xl font-bold leading-none">&times;</button>
+                <div>
+                    <h3 class="text-white font-semibold text-lg">Ver Zoocriadero</h3>
+                    <p class="text-sky-100 text-xs">Información detallada</p>
+                </div>
+            </div>
+            <button id="closeModalVer" class="text-white hover:text-sky-100 text-2xl font-bold leading-none">&times;</button>
+        </div>
+
+        <!-- CONTENIDO -->
+        <div class="p-6">
+            <div class="mb-4">
+                <label class="flex items-center gap-2 text-sm font-medium text-sky-700 mb-2">
+                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M4 4a2 2 0 012-2h8a2 2 0 012 2v12a1 1 0 110 2h-3a1 1 0 01-1-1v-2a1 1 0 00-1-1H9a1 1 0 00-1 1v2a1 1 0 01-1 1H4a1 1 0 110-2V4zm3 1h2v2H7V5zm2 4H7v2h2V9zm2-4h2v2h-2V5zm2 4h-2v2h2V9z" clip-rule="evenodd" />
+                    </svg>
+                    Nombre del Zoocriadero
+                </label>
+                <input id="ver_nombre" class="w-full border border-sky-200 rounded-lg p-3 bg-sky-50 text-slate-800" readonly>
             </div>
 
-            <!-- FORM -->
-            <form id="modalForm" action="editar.php" method="POST" class="p-6">
-                <input type="hidden" name="cod_zoo" id="modal_cod_zoo">
-
-                <div class="mb-4">
+            <div class="grid grid-cols-2 gap-4 mb-4">
+                <div>
                     <label class="flex items-center gap-2 text-sm font-medium text-sky-700 mb-2">
                         <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd" d="M4 4a2 2 0 012-2h8a2 2 0 012 2v12a1 1 0 110 2h-3a1 1 0 01-1-1v-2a1 1 0 00-1-1H9a1 1 0 00-1 1v2a1 1 0 01-1 1H4a1 1 0 110-2V4zm3 1h2v2H7V5zm2 4H7v2h2V9zm2-4h2v2h-2V5zm2 4h-2v2h2V9z" clip-rule="evenodd" />
+                            <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd" />
                         </svg>
-                        Nombre del Zoocriadero
+                        Encargado
                     </label>
-                    <input name="nombre" id="modal_nombre" class="w-full border border-sky-200 rounded-lg p-3 bg-sky-50 text-slate-800" readonly>
+                    <input id="ver_encargado" class="w-full border border-sky-200 rounded-lg p-3 bg-sky-50 text-slate-800" readonly>
                 </div>
-
-                <div class="grid grid-cols-2 gap-4 mb-4">
-                    <div>
-                        <label class="flex items-center gap-2 text-sm font-medium text-sky-700 mb-2">
-                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd" />
-                            </svg>
-                            Encargado
-                        </label>
-                        <input id="modal_encargado" class="w-full border border-sky-200 rounded-lg p-3 bg-sky-50 text-slate-800" readonly>
-                        <input type="hidden" name="id_usuarios" id="modal_encargado_id">
-                    </div>
-                    <div>
-                        <label class="flex items-center gap-2 text-sm font-medium text-sky-700 mb-2">
-                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd" />
-                            </svg>
-                            Barrio
-                        </label>
-                        <input name="barrio" id="modal_barrio" class="w-full border border-sky-200 rounded-lg p-3 bg-sky-50 text-slate-800" readonly>
-                    </div>
-                </div>
-
-                <div class="mb-4">
+                <div>
                     <label class="flex items-center gap-2 text-sm font-medium text-sky-700 mb-2">
                         <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
                             <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd" />
                         </svg>
-                        Dirección
+                        Barrio
                     </label>
-                    <div class="flex gap-2">
-                        <input name="direccion" id="modal_direccion" class="flex-1 border border-sky-200 rounded-lg p-3 bg-sky-50 text-slate-800" readonly>
-                        <button id="btnEditarDireccion" type="button" class="px-4 py-2 bg-sky-500 text-white rounded-lg hover:bg-sky-600 transition font-medium hidden">
-                            Editar Dirección
-                        </button>
-                    </div>
+                    <input id="ver_barrio" class="w-full border border-sky-200 rounded-lg p-3 bg-sky-50 text-slate-800" readonly>
                 </div>
+            </div>
 
+            <div class="mb-4">
+                <label class="flex items-center gap-2 text-sm font-medium text-sky-700 mb-2">
+                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd" />
+                    </svg>
+                    Dirección
+                </label>
+                <input id="ver_direccion" class="w-full border border-sky-200 rounded-lg p-3 bg-sky-50 text-slate-800" readonly>
+            </div>
+
+            <!-- Tanques (SIN columna de acción) -->
+            <div class="mt-6">
+                <label class="flex items-center gap-2 text-sm font-medium text-sky-700 mb-3">
+                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M3 12v3c0 1.657 3.134 3 7 3s7-1.343 7-3v-3c0 1.657-3.134 3-7 3s-7-1.343-7-3z" />
+                        <path d="M3 7v3c0 1.657 3.134 3 7 3s7-1.343 7-3V7c0 1.657-3.134 3-7 3S3 8.657 3 7z" />
+                        <path d="M17 5c0 1.657-3.134 3-7 3S3 6.657 3 5s3.134-3 7-3 7 1.343 7 3z" />
+                    </svg>
+                    Tanques Asociados
+                </label>
+
+                <div class="bg-sky-50 rounded-lg border-2 border-sky-200 overflow-hidden shadow-sm">
+                    <table class="w-full text-sm">
+                        <thead class="bg-gradient-to-r from-sky-100 to-sky-200">
+                            <tr>
+                                <th class="py-3 px-4 text-left font-semibold text-sky-800">Tipo de Tanque</th>
+                                <th class="py-3 px-4 text-left font-semibold text-sky-800">Nombre</th>
+                            </tr>
+                        </thead>
+                        <tbody id="ver_tanques_list" class="divide-y divide-sky-200 bg-white">
+                            <tr>
+                                <td colspan="2" class="py-6 px-4 text-center text-slate-500">
+                                    <div class="flex flex-col items-center gap-2">
+                                        <svg class="w-12 h-12 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
+                                        </svg>
+                                        <span class="text-sm">No hay tanques asociados</span>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- FOOTER -->
+            <div class="mt-6 flex justify-end">
+                <button type="button" id="btnCerrarVer" class="px-6 py-2 rounded-lg bg-slate-300 text-slate-700 font-medium hover:bg-slate-400 transition">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL EDITAR -->
+<div id="modalEditar" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50 p-4">
+    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+        <!-- HEADER -->
+        <div class="bg-green-500 p-4 flex items-center justify-between sticky top-0 z-10">
+            <div class="flex items-center gap-3">
+                <div class="w-8 h-8 bg-white rounded-full flex items-center justify-center">
+                    <svg class="w-5 h-5 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
+                    </svg>
+                </div>
                 <div>
-                    <label class="flex items-center gap-2 text-sm font-medium text-sky-700 mb-2">
+                    <h3 class="text-white font-semibold text-lg">Editar Zoocriadero</h3>
+                    <p class="text-green-100 text-xs">Modifica la información</p>
+                </div>
+            </div>
+            <button id="closeModalEditar" class="text-white hover:text-green-100 text-2xl font-bold leading-none">&times;</button>
+        </div>
+
+        <!-- FORM -->
+        <form id="modalFormEditar" class="p-6">
+            <input type="hidden" id="editar_cod_zoo">
+
+            <div class="mb-4">
+                <label class="flex items-center gap-2 text-sm font-medium text-green-700 mb-2">
+                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M4 4a2 2 0 012-2h8a2 2 0 012 2v12a1 1 0 110 2h-3a1 1 0 01-1-1v-2a1 1 0 00-1-1H9a1 1 0 00-1 1v2a1 1 0 01-1 1H4a1 1 0 110-2V4zm3 1h2v2H7V5zm2 4H7v2h2V9zm2-4h2v2h-2V5zm2 4h-2v2h2V9z" clip-rule="evenodd" />
+                    </svg>
+                    Nombre del Zoocriadero
+                </label>
+                <input id="editar_nombre" class="w-full border border-green-200 rounded-lg p-3 bg-white text-slate-800 focus:border-green-500 focus:ring-2 focus:ring-green-200">
+            </div>
+
+            <div class="grid grid-cols-2 gap-4 mb-4">
+                <div>
+                    <label class="flex items-center gap-2 text-sm font-medium text-green-700 mb-2">
                         <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd" />
+                        </svg>
+                        Encargado
+                    </label>
+                    <select id="editar_encargado" class="w-full border border-green-200 rounded-lg p-3 bg-white text-slate-800 focus:border-green-500 focus:ring-2 focus:ring-green-200">
+                        <option value="">-- Seleccione --</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="flex items-center gap-2 text-sm font-medium text-green-700 mb-2">
+                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd" />
+                        </svg>
+                        Barrio
+                    </label>
+                    <select id="editar_barrio" class="w-full border border-green-200 rounded-lg p-3 bg-white text-slate-800 focus:border-green-500 focus:ring-2 focus:ring-green-200">
+                        <option value="">-- Seleccione --</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="mb-4">
+                <label class="flex items-center gap-2 text-sm font-medium text-green-700 mb-2">
+                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd" />
+                    </svg>
+                    Dirección
+                </label>
+                <div class="flex gap-2">
+                    <input id="editar_direccion" class="flex-1 border border-green-200 rounded-lg p-3 bg-white text-slate-800 focus:border-green-500 focus:ring-2 focus:ring-green-200">
+                    <button id="btnEditarDireccion" type="button" class="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition font-medium">
+                        Editar Dirección
+                    </button>
+                </div>
+            </div>
+
+            <!-- Tanques (CON columna de acción) -->
+            <div class="mt-6">
+                <div class="flex items-center justify-between mb-3">
+                    <label class="flex items-center gap-2 text-sm font-medium text-green-700">
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
                             <path d="M3 12v3c0 1.657 3.134 3 7 3s7-1.343 7-3v-3c0 1.657-3.134 3-7 3s-7-1.343-7-3z" />
                             <path d="M3 7v3c0 1.657 3.134 3 7 3s7-1.343 7-3V7c0 1.657-3.134 3-7 3S3 8.657 3 7z" />
                             <path d="M17 5c0 1.657-3.134 3-7 3S3 6.657 3 5s3.134-3 7-3 7 1.343 7 3z" />
                         </svg>
-                        <div>
-                            <!-- Tanques Asociados -->
-                            <div class="mt-6">
-                                <div class="flex items-center justify-between mb-3">
-                                    <label class="flex items-center gap-2 text-sm font-medium text-sky-700">
-                                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                                            <path d="M3 12v3c0 1.657 3.134 3 7 3s7-1.343 7-3v-3c0 1.657-3.134 3-7 3s-7-1.343-7-3z" />
-                                            <path d="M3 7v3c0 1.657 3.134 3 7 3s7-1.343 7-3V7c0 1.657-3.134 3-7 3S3 8.657 3 7z" />
-                                            <path d="M17 5c0 1.657-3.134 3-7 3S3 6.657 3 5s3.134-3 7-3 7 1.343 7 3z" />
-                                        </svg>
-                                        Tanques Asociados
-                                    </label>
-                                    <button type="button" id="btnAgregarTanque"
-                                        class="hidden px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition text-sm font-medium flex items-center gap-2 shadow-md">
-                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-                                        </svg>
-                                        Agregar Tanque
-                                    </button>
-                                </div>
+                        Tanques Asociados
+                    </label>
+                    <button type="button" id="btnAgregarTanque"
+                        class="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition text-sm font-medium flex items-center gap-2 shadow-md">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                        </svg>
+                        Agregar Tanque
+                    </button>
+                </div>
 
-                                <div class="bg-sky-50 rounded-lg border-2 border-sky-200 overflow-hidden shadow-sm">
-                                    <table class="w-full text-sm">
-                                        <thead class="bg-gradient-to-r from-sky-100 to-sky-200">
-                                            <tr>
-                                                <th class="py-3 px-4 text-left font-semibold text-sky-800">Tipo de Tanque</th>
-                                                <th class="py-3 px-4 text-left font-semibold text-sky-800">Nombre</th>
-                                                <th class="py-3 px-4 text-center font-semibold text-sky-800 w-24">Acción</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody id="modal_tanques_list" class="divide-y divide-sky-200 bg-white">
-                                            <tr>
-                                                <td colspan="3" class="py-6 px-4 text-center text-slate-500">
-                                                    <div class="flex flex-col items-center gap-2">
-                                                        <svg class="w-12 h-12 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
-                                                        </svg>
-                                                        <span class="text-sm">No hay tanques asociados</span>
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
+                <div class="bg-green-50 rounded-lg border-2 border-green-200 overflow-hidden shadow-sm">
+                    <table class="w-full text-sm">
+                        <thead class="bg-gradient-to-r from-green-100 to-green-200">
+                            <tr>
+                                <th class="py-3 px-4 text-left font-semibold text-green-800">Tipo de Tanque</th>
+                                <th class="py-3 px-4 text-left font-semibold text-green-800">Nombre</th>
+                                <th class="py-3 px-4 text-center font-semibold text-green-800 w-32">Acción</th>
+                            </tr>
+                        </thead>
+                        <tbody id="editar_tanques_list" class="divide-y divide-green-200 bg-white">
+                            <tr>
+                                <td colspan="3" class="py-6 px-4 text-center text-slate-500">
+                                    <div class="flex flex-col items-center gap-2">
+                                        <svg class="w-12 h-12 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
+                                        </svg>
+                                        <span class="text-sm">No hay tanques asociados</span>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
 
-                            <!-- FOOTER -->
-                            <div class="mt-6 flex justify-end gap-3">
-                                <button type="button" id="modalCancel" class="px-6 py-2 rounded-lg bg-slate-300 text-slate-700 font-medium hover:bg-slate-400 transition">Cerrar</button>
-                                <button type="submit" id="modalSave" class="px-8 py-2 rounded-lg bg-sky-500 text-white font-semibold hover:bg-sky-600 transition hidden">
-                                    Guardar
-                                </button>
-                            </div>
-            </form>
-        </div>
+            <!-- FOOTER -->
+            <div class="mt-6 flex justify-end gap-3">
+                <button type="button" id="btnCerrarEditar" class="px-6 py-2 rounded-lg bg-slate-300 text-slate-700 font-medium hover:bg-slate-400 transition">Cancelar</button>
+                <button type="submit" class="px-8 py-2 rounded-lg bg-green-500 text-white font-semibold hover:bg-green-600 transition">
+                    Guardar Cambios
+                </button>
+            </div>
+        </form>
     </div>
+</div>
 
     <!-- MODAL DE DIRECCIÓN -->
     <div id="modalDireccion" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50 p-4">
@@ -412,6 +511,54 @@ $tiposTanque = $obj->ObtenerTiposTanque();
                 </button>
                 <button type="button" id="btnAplicarDireccion" class="bg-blue-400 text-white font-semibold px-8 py-3 rounded-lg hover:bg-blue-500 transition-all uppercase shadow-lg">
                     GUARDAR
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL AGREGAR TANQUE -->
+    <div id="modalAgregarTanque" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50 p-4">
+        <div class="bg-white rounded-2xl shadow-2xl p-8 w-full max-w-md">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-2xl font-bold text-sky-600">Agregar Tanque</h2>
+                <button type="button" id="btnCerrarModalTanque" class="text-gray-400 hover:text-gray-600 text-3xl font-bold leading-none">×</button>
+            </div>
+
+            <div class="space-y-4">
+                <!-- Tipo de Tanque -->
+                <div>
+                    <label class="block text-sm font-medium text-sky-700 mb-2">
+                        <svg class="w-4 h-4 inline mr-1" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M3 12v3c0 1.657 3.134 3 7 3s7-1.343 7-3v-3c0 1.657-3.134 3-7 3s-7-1.343-7-3z" />
+                            <path d="M3 7v3c0 1.657 3.134 3 7 3s7-1.343 7-3V7c0 1.657-3.134 3-7 3S3 8.657 3 7z" />
+                            <path d="M17 5c0 1.657-3.134 3-7 3S3 6.657 3 5s3.134-3 7-3 7 1.343 7 3z" />
+                        </svg>
+                        Tipo de Tanque
+                    </label>
+                    <select id="selectTipoTanque" class="w-full px-4 py-3 border-2 border-sky-200 rounded-lg focus:outline-none focus:border-sky-500 bg-white text-gray-700">
+                        <option value="">-- Seleccione tipo --</option>
+                    </select>
+                </div>
+
+                <!-- Nombre del Tanque -->
+                <div>
+                    <label class="block text-sm font-medium text-sky-700 mb-2">
+                        <svg class="w-4 h-4 inline mr-1" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M4 4a2 2 0 012-2h8a2 2 0 012 2v12a1 1 0 110 2h-3a1 1 0 01-1-1v-2a1 1 0 00-1-1H9a1 1 0 00-1 1v2a1 1 0 01-1 1H4a1 1 0 110-2V4zm3 1h2v2H7V5zm2 4H7v2h2V9zm2-4h2v2h-2V5zm2 4h-2v2h2V9z" clip-rule="evenodd" />
+                        </svg>
+                        Nombre del Tanque
+                    </label>
+                    <input type="text" id="inputNombreTanque" placeholder="Ej: Tanque Principal" class="w-full px-4 py-3 border-2 border-sky-200 rounded-lg focus:outline-none focus:border-sky-500 bg-white">
+                </div>
+            </div>
+
+            <!-- Botones -->
+            <div class="flex justify-end gap-3 mt-6">
+                <button type="button" id="btnCancelarTanque" class="px-6 py-2 rounded-lg bg-slate-300 text-slate-700 font-medium hover:bg-slate-400 transition">
+                    Cancelar
+                </button>
+                <button type="button" id="btnGuardarTanque" class="px-6 py-2 rounded-lg bg-sky-500 text-white font-semibold hover:bg-sky-600 transition">
+                    Guardar
                 </button>
             </div>
         </div>

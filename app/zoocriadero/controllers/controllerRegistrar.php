@@ -75,7 +75,8 @@ class RegistrarZoo
             $datosTanque = [
                 "cod_zoo"         => $cod_zoo,              
                 "cod_tipotanque"  => $tiposTanque[$i],      
-                "nom_zootanque"   => $nombresTanque[$i]     
+                "nom_zootanque"   => $nombresTanque[$i],
+                "cod_estado"      => 1     
             ];
 
             $resultTanque = $this->model->RegistrarTanqueZoo($datosTanque);

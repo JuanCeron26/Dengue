@@ -36,12 +36,20 @@ class ListarZoo
 
     public function AgregarTanque($cod_zoo, $cod_tipotanque, $nom_zootanque)
     {
+        //Permite agregar tanques nuevos a un zoocriadero
         return $this->model->InsertarTanque($cod_zoo, $cod_tipotanque, $nom_zootanque);
     }
 
     public function EliminarTanque($cod_zootanque)
     {
+        //Cambia de estado de activo a inactivo
         return $this->model->EliminarTanque($cod_zootanque);
+    }
+
+    public function ActualizarTanque($cod_zootanque, $cod_tipotanque, $nom_zootanque)
+    {
+        //Permite actualizar el nombre y el tipo de tanque 
+        return $this->model->ActualizarTanque($cod_zootanque, $cod_tipotanque, $nom_zootanque);
     }
 
     public function procesarPeticion()
@@ -76,7 +84,7 @@ class ListarZoo
             // Peticiones POST
             if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 header('Content-Type: application/json');
-                
+
                 $json = file_get_contents('php://input');
                 $data = json_decode($json, true);
 
@@ -140,10 +148,30 @@ class ListarZoo
                                 'message' => 'Acción no válida'
                             ]);
                             break;
+
+                        case 'actualizarTanque':
+                            if (!isset($data['cod_zootanque']) || !isset($data['cod_tipotanque']) || !isset($data['nom_zootanque'])) {
+                                echo json_encode([
+                                    'success' => false,
+                                    'message' => 'Datos incompletos'
+                                ]);
+                                exit;
+                            }
+
+                            $resultado = $this->ActualizarTanque(
+                                $data['cod_zootanque'],
+                                $data['cod_tipotanque'],
+                                $data['nom_zootanque']
+                            );
+
+                            echo json_encode([
+                                'success' => $resultado,
+                                'message' => $resultado ? 'Tanque actualizado correctamente' : 'Error al actualizar el tanque'
+                            ]);
+                            exit;
                     }
                 }
             }
-
         } catch (Exception $e) {
             echo json_encode([
                 'success' => false,
@@ -152,17 +180,3 @@ class ListarZoo
         }
     }
 }
-
-// Instancia y ejecución
-$listar = new ListarZoo();
-
-// Si no es una petición AJAX, mostrar la lista
-if (!isset($_GET['action']) && $_SERVER['REQUEST_METHOD'] != 'POST') {
-    $zoocriaderos = $listar->MostrarLista();
-    $admins = $listar->ObtenerEncargados();
-    $tiposTanque = $listar->ObtenerTiposTanque();
-} else {
-    // Procesar petición AJAX
-    $listar->procesarPeticion();
-}
-?>

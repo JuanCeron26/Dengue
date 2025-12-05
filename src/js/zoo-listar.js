@@ -66,24 +66,25 @@ document.addEventListener('DOMContentLoaded', async () => {
   const PAGE_SIZE = 8;
   const initialRows = Array.from(elements.tbody.querySelectorAll('tr[data-cod]'));
   
-  const state = {
-    filters: {
-      filterName: '',
-      filterEncargado: '',
-      filterTipo: '',
-      filterDireccion: ''
-    },
-    sortKey: null,
-    sortDir: 1,
-    page: 1,
-    isEditMode: false,
-    encargados: [],
-    barrios: [],
-    tiposTanque: [],
-    tanquesDelZoo: [],
-    currentCodZoo: null
-  };
-
+  // Estado global (línea 69 - MANTENER SOLO ESTA)
+const state = {
+  // Propiedades de filtros
+  filters: {
+    filterName: '',
+    filterEncargado: '',
+    filterTipo: '',
+    filterDireccion: ''
+  },
+  sortKey: null,
+  sortDir: 1,
+  page: 1,
+  isEditMode: false,
+  encargados: [],
+  barrios: [],
+  tiposTanque: [],
+  tanquesDelZoo: [],
+  currentCodZoo: null
+};
   // ============================================================================
   // API: CARGA DE DATOS INICIALES
   // ============================================================================
@@ -442,376 +443,433 @@ document.addEventListener('DOMContentLoaded', async () => {
   });
 
   // ============================================================================
-  // MODAL VER DETALLE
-  // ============================================================================
-  
-  async function abrirModalVer(codZoo) {
-    try {
-      const response = await fetch(`../controllers/controllerVerDetalle.php?cod_zoo=${codZoo}`);
-      const data = await response.json();
+// ELEMENTOS DEL DOM - SEPARADOS POR MODAL
+// ============================================================================
 
-      if (!data.success) {
-        alert(data.message || 'Error al cargar los datos del zoocriadero');
-        return;
-      }
+const elementsVer = {
+  modal: document.getElementById('modalVerDetalle'),
+  closeBtn: document.getElementById('closeModalVer'),
+  cerrarBtn: document.getElementById('btnCerrarVer'),
+  nombre: document.getElementById('ver_nombre'),
+  encargado: document.getElementById('ver_encargado'),
+  barrio: document.getElementById('ver_barrio'),
+  direccion: document.getElementById('ver_direccion'),
+  tanquesList: document.getElementById('ver_tanques_list')
+};
 
-      state.isEditMode = false;
+const elementsEditar = {
+  modal: document.getElementById('modalEditar'),
+  closeBtn: document.getElementById('closeModalEditar'),
+  cerrarBtn: document.getElementById('btnCerrarEditar'),
+  form: document.getElementById('modalFormEditar'),
+  codZoo: document.getElementById('editar_cod_zoo'),
+  nombre: document.getElementById('editar_nombre'),
+  encargado: document.getElementById('editar_encargado'),
+  barrio: document.getElementById('editar_barrio'),
+  direccion: document.getElementById('editar_direccion'),
+  btnEditarDireccion: document.getElementById('btnEditarDireccion'),
+  tanquesList: document.getElementById('editar_tanques_list'),
+  btnAgregarTanque: document.getElementById('btnAgregarTanque')
+};
 
-      elements.fields.cod.value = data.zoo.cod_zoo;
-      elements.fields.nombre.value = data.zoo.nombre_zoo;
 
-      if (elements.fields.encargadoSelect) {
-        elements.fields.encargadoSelect.classList.add('hidden');
-      }
-      elements.fields.encargadoText.classList.remove('hidden');
-      elements.fields.encargadoText.value = data.zoo.encargado;
-      elements.fields.encargadoId.value = data.zoo.id_usuarios;
+// ============================================================================
+// MODAL VER DETALLE
+// ============================================================================
 
-      if (elements.fields.barrioSelect) {
-        elements.fields.barrioSelect.classList.add('hidden');
-      }
-      elements.fields.barrio.classList.remove('hidden');
-      elements.fields.barrio.value = data.zoo.nombarrio || '';
+async function abrirModalVer(codZoo) {
+  try {
+    const response = await fetch(`../controllers/controllerVerDetalle.php?cod_zoo=${codZoo}`);
+    const data = await response.json();
 
-      elements.fields.direccion.value = data.zoo.direccion_zoo;
-      elements.modalTitle.textContent = 'Ver Zoocriadero';
-
-      renderTanquesVista(data.tanques || []);
-      resetModalFields();
-      showModal();
-      
-    } catch (error) {
-      console.error('Error:', error);
-      alert('Error al cargar los datos del zoocriadero');
-    }
-  }
-
-  function renderTanquesVista(tanques) {
-    const list = elements.fields.tanquesList;
-    list.innerHTML = '';
-
-    if (tanques && tanques.length > 0) {
-      tanques.forEach((t, index) => {
-        const tr = document.createElement('tr');
-        tr.className = 'hover:bg-sky-50 transition-colors';
-        tr.innerHTML = `
-          <td class="py-3 px-4 text-slate-700">
-            <div class="flex items-center gap-2">
-              <span class="w-2 h-2 bg-sky-500 rounded-full"></span>
-              ${t.nomtiptan || 'N/A'}
-            </div>
-          </td>
-          <td class="py-3 px-4 text-slate-700 font-medium">${t.nom_zootanque || 'N/A'}</td>
-        `;
-        list.appendChild(tr);
-      });
-    } else {
-      list.innerHTML = `
-        <tr>
-          <td colspan="2" class="py-6 px-4 text-center text-slate-500">
-            <div class="flex flex-col items-center gap-2">
-              <svg class="w-12 h-12 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
-              </svg>
-              <span class="text-sm">No hay tanques asociados</span>
-            </div>
-          </td>
-        </tr>`;
-    }
-  }
-
-  // ============================================================================
-  // MODAL EDITAR
-  // ============================================================================
-  
-  async function abrirModalEditar(codZoo) {
-    try {
-      if (state.encargados.length === 0 || state.barrios.length === 0) {
-        console.log('Recargando datos...');
-        await inicializarDatos();
-      }
-
-      const cod = parseInt(codZoo);
-      state.currentCodZoo = cod;
-
-      const response = await fetch(`../controllers/controllerEditar.php?cod_zoo=${cod}`);
-      const dataZoo = await response.json();
-
-      if (!dataZoo.success) {
-        alert(dataZoo.message || 'Error al cargar los datos del zoocriadero');
-        return;
-      }
-
-      console.log('Datos del zoo:', dataZoo);
-      console.log('Encargados disponibles:', state.encargados);
-      console.log('Barrios disponibles:', state.barrios);
-
-      state.isEditMode = true;
-      state.tanquesDelZoo = dataZoo.tanques || [];
-
-      elements.fields.cod.value = dataZoo.zoo.cod_zoo;
-      elements.fields.nombre.value = dataZoo.zoo.nombre_zoo;
-      elements.fields.direccion.value = dataZoo.zoo.direccion_zoo;
-      elements.modalTitle.textContent = 'Editar Zoocriadero';
-
-      // Habilitar edición del nombre
-      elements.fields.nombre.readOnly = false;
-      elements.fields.nombre.classList.remove('bg-sky-50');
-      elements.fields.nombre.classList.add('bg-white', 'focus:border-sky-500', 'focus:ring-2', 'focus:ring-sky-200');
-
-      // Configurar select de encargados
-      configurarSelectEncargados(dataZoo.zoo.id_usuarios);
-      
-      // Configurar select de barrios
-      configurarSelectBarrios(dataZoo.zoo.cod_barrio);
-
-      renderTanquesEditables(dataZoo.tanques || []);
-
-      elements.btnEditarDireccion.classList.remove('hidden');
-      elements.btnAgregarTanque.classList.remove('hidden');
-      elements.modalSave.classList.remove('hidden');
-
-      showModal();
-
-    } catch (error) {
-      console.error('Error al abrir modal:', error);
-      alert('Error al cargar los datos del zoocriadero: ' + error.message);
-    }
-  }
-
-  function configurarSelectEncargados(idUsuarioActual) {
-    if (elements.fields.encargadoText) {
-      elements.fields.encargadoText.classList.add('hidden');
-    }
-
-    if (!elements.fields.encargadoSelect) {
-      const selectEncargado = document.createElement('select');
-      selectEncargado.id = 'modal_encargado_select';
-      selectEncargado.name = 'id_usuarios';
-      selectEncargado.className = 'w-full border border-sky-200 rounded-lg p-3 bg-white text-slate-800 focus:border-sky-500 focus:ring-2 focus:ring-sky-200';
-      elements.fields.encargadoText.parentNode.insertBefore(selectEncargado, elements.fields.encargadoText.nextSibling);
-      elements.fields.encargadoSelect = selectEncargado;
-    }
-
-    elements.fields.encargadoSelect.innerHTML = '<option value="">-- Seleccione --</option>';
-
-    if (state.encargados.length > 0) {
-      state.encargados.forEach(enc => {
-        const option = document.createElement('option');
-        option.value = enc.id_usuarios;
-        option.textContent = `${enc.nombre_usu} ${enc.apellido_usu}`;
-        if (enc.id_usuarios == idUsuarioActual) {
-          option.selected = true;
-        }
-        elements.fields.encargadoSelect.appendChild(option);
-      });
-    } else {
-      console.warn('No hay encargados disponibles');
-    }
-
-    elements.fields.encargadoSelect.classList.remove('hidden');
-  }
-
-  function configurarSelectBarrios(codBarrioActual) {
-    if (elements.fields.barrio) {
-      elements.fields.barrio.classList.add('hidden');
-    }
-
-    if (!elements.fields.barrioSelect) {
-      const selectBarrio = document.createElement('select');
-      selectBarrio.id = 'modal_barrio_select';
-      selectBarrio.name = 'cod_barrio';
-      selectBarrio.className = 'w-full border border-sky-200 rounded-lg p-3 bg-white text-slate-800 focus:border-sky-500 focus:ring-2 focus:ring-sky-200';
-      elements.fields.barrio.parentNode.insertBefore(selectBarrio, elements.fields.barrio.nextSibling);
-      elements.fields.barrioSelect = selectBarrio;
-    }
-
-    elements.fields.barrioSelect.innerHTML = '<option value="">-- Seleccione --</option>';
-
-    if (state.barrios.length > 0) {
-      state.barrios.forEach(barrio => {
-        const option = document.createElement('option');
-        option.value = barrio.cod_barrio;
-        option.textContent = barrio.nombarrio;
-        if (barrio.cod_barrio == codBarrioActual) {
-          option.selected = true;
-        }
-        elements.fields.barrioSelect.appendChild(option);
-      });
-    } else {
-      console.warn('No hay barrios disponibles');
-    }
-
-    elements.fields.barrioSelect.classList.remove('hidden');
-  }
-
-  function renderTanquesEditables(tanques) {
-    const list = elements.fields.tanquesList;
-    list.innerHTML = '';
-
-    if (tanques && tanques.length > 0) {
-      tanques.forEach((t) => {
-        const tr = document.createElement('tr');
-        tr.className = 'hover:bg-sky-50 transition-colors';
-        tr.innerHTML = `
-          <td class="py-3 px-4 text-slate-700">
-            <div class="flex items-center gap-2">
-              <span class="w-2 h-2 bg-sky-500 rounded-full"></span>
-              ${t.nomtiptan || 'N/A'}
-            </div>
-          </td>
-          <td class="py-3 px-4 text-slate-700 font-medium">${t.nom_zootanque || 'N/A'}</td>
-          <td class="py-3 px-4 text-center">
-            <button type="button" 
-              class="inline-flex items-center justify-center w-8 h-8 text-red-600 hover:bg-red-50 rounded-full transition-all hover:scale-110" 
-              data-cod-tanque="${t.cod_zootanque}"
-              title="Eliminar tanque">
-              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            </button>
-          </td>
-        `;
-        list.appendChild(tr);
-      });
-    } else {
-      list.innerHTML = `
-        <tr>
-          <td colspan="3" class="py-6 px-4 text-center text-slate-500">
-            <div class="flex flex-col items-center gap-2">
-              <svg class="w-12 h-12 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
-              </svg>
-              <span class="text-sm">No hay tanques asociados</span>
-            </div>
-          </td>
-        </tr>`;
-    }
-  }
-
-  // Event delegation para eliminar tanques
-  elements.fields.tanquesList.addEventListener('click', async (e) => {
-    const btn = e.target.closest('button[data-cod-tanque]');
-    if (!btn) return;
-
-    const codTanque = btn.dataset.codTanque;
-    
-    if (!confirm('¿Desea eliminar este tanque?')) return;
-
-    try {
-      const response = await fetch('../controllers/controllerEliminarTanque.php', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ cod_zootanque: parseInt(codTanque) })
-      });
-
-      const result = await response.json();
-
-      if (result.success) {
-        alert('Tanque eliminado correctamente');
-        abrirModalEditar(state.currentCodZoo);
-      } else {
-        alert(result.message || 'Error al eliminar el tanque');
-      }
-    } catch (error) {
-      console.error('Error:', error);
-      alert('Error al eliminar el tanque: ' + error.message);
-    }
-  });
-
-  // ============================================================================
-  // MODAL AGREGAR TANQUE
-  // ============================================================================
-  
-  function cerrarModalAgregarTanque() {
-    if (elements.modalAgregarTanque) {
-      elements.modalAgregarTanque.classList.add('hidden');
-      elements.modalAgregarTanque.classList.remove('flex');
-    }
-  }
-
-  elements.btnAgregarTanque.addEventListener('click', () => {
-    if (!elements.modalAgregarTanque) {
-      console.error('Modal de agregar tanque no encontrado en el DOM');
-      alert('Error: El modal de agregar tanque no está disponible');
+    if (!data.success) {
+      alert(data.message || 'Error al cargar los datos del zoocriadero');
       return;
     }
 
-    elements.selectTipoTanque.innerHTML = '<option value="">-- Seleccione tipo --</option>';
+    elementsVer.nombre.value = data.zoo.nombre_zoo;
+    elementsVer.encargado.value = data.zoo.encargado;
+    elementsVer.barrio.value = data.zoo.nombarrio || '';
+    elementsVer.direccion.value = data.zoo.direccion_zoo;
+
+    renderTanquesVista(data.tanques || []);
     
-    state.tiposTanque.forEach(tipo => {
+    elementsVer.modal.classList.remove('hidden');
+    elementsVer.modal.classList.add('flex');
+    
+  } catch (error) {
+    console.error('Error:', error);
+    alert('Error al cargar los datos del zoocriadero');
+  }
+}
+
+function renderTanquesVista(tanques) {
+  const list = elementsVer.tanquesList;
+  list.innerHTML = '';
+
+  if (tanques && tanques.length > 0) {
+    tanques.forEach((t) => {
+      const tr = document.createElement('tr');
+      tr.className = 'hover:bg-sky-50 transition-colors';
+      tr.innerHTML = `
+        <td class="py-3 px-4 text-slate-700">
+          <div class="flex items-center gap-2">
+            <span class="w-2 h-2 bg-sky-500 rounded-full"></span>
+            ${t.nomtiptan || 'N/A'}
+          </div>
+        </td>
+        <td class="py-3 px-4 text-slate-700 font-medium">${t.nom_zootanque || 'N/A'}</td>
+      `;
+      list.appendChild(tr);
+    });
+  } else {
+    list.innerHTML = `
+      <tr>
+        <td colspan="2" class="py-6 px-4 text-center text-slate-500">
+          <div class="flex flex-col items-center gap-2">
+            <svg class="w-12 h-12 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
+            </svg>
+            <span class="text-sm">No hay tanques asociados</span>
+          </div>
+        </td>
+      </tr>`;
+  }
+}
+
+function cerrarModalVer() {
+  elementsVer.modal.classList.add('hidden');
+  elementsVer.modal.classList.remove('flex');
+}
+
+// Event listeners para cerrar modal Ver
+elementsVer.closeBtn?.addEventListener('click', cerrarModalVer);
+elementsVer.cerrarBtn?.addEventListener('click', cerrarModalVer);
+elementsVer.modal?.addEventListener('click', (e) => {
+  if (e.target === elementsVer.modal) {
+    cerrarModalVer();
+  }
+});
+
+// ============================================================================
+// MODAL EDITAR
+// ============================================================================
+
+async function abrirModalEditar(codZoo) {
+  try {
+    // Cargar datos iniciales si no están cargados
+    if (state.encargados.length === 0 || state.barrios.length === 0) {
+      await inicializarDatos();
+    }
+
+    const cod = parseInt(codZoo);
+    state.currentCodZoo = cod;
+
+    const response = await fetch(`../controllers/controllerEditar.php?cod_zoo=${cod}`);
+    const dataZoo = await response.json();
+
+    if (!dataZoo.success) {
+      alert(dataZoo.message || 'Error al cargar los datos del zoocriadero');
+      return;
+    }
+
+    state.tanquesDelZoo = dataZoo.tanques || [];
+
+    elementsEditar.codZoo.value = dataZoo.zoo.cod_zoo;
+    elementsEditar.nombre.value = dataZoo.zoo.nombre_zoo;
+    elementsEditar.direccion.value = dataZoo.zoo.direccion_zoo;
+
+    // Cargar select de encargados
+    elementsEditar.encargado.innerHTML = '<option value="">-- Seleccione --</option>';
+    state.encargados.forEach(enc => {
       const option = document.createElement('option');
-      option.value = tipo.cod_tipotanque;
-      option.textContent = tipo.nomtiptan;
-      elements.selectTipoTanque.appendChild(option);
+      option.value = enc.id_usuarios;
+      option.textContent = `${enc.nombre_usu} ${enc.apellido_usu}`;
+      if (enc.id_usuarios == dataZoo.zoo.id_usuarios) {
+        option.selected = true;
+      }
+      elementsEditar.encargado.appendChild(option);
     });
 
-    elements.inputNombreTanque.value = '';
-    elements.modalAgregarTanque.classList.remove('hidden');
-    elements.modalAgregarTanque.classList.add('flex');
+    // Cargar select de barrios
+    elementsEditar.barrio.innerHTML = '<option value="">-- Seleccione --</option>';
+    state.barrios.forEach(barrio => {
+      const option = document.createElement('option');
+      option.value = barrio.cod_barrio;
+      option.textContent = barrio.nombarrio;
+      if (barrio.cod_barrio == dataZoo.zoo.cod_barrio) {
+        option.selected = true;
+      }
+      elementsEditar.barrio.appendChild(option);
+    });
+
+    renderTanquesEditables(dataZoo.tanques || []);
+
+    elementsEditar.modal.classList.remove('hidden');
+    elementsEditar.modal.classList.add('flex');
+
+  } catch (error) {
+    console.error('Error al abrir modal:', error);
+    alert('Error al cargar los datos del zoocriadero: ' + error.message);
+  }
+}
+
+function renderTanquesEditables(tanques) {
+  const list = elementsEditar.tanquesList;
+  list.innerHTML = '';
+
+  if (tanques && tanques.length > 0) {
+    tanques.forEach((t) => {
+      const tr = document.createElement('tr');
+      tr.className = 'hover:bg-green-50 transition-colors';
+      tr.innerHTML = `
+        <td class="py-3 px-4 text-slate-700">
+          <div class="flex items-center gap-2">
+            <span class="w-2 h-2 bg-green-500 rounded-full"></span>
+            ${t.nomtiptan || 'N/A'}
+          </div>
+        </td>
+        <td class="py-3 px-4 text-slate-700 font-medium">${t.nom_zootanque || 'N/A'}</td>
+        <td class="py-3 px-4 text-center">
+          <button type="button" 
+            class="btn-eliminar-tanque inline-flex items-center justify-center w-8 h-8 text-red-600 hover:bg-red-50 rounded-full transition-all hover:scale-110" 
+            data-cod-tanque="${t.cod_zootanque}"
+            title="Eliminar tanque">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </td>
+      `;
+      list.appendChild(tr);
+    });
+  } else {
+    list.innerHTML = `
+      <tr>
+        <td colspan="3" class="py-6 px-4 text-center text-slate-500">
+          <div class="flex flex-col items-center gap-2">
+            <svg class="w-12 h-12 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
+            </svg>
+            <span class="text-sm">No hay tanques asociados</span>
+          </div>
+        </td>
+      </tr>`;
+  }
+}
+
+function cerrarModalEditar() {
+  elementsEditar.modal.classList.add('hidden');
+  elementsEditar.modal.classList.remove('flex');
+}
+
+// Event listeners para cerrar modal Editar
+elementsEditar.closeBtn?.addEventListener('click', cerrarModalEditar);
+elementsEditar.cerrarBtn?.addEventListener('click', cerrarModalEditar);
+elementsEditar.modal?.addEventListener('click', (e) => {
+  if (e.target === elementsEditar.modal) {
+    cerrarModalEditar();
+  }
+});
+
+// ============================================================================
+// GESTIÓN DE TANQUES - ELIMINAR
+// ============================================================================
+
+elementsEditar.tanquesList?.addEventListener('click', async (e) => {
+  const btn = e.target.closest('.btn-eliminar-tanque');
+  if (!btn) return;
+
+  const codTanque = parseInt(btn.dataset.codTanque);
+  
+  if (!confirm('¿Desea inactivar este tanque?')) return;
+
+  try {
+    const response = await fetch('../controllers/controllerListar.php', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ 
+        action: 'eliminarTanque',
+        cod_zootanque: codTanque
+      })
+    });
+
+    const result = await response.json();
+
+    if (result.success) {
+      alert('Tanque inactivado correctamente');
+      abrirModalEditar(state.currentCodZoo);
+    } else {
+      alert(result.message || 'Error al inactivar el tanque');
+    }
+  } catch (error) {
+    console.error('Error:', error);
+    alert('Error al inactivar el tanque: ' + error.message);
+  }
+});
+
+// ============================================================================
+// MODAL AGREGAR TANQUE
+// ============================================================================
+
+const modalAgregarTanque = document.getElementById('modalAgregarTanque');
+const selectTipoTanque = document.getElementById('selectTipoTanque');
+const inputNombreTanque = document.getElementById('inputNombreTanque');
+const btnGuardarTanque = document.getElementById('btnGuardarTanque');
+const btnCerrarModalTanque = document.getElementById('closeModalAgregarTanque');
+const btnCancelarTanque = document.getElementById('btnCancelarTanque');
+
+function cerrarModalAgregarTanque() {
+  if (modalAgregarTanque) {
+    modalAgregarTanque.classList.add('hidden');
+    modalAgregarTanque.classList.remove('flex');
+  }
+}
+
+elementsEditar.btnAgregarTanque?.addEventListener('click', () => {
+  if (!modalAgregarTanque) {
+    console.error('Modal de agregar tanque no encontrado en el DOM');
+    alert('Error: El modal de agregar tanque no está disponible');
+    return;
+  }
+
+  selectTipoTanque.innerHTML = '<option value="">-- Seleccione tipo --</option>';
+  
+  state.tiposTanque.forEach(tipo => {
+    const option = document.createElement('option');
+    option.value = tipo.cod_tipotanque;
+    option.textContent = tipo.nomtiptan;
+    selectTipoTanque.appendChild(option);
   });
 
-  if (elements.btnCerrarModalTanque) {
-    elements.btnCerrarModalTanque.addEventListener('click', cerrarModalAgregarTanque);
+  inputNombreTanque.value = '';
+  modalAgregarTanque.classList.remove('hidden');
+  modalAgregarTanque.classList.add('flex');
+});
+
+btnCerrarModalTanque?.addEventListener('click', cerrarModalAgregarTanque);
+btnCancelarTanque?.addEventListener('click', cerrarModalAgregarTanque);
+
+btnGuardarTanque?.addEventListener('click', async () => {
+  const codTipoTanque = selectTipoTanque.value;
+  const nombreTanque = inputNombreTanque.value.trim();
+
+  if (!codTipoTanque || !nombreTanque) {
+    alert('Por favor complete todos los campos');
+    return;
   }
 
-  // Botón cancelar adicional
-  const btnCancelarTanque = document.getElementById('btnCancelarTanque');
-  if (btnCancelarTanque) {
-    btnCancelarTanque.addEventListener('click', cerrarModalAgregarTanque);
+  if (!state.currentCodZoo) {
+    alert('Error: No se ha seleccionado un zoocriadero');
+    return;
   }
 
-  if (elements.btnGuardarTanque) {
-    elements.btnGuardarTanque.addEventListener('click', async () => {
-      const codTipoTanque = elements.selectTipoTanque.value;
-      const nombreTanque = elements.inputNombreTanque.value.trim();
-
-      if (!codTipoTanque || !nombreTanque) {
-        alert('Por favor complete todos los campos');
-        return;
-      }
-
-      if (!state.currentCodZoo) {
-        alert('Error: No se ha seleccionado un zoocriadero');
-        return;
-      }
-
-      try {
-        const response = await fetch('../controllers/controllerListar.php', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            action: 'agregarTanque',
-            cod_zoo: state.currentCodZoo,
-            cod_tipotanque: parseInt(codTipoTanque),
-            nom_zootanque: nombreTanque
-          })
-        });
-
-        const result = await response.json();
-
-        if (result.success) {
-          alert('Tanque agregado correctamente');
-          cerrarModalAgregarTanque();
-          abrirModalEditar(state.currentCodZoo);
-        } else {
-          alert(result.message || 'Error al agregar el tanque');
-        }
-      } catch (error) {
-        console.error('Error:', error);
-        alert('Error al agregar el tanque: ' + error.message);
-      }
+  try {
+    const response = await fetch('../controllers/controllerListar.php', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        action: 'agregarTanque',
+        cod_zoo: state.currentCodZoo,
+        cod_tipotanque: parseInt(codTipoTanque),
+        nom_zootanque: nombreTanque
+      })
     });
+
+    const result = await response.json();
+
+    if (result.success) {
+      alert('Tanque agregado correctamente');
+      cerrarModalAgregarTanque();
+      abrirModalEditar(state.currentCodZoo);
+    } else {
+      alert(result.message || 'Error al agregar el tanque');
+    }
+  } catch (error) {
+    console.error('Error:', error);
+    alert('Error al agregar el tanque: ' + error.message);
+  }
+});
+
+modalAgregarTanque?.addEventListener('click', (e) => {
+  if (e.target === modalAgregarTanque) {
+    cerrarModalAgregarTanque();
+  }
+});
+
+// ============================================================================
+// GUARDAR CAMBIOS DEL ZOOCRIADERO
+// ============================================================================
+
+elementsEditar.form?.addEventListener('submit', async (e) => {
+  e.preventDefault();
+
+  const formData = {
+    action: 'actualizarZoocriadero',
+    cod_zoo: state.currentCodZoo,
+    nombre_zoo: elementsEditar.nombre.value.trim(),
+    id_usuarios: elementsEditar.encargado.value,
+    cod_barrio: elementsEditar.barrio.value,
+    direccion_zoo: elementsEditar.direccion.value.trim()
+  };
+
+  if (!formData.nombre_zoo || !formData.id_usuarios || !formData.cod_barrio || !formData.direccion_zoo) {
+    alert('Por favor complete todos los campos');
+    return;
   }
 
-  if (elements.modalAgregarTanque) {
-    elements.modalAgregarTanque.addEventListener('click', (e) => {
-      if (e.target === elements.modalAgregarTanque) {
-        cerrarModalAgregarTanque();
-      }
+  try {
+    const response = await fetch('../controllers/controllerListar.php', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(formData)
     });
-  }
 
+    const result = await response.json();
+
+    if (result.success) {
+      alert('Zoocriadero actualizado correctamente');
+      cerrarModalEditar();
+      // Aquí deberías recargar tu tabla principal
+      if (typeof cargarZoocriaderos === 'function') {
+        cargarZoocriaderos();
+      }
+    } else {
+      alert(result.message || 'Error al actualizar el zoocriadero');
+    }
+  } catch (error) {
+    console.error('Error:', error);
+    alert('Error al actualizar el zoocriadero: ' + error.message);
+  }
+});
+
+// ============================================================================
+// INICIALIZAR DATOS (encargados, barrios, tipos de tanque)
+// ============================================================================
+
+async function inicializarDatos() {
+  try {
+    const response = await fetch('../controllers/controllerListar.php?action=obtenerDatos');
+    const data = await response.json();
+    
+    if (data.success) {
+      state.encargados = data.encargados || [];
+      state.barrios = data.barrios || [];
+      state.tiposTanque = data.tiposTanque || [];
+    }
+  } catch (error) {
+    console.error('Error al inicializar datos:', error);
+  }
+}
+
+// Inicializar al cargar la página
+document.addEventListener('DOMContentLoaded', () => {
+  inicializarDatos();
+});
+
+// Exponer funciones globalmente para poder llamarlas desde HTML
+window.abrirModalVer = abrirModalVer;
+window.abrirModalEditar = abrirModalEditar;
   // ============================================================================
   // MODAL DIRECCIÓN
   // ============================================================================
