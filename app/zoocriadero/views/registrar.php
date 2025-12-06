@@ -13,6 +13,21 @@ $barrios = $obj->ObtenerBarrio();
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Registrar Zoocriadero</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'azul-primario': '#0891b2',
+                        'azul-oscuro': '#0e7490',
+                        'azul-medio': '#22d3ee',
+                        'azul-claro-1': '#ecfeff',
+                        'azul-claro-2': '#67e8f9'
+                    }
+                }
+            }
+        }
+    </script>
 </head>
 
 <body class="bg-blue-200 min-h-screen flex items-center justify-center p-6">
@@ -90,7 +105,8 @@ $barrios = $obj->ObtenerBarrio();
                     <button
                         type="button"
                         id="btnSiguiente"
-                        class="bg-cyan-500 text-white font-semibold px-8 py-3 rounded-full shadow-lg hover:shadow-xl transition-all flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed">
+                        class="bg-cyan-500 text-white font-semibold px-8 py-3 rounded-full shadow-lg hover:shadow-xl transition-all flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                        disabled>
                         Siguiente
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
@@ -107,10 +123,10 @@ $barrios = $obj->ObtenerBarrio();
                 <div class="mb-8">
                     <!-- Encabezados -->
                     <div class="grid grid-cols-2 gap-4 mb-4">
-                        <div class="bg-blue-500 text-white font-semibold py-3 px-4 rounded-lg text-center">
+                        <div class="bg-cyan-500 text-white font-semibold py-3 px-4 rounded-lg text-center">
                             Tipo de Tanque
                         </div>
-                        <div class="bg-blue-500 text-white font-semibold py-3 px-4 rounded-lg text-center flex items-center justify-center gap-2">
+                        <div class="bg-cyan-500 text-white font-semibold py-3 px-4 rounded-lg text-center flex items-center justify-center gap-2">
                             Nombre del Tanque
                             <button
                                 type="button"
@@ -154,7 +170,7 @@ $barrios = $obj->ObtenerBarrio();
                     <button
                         type="button"
                         id="btnAnterior"
-                        class="bg-blue-300 text-white px-8 py-3 rounded-full shadow-lg hover:shadow-xl hover:bg-gray-400 transition-all flex items-center gap-2">
+                        class="bg-gray-300 text-gray-700 px-8 py-3 rounded-full shadow-lg hover:shadow-xl hover:bg-gray-400 transition-all flex items-center gap-2">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 17l-5-5m0 0l5-5m-5 5h12"></path>
                         </svg>
@@ -162,7 +178,7 @@ $barrios = $obj->ObtenerBarrio();
                     </button>
                     <button
                         type="submit"
-                        class="bg-blue-500 text-white font-semibold px-8 py-3 rounded-full shadow-lg hover:shadow-xl transition-all">
+                        class="bg-cyan-500 text-white font-semibold px-8 py-3 rounded-full shadow-lg hover:shadow-xl hover:bg-cyan-600 transition-all">
                         Registrar
                     </button>
                 </div>
@@ -178,11 +194,11 @@ $barrios = $obj->ObtenerBarrio();
 
     </div>
 
-    <!-- MODAL PARA CONSTRUIR DIRECCIÓN -->
+    <!-- ✅ MODAL PARA CONSTRUIR DIRECCIÓN CON COLORES -->
     <div id="modalDireccion" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50 p-4">
         <div class="bg-white rounded-2xl shadow-2xl p-8 w-full max-w-3xl">
             <div class="flex justify-between items-center mb-8">
-                <h2 class="text-2xl font-bold text-azul-primario">Ingreso de Dirección</h2>
+                <h2 class="text-2xl font-bold text-cyan-600">Ingreso de Dirección</h2>
                 <button
                     type="button"
                     id="btnCerrarModal"
@@ -196,10 +212,10 @@ $barrios = $obj->ObtenerBarrio();
 
                 <!-- Tipo de Vía -->
                 <div>
-                    <label class="block text-sm font-medium text-azul-primario mb-2">Tipo de Vía</label>
+                    <label class="block text-sm font-medium text-cyan-600 mb-2">Tipo de Vía</label>
                     <select
                         id="tipoVia"
-                        class="w-full px-4 py-3 border-2 border-azul-claro-2 rounded-lg focus:outline-none focus:border-azul-primario bg-azul-claro-1 text-gray-700">
+                        class="w-full px-4 py-3 border-2 border-cyan-300 rounded-lg focus:outline-none focus:border-cyan-500 bg-cyan-50 text-gray-700">
                         <option value="">-</option>
                         <option value="Calle">Calle</option>
                         <option value="Carrera">Carrera</option>
@@ -211,49 +227,49 @@ $barrios = $obj->ObtenerBarrio();
 
                 <!-- Número Vía -->
                 <div>
-                    <label class="block text-sm font-medium text-azul-primario mb-2">Número Vía</label>
+                    <label class="block text-sm font-medium text-cyan-600 mb-2">Número Vía</label>
                     <input
                         type="text"
                         id="numeroVia"
-                        class="w-full px-4 py-3 border-2 border-azul-claro-2 rounded-lg focus:outline-none focus:border-azul-primario bg-azul-claro-1">
+                        class="w-full px-4 py-3 border-2 border-cyan-300 rounded-lg focus:outline-none focus:border-cyan-500 bg-cyan-50">
                 </div>
 
                 <!-- # -->
                 <div>
-                    <label class="block text-sm font-medium text-azul-primario mb-2">#</label>
+                    <label class="block text-sm font-medium text-cyan-600 mb-2">#</label>
                     <input
                         type="text"
                         id="numeroSimbolo"
                         value="#"
-                        class="w-full px-4 py-3 border-2 border-azul-claro-2 rounded-lg focus:outline-none focus:border-azul-primario bg-azul-claro-1"
+                        class="w-full px-4 py-3 border-2 border-cyan-300 rounded-lg focus:outline-none focus:border-cyan-500 bg-cyan-50"
                         readonly>
                 </div>
 
                 <!-- Sufijo / Letra -->
                 <div>
-                    <label class="block text-sm font-medium text-azul-primario mb-2">Sufijo / Letra</label>
+                    <label class="block text-sm font-medium text-cyan-600 mb-2">Sufijo / Letra</label>
                     <input
                         type="text"
                         id="sufijo"
                         maxlength="5"
-                        class="w-full px-4 py-3 border-2 border-azul-claro-2 rounded-lg focus:outline-none focus:border-azul-primario bg-azul-claro-1">
+                        class="w-full px-4 py-3 border-2 border-cyan-300 rounded-lg focus:outline-none focus:border-cyan-500 bg-cyan-50">
                 </div>
 
                 <!-- Distancia -->
                 <div class="col-span-2">
-                    <label class="block text-sm font-medium text-azul-primario mb-2">Distancia</label>
+                    <label class="block text-sm font-medium text-cyan-600 mb-2">Distancia</label>
                     <input
                         type="text"
                         id="distancia"
-                        class="w-full px-4 py-3 border-2 border-azul-claro-2 rounded-lg focus:outline-none focus:border-azul-primario bg-azul-claro-1">
+                        class="w-full px-4 py-3 border-2 border-cyan-300 rounded-lg focus:outline-none focus:border-cyan-500 bg-cyan-50">
                 </div>
 
             </div>
 
             <!-- Dirección Generada -->
             <div class="mb-8">
-                <label class="block text-sm font-medium text-azul-primario mb-2">DIRECCIÓN GENERADA</label>
-                <div class="w-full px-4 py-4 border-2 border-azul-claro-2 rounded-lg bg-azul-claro-1 min-h-[60px] flex items-center">
+                <label class="block text-sm font-medium text-cyan-600 mb-2">DIRECCIÓN GENERADA</label>
+                <div class="w-full px-4 py-4 border-2 border-cyan-300 rounded-lg bg-cyan-50 min-h-[60px] flex items-center">
                     <p id="vistaPrevia" class="text-lg text-gray-700 font-medium">
                         -
                     </p>
@@ -277,7 +293,7 @@ $barrios = $obj->ObtenerBarrio();
                 <button
                     type="button"
                     id="btnAplicarDireccion"
-                    class="bg-azul-primario hover:bg-azul-oscuro text-white font-semibold px-8 py-3 rounded-lg transition-all uppercase shadow-lg">
+                    class="bg-cyan-500 hover:bg-cyan-600 text-white font-semibold px-8 py-3 rounded-lg transition-all uppercase shadow-lg">
                     GUARDAR
                 </button>
             </div>
