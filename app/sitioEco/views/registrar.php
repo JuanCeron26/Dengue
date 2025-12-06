@@ -1,8 +1,8 @@
-<?php 
-include_once '../controllers/controllerRegistar.php';
+<?php
+include_once '../controllers/controllerRegistrar.php';
 
-$obj= new RegistrarSitioEco();
-$barrios= $obj->ObtenerBarrios();
+$obj = new RegistrarSitioEco();
+$barrios = $obj->ObtenerBarrios();
 
 ?>
 
@@ -49,11 +49,11 @@ $barrios= $obj->ObtenerBarrios();
                     </div>
                 </div>
                 <div class="flex gap-3">
-                    <button class="bg-eco-green-dark hover:bg-eco-teal text-white px-6 py-3 rounded-lg font-semibold transition-all shadow-md">
-                        <i class="fas fa-plus mr-2"></i>Registrar
+                    <button onclick="window.location.href='registrar.php'" class="bg-eco-green-dark hover:bg-eco-teal text-white px-6 py-3 rounded-lg font-semibold transition-all shadow-md">
+                        <i class="fas fa-plus mr-2" hrf="registrar.php"></i>Registrar
                     </button>
-                    <button class="bg-eco-blue hover:bg-eco-blue-light text-white px-6 py-3 rounded-lg font-semibold transition-all shadow-md">
-                        <i class="fas fa-search mr-2"></i>Consultar
+                    <button onclick="window.location.href='listar.php'"  class="bg-eco-blue hover:bg-eco-blue-light text-white px-6 py-3 rounded-lg font-semibold transition-all shadow-md">
+                        <i class="fas fa-search mr-2" hrf="listar.php"></i>Consultar
                     </button>
                 </div>
             </div>
@@ -127,8 +127,8 @@ $barrios= $obj->ObtenerBarrios();
                                 readonly
                                 required>
                             <button
-                                type="button" id="btnAbrirModalAdreess"
-                                onclick="openAddressModal()"
+                                type="button"
+                                id="btnAbrirModalAdreess"
                                 class="bg-eco-blue hover:bg-eco-blue-light text-white px-6 py-3 rounded-lg font-semibold transition-all shadow-md whitespace-nowrap">
                                 Ingresar
                             </button>
@@ -146,89 +146,133 @@ $barrios= $obj->ObtenerBarrios();
             </div>
         </div>
     </div>
-    </div>
 
-    <!-- Modal for Address Input -->
+    <!-- Modal Mejorado para Dirección -->
     <div id="addressModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-        <div class="bg-white rounded-xl shadow-2xl max-w-md w-full p-6">
+        <div class="bg-white rounded-xl shadow-2xl max-w-2xl w-full p-6 max-h-[90vh] overflow-y-auto">
             <div class="flex items-center justify-between mb-6">
                 <div class="flex items-center gap-3">
-                    <div class="bg-eco-blue text-white p-3 rounded-lg">
+                    <div class="bg-eco-teal text-white p-3 rounded-lg">
                         <i class="fas fa-location-dot text-xl"></i>
                     </div>
-                    <h3 class="text-xl font-bold text-eco-green-dark">Ingresar Dirección</h3>
+                    <h3 class="text-xl font-bold text-eco-green-dark">Ingreso de Dirección</h3>
                 </div>
-                <button id="btnCloseAdress" onclick="closeAddressModal()" class="text-gray-400 hover:text-gray-600 text-2xl">
+                <button id="btnCloseAdress" class="text-gray-400 hover:text-gray-600 text-2xl">
                     <i class="fas fa-times"></i>
                 </button>
             </div>
 
             <div class="space-y-4">
+                <!-- Primera fila: Tipo de Vía, Número Vía y # -->
+                <div class="grid grid-cols-12 gap-3">
+                    <div class="col-span-5">
+                        <label class="text-sm font-semibold text-eco-teal mb-2 block">
+                            Tipo de Vía
+                        </label>
+                        <select id="viaType" class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-eco-blue focus:ring-2 focus:ring-eco-blue-light focus:outline-none">
+                            <option value="">-</option>
+                            <option value="Calle">Calle</option>
+                            <option value="Carrera">Carrera</option>
+                            <option value="Avenida">Avenida</option>
+                            <option value="Transversal">Transversal</option>
+                            <option value="Diagonal">Diagonal</option>
+                            <option value="Circular">Circular</option>
+                        </select>
+                    </div>
+                    <div class="col-span-5">
+                        <label class="text-sm font-semibold text-eco-teal mb-2 block">
+                            Número Vía
+                        </label>
+                        <input
+                            type="text"
+                            id="viaNumber"
+                            class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-eco-blue focus:ring-2 focus:ring-eco-blue-light focus:outline-none">
+                    </div>
+                    <div class="col-span-2">
+                        <label class="text-sm font-semibold text-eco-teal mb-2 block">
+                            #
+                        </label>
+                        <input
+                            type="text"
+                            id="hashNumber"
+                            class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-eco-blue focus:ring-2 focus:ring-eco-blue-light focus:outline-none">
+                    </div>
+                </div>
+
+                <!-- Segunda fila: Sufijo/Letra y Distancia -->
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="text-sm font-semibold text-eco-teal mb-2 block">
+                            Sufijo / Letra <span class="text-gray-400 text-xs">(opcional)</span>
+                        </label>
+                        <input
+                            type="text"
+                            id="suffix"
+                            placeholder="Ej: A, B, BIS"
+                            maxlength="3"
+                            class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-eco-blue focus:ring-2 focus:ring-eco-blue-light focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="text-sm font-semibold text-eco-teal mb-2 block">
+                            Distancia <span class="text-gray-400 text-xs">(opcional)</span>
+                        </label>
+                        <input
+                            type="text"
+                            id="distance"
+                            placeholder="Ej: 25, 30"
+                            class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-eco-blue focus:ring-2 focus:ring-eco-blue-light focus:outline-none">
+                    </div>
+                </div>
+
+                <!-- Tercera fila: Punto Cardinal (opcional) -->
                 <div>
-                    <label class="text-sm font-semibold text-gray-700 mb-2 block">
-                        Tipo de Vía
+                    <label class="text-sm font-semibold text-eco-teal mb-2 block">
+                        Punto Cardinal <span class="text-gray-400 text-xs">(opcional)</span>
                     </label>
-                    <select id="viaType" class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-eco-blue focus:ring-2 focus:ring-eco-blue-light focus:outline-none">
-                        <option value="">Selecciona...</option>
-                        <option value="Calle">Calle</option>
-                        <option value="Carrera">Carrera</option>
-                        <option value="Avenida">Avenida</option>
-                        <option value="Transversal">Transversal</option>
-                        <option value="Diagonal">Diagonal</option>
+                    <select id="cardinalPoint" class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-eco-blue focus:ring-2 focus:ring-eco-blue-light focus:outline-none">
+                        <option value="">Ninguno</option>
+                        <option value="Norte">Norte</option>
+                        <option value="Sur">Sur</option>
+                        <option value="Este">Este</option>
+                        <option value="Oeste">Oeste</option>
                     </select>
                 </div>
 
-                <div class="grid grid-cols-3 gap-3">
-                    <div>
-                        <label class="text-sm font-semibold text-gray-700 mb-2 block">
-                            Principal
-                        </label>
-                        <input
-                            type="text"
-                            id="mainNumber"
-                            placeholder="3"
-                            class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-eco-blue focus:ring-2 focus:ring-eco-blue-light focus:outline-none">
-                    </div>
-                    <div>
-                        <label class="text-sm font-semibold text-gray-700 mb-2 block">
-                            Secundaria
-                        </label>
-                        <input
-                            type="text"
-                            id="secundaryNumber"
-                            placeholder="123"
-                            class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-eco-blue focus:ring-2 focus:ring-eco-blue-light focus:outline-none">
-                    </div>
-                    <div>
-                        <label class="text-sm font-semibold text-gray-700 mb-2 block">
-                            Número
-                        </label>
-                        <input
-                            type="text"
-                            id="plateNumber"
-                            placeholder="456"
-                            class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-eco-blue focus:ring-2 focus:ring-eco-blue-light focus:outline-none">
+                <!-- Dirección Generada (Vista previa) -->
+                <div class="bg-eco-green-light bg-opacity-30 p-4 rounded-lg border-2 border-eco-green-dark">
+                    <label class="text-sm font-bold text-eco-green-dark mb-2 block">
+                        DIRECCIÓN GENERADA
+                    </label>
+                    <div id="generatedAddress" class="text-lg font-semibold text-eco-teal min-h-[30px]">
+                        -
                     </div>
                 </div>
 
+                <!-- Botones de acción -->
                 <div class="flex gap-3 pt-4">
                     <button
-                    id="btnSaveAdress"
-                        onclick="saveAddress()"
+                        id="btnClearAddress"
+                        class="flex-1 bg-red-500 hover:bg-red-600 text-white px-4 py-3 rounded-lg font-semibold transition-all shadow-md">
+                        <i class="fas fa-eraser mr-2"></i>
+                        Borrar
+                    </button>
+                    <button
+                        id="btnClearLastField"
+                        class="flex-1 bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-3 rounded-lg font-semibold transition-all shadow-md">
+                        <i class="fas fa-undo mr-2"></i>
+                        Borrar Último
+                    </button>
+                    <button
+                        id="btnSaveAdress"
                         class="flex-1 bg-eco-green-dark hover:bg-eco-teal text-white px-4 py-3 rounded-lg font-semibold transition-all shadow-md">
                         <i class="fas fa-check mr-2"></i>
                         Guardar
-                    </button>
-                    <button
-                        onclick="closeAddressModal()"
-                        class="flex-1 bg-gray-400 hover:bg-gray-500 text-white px-4 py-3 rounded-lg font-semibold transition-all shadow-md">
-                        <i class="fas fa-times mr-2"></i>
-                        Cancelar
                     </button>
                 </div>
             </div>
         </div>
     </div>
+
     <script src="../../../src/js/sitio-eco-registrar.js"></script>
 </body>
 
