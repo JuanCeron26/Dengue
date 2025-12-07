@@ -75,7 +75,7 @@ function cancelEdit() {
     document.getElementById('editForm').classList.add('hidden');
     document.getElementById('emptyState').classList.remove('hidden');
     document.getElementById('editForm').dataset.codSitio = '';
-
+    
     // Limpiar campos
     document.getElementById('siteId').value = '';
     document.getElementById('neighborhood').value = '';
@@ -83,42 +83,69 @@ function cancelEdit() {
     document.getElementById('siteName').value = '';
 }
 
-// Función para abrir el modal de detalles
-function viewDetails(sitio) {
-    // Llenar el modal con los datos del sitio
-    document.getElementById('modalNombre').textContent = sitio.nombre_sitio;
-    document.getElementById('modalId').textContent = sitio.cod_sitioeco;
-    document.getElementById('modalBarrio').textContent = sitio.nombarrio;
-    document.getElementById('modalComuna').textContent = sitio.nomcomun || 'N/A';
-    document.getElementById('modalDireccion').textContent = sitio.direccion;
+// ========================================
+// FUNCIÓN PARA VER DETALLES CON AJAX
+// ========================================
+async function viewDetails(sitio) {
+    try {
+        // Mostrar el modal inmediatamente (con loading)
+        document.getElementById('detailsModal').classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
+        
+        // Mostrar "Cargando..." mientras se obtienen los datos
+        document.getElementById('modalNombre').textContent = 'Cargando...';
+        document.getElementById('modalId').textContent = 'Cargando...';
+        document.getElementById('modalBarrio').textContent = 'Cargando...';
+        document.getElementById('modalComuna').textContent = 'Cargando...';
+        document.getElementById('modalDireccion').textContent = 'Cargando...';
 
-    // Mostrar el modal
-    document.getElementById('detailsModal').classList.remove('hidden');
+        // Consultar al servidor para obtener la información completa
+        const response = await fetch(`../controllers/controllerVerDetalle.php?cod_sitioeco=${encodeURIComponent(sitio.cod_sitioeco)}`);
+        
+        const result = await response.json();
 
-    // Prevenir scroll del body
-    document.body.style.overflow = 'hidden';
+        if (result.success) {
+            // Llenar el modal con los datos obtenidos del servidor
+            const sitioData = result.sitio;
+            document.getElementById('modalNombre').textContent = sitioData.nombre_sitio;
+            document.getElementById('modalId').textContent = sitioData.cod_sitioeco;
+            document.getElementById('modalBarrio').textContent = sitioData.nombarrio;
+            document.getElementById('modalComuna').textContent = sitioData.nomcomun || 'N/A';
+            document.getElementById('modalDireccion').textContent = sitioData.direccion;
+        } else {
+            // Si hay error, mostrar mensaje
+            alert('❌ Error: ' + result.message);
+            closeDetailsModal();
+        }
+
+    } catch (error) {
+        console.error('Error:', error);
+        alert('❌ Error al obtener los detalles del sitio.');
+        closeDetailsModal();
+    }
 }
+// ========================================
 
 // Función para cerrar el modal de detalles
 function closeDetailsModal() {
     document.getElementById('detailsModal').classList.add('hidden');
-
+    
     // Restaurar scroll del body
     document.body.style.overflow = 'auto';
 }
 
 // Cerrar modal al hacer clic fuera de él
-document.addEventListener('DOMContentLoaded', function () {
+document.addEventListener('DOMContentLoaded', function() {
     const modal = document.getElementById('detailsModal');
-
-    modal.addEventListener('click', function (e) {
+    
+    modal.addEventListener('click', function(e) {
         if (e.target === modal) {
             closeDetailsModal();
         }
     });
 
     // Cerrar modal con la tecla Escape
-    document.addEventListener('keydown', function (e) {
+    document.addEventListener('keydown', function(e) {
         if (e.key === 'Escape') {
             closeDetailsModal();
         }
@@ -196,13 +223,13 @@ function clearFilters() {
 }
 
 // Animación suave al cargar la página
-document.addEventListener('DOMContentLoaded', function () {
+document.addEventListener('DOMContentLoaded', function() {
     // Agregar animación de entrada a las cards
     const cards = document.querySelectorAll('.card-hover');
     cards.forEach((card, index) => {
         card.style.opacity = '0';
         card.style.transform = 'translateY(20px)';
-
+        
         setTimeout(() => {
             card.style.transition = 'all 0.5s ease';
             card.style.opacity = '1';
