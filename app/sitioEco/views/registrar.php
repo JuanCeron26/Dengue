@@ -34,7 +34,7 @@ $barrios = $obj->ObtenerBarrios();
     </script>
 </head>
 
-<body class="bg-eco-green-light min-h-screen">
+<body class="bg-gray-100 min-h-screen">
     <div class="container mx-auto p-6 max-w-6xl">
         <!-- Header -->
         <div class="bg-white rounded-lg shadow-lg p-6 mb-6">

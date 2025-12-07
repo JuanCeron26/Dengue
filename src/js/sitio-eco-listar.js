@@ -20,42 +20,55 @@ function loadSiteData(sitio) {
     }
 }
 
+// ========================================
+// FUNCIÓN ACTUALIZADA CON AJAX
+// ========================================
 // Guardar cambios del sitio
-function saveSite() {
+async function saveSite() {
+    // Obtener valores
     const siteName = document.getElementById('siteName').value;
     const codSitio = document.getElementById('editForm').dataset.codSitio;
 
+    // Validar que el nombre no esté vacío
     if (siteName.trim() === '') {
         alert('⚠️ Por favor ingresa un nombre para el sitio');
         return;
     }
 
-    // Aquí implementarías la llamada AJAX para guardar en la BD
-    alert('✅ Sitio guardado exitosamente:\n\n' + siteName + '\nID: ' + codSitio);
+    // Confirmar antes de guardar
+    if (!confirm(`¿Deseas guardar los cambios?\n\nNuevo nombre: ${siteName}`)) {
+        return;
+    }
 
-    // TODO: Implementar guardado real con AJAX
-    /*
-    fetch('../controllers/guardarSitio.php', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-            cod_sitio: codSitio,
-            nombre: siteName
-        })
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            alert('Sitio guardado exitosamente');
-            location.reload();
+    try {
+        // Preparar datos para enviar
+        const formData = new FormData();
+        formData.append('cod_sitioeco', codSitio);    // ✅ CORREGIDO: cod_sitioeco
+        formData.append('nombre_sitio', siteName);
+
+        // Enviar datos al servidor
+        const response = await fetch('../controllers/controllerEditar.php', {
+            method: 'POST',
+            body: formData
+        });
+
+        // Obtener respuesta JSON
+        const result = await response.json();
+
+        // Verificar resultado
+        if (result.success) {
+            alert('✅ ' + result.message);
+            location.reload(); // Recargar para ver cambios
         } else {
-            alert('Error al guardar: ' + data.message);
+            alert('❌ Error: ' + result.message);
         }
-    });
-    */
+
+    } catch (error) {
+        console.error('Error:', error);
+        alert('❌ Error al conectar con el servidor. Por favor intenta de nuevo.');
+    }
 }
+// ========================================
 
 // Cancelar edición
 function cancelEdit() {
@@ -127,32 +140,6 @@ function deactivateSite(codSitio, nombreSitio) {
         if (confirmarAnulacion === 'ANULAR') {
             // Aquí implementarías la llamada AJAX para anular
             alert(`✅ Sitio "${nombreSitio}" ha sido anulado exitosamente`);
-
-            // TODO: Implementar anulación real con AJAX
-            /*
-            fetch('../controllers/anularSitio.php', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    cod_sitio: codSitio
-                })
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    alert('Sitio anulado exitosamente');
-                    location.reload();
-                } else {
-                    alert('Error al anular el sitio: ' + data.message);
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('Error al procesar la solicitud');
-            });
-            */
         } else if (confirmarAnulacion !== null) {
             alert('❌ Anulación cancelada. Debes escribir "ANULAR" exactamente para confirmar.');
         }
