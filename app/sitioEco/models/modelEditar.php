@@ -7,7 +7,7 @@ class modelEditar
 
     public function __construct()
     {
-        $this->base = new BaseDatos("1234"); // Una sola conexión
+        $this->base = new BaseDatos("1234"); 
     }
 
     //Editar el nombre del SitioECO

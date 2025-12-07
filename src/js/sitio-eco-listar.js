@@ -75,7 +75,7 @@ function cancelEdit() {
     document.getElementById('editForm').classList.add('hidden');
     document.getElementById('emptyState').classList.remove('hidden');
     document.getElementById('editForm').dataset.codSitio = '';
-    
+
     // Limpiar campos
     document.getElementById('siteId').value = '';
     document.getElementById('neighborhood').value = '';
@@ -94,7 +94,7 @@ function viewDetails(sitio) {
 
     // Mostrar el modal
     document.getElementById('detailsModal').classList.remove('hidden');
-    
+
     // Prevenir scroll del body
     document.body.style.overflow = 'hidden';
 }
@@ -102,49 +102,69 @@ function viewDetails(sitio) {
 // Función para cerrar el modal de detalles
 function closeDetailsModal() {
     document.getElementById('detailsModal').classList.add('hidden');
-    
+
     // Restaurar scroll del body
     document.body.style.overflow = 'auto';
 }
 
 // Cerrar modal al hacer clic fuera de él
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     const modal = document.getElementById('detailsModal');
-    
-    modal.addEventListener('click', function(e) {
+
+    modal.addEventListener('click', function (e) {
         if (e.target === modal) {
             closeDetailsModal();
         }
     });
 
     // Cerrar modal con la tecla Escape
-    document.addEventListener('keydown', function(e) {
+    document.addEventListener('keydown', function (e) {
         if (e.key === 'Escape') {
             closeDetailsModal();
         }
     });
 });
 
-// Función para anular sitio
-function deactivateSite(codSitio, nombreSitio) {
-    if (confirm(
+// ========================================
+// FUNCIÓN PARA ANULAR SITIO CON AJAX
+// ========================================
+async function deactivateSite(codSitio, nombreSitio) {
+    // Confirmación única
+    if (!confirm(
         `⚠️ ¿Estás seguro de que deseas anular el sitio "${nombreSitio}"?\n\n` +
-        `Esta acción puede ser irreversible.\n` +
-        `Código: ${codSitio}`
+        `Esta acción cambiará el estado del sitio.`
     )) {
-        // Mostrar confirmación de seguridad adicional
-        const confirmarAnulacion = prompt(
-            `Para confirmar la anulación, escribe "ANULAR" (en mayúsculas):`
-        );
+        return; // Si cancela, salimos
+    }
 
-        if (confirmarAnulacion === 'ANULAR') {
-            // Aquí implementarías la llamada AJAX para anular
-            alert(`✅ Sitio "${nombreSitio}" ha sido anulado exitosamente`);
-        } else if (confirmarAnulacion !== null) {
-            alert('❌ Anulación cancelada. Debes escribir "ANULAR" exactamente para confirmar.');
+    try {
+        // Preparar datos para enviar
+        const formData = new FormData();
+        formData.append('cod_sitioeco', codSitio);
+
+        // Enviar petición al servidor
+        const response = await fetch('../controllers/controllerAnular.php', {
+            method: 'POST',
+            body: formData
+        });
+
+        // Obtener respuesta JSON
+        const result = await response.json();
+
+        // Verificar resultado
+        if (result.success) {
+            alert('✅ ' + result.message);
+            location.reload(); // Recargar para ver cambios
+        } else {
+            alert('❌ Error: ' + result.message);
         }
+
+    } catch (error) {
+        console.error('Error:', error);
+        alert('❌ Error al conectar con el servidor. Por favor intenta de nuevo.');
     }
 }
+// ========================================
 
 // Aplicar filtros
 function applyFilters() {
@@ -176,13 +196,13 @@ function clearFilters() {
 }
 
 // Animación suave al cargar la página
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     // Agregar animación de entrada a las cards
     const cards = document.querySelectorAll('.card-hover');
     cards.forEach((card, index) => {
         card.style.opacity = '0';
         card.style.transform = 'translateY(20px)';
-        
+
         setTimeout(() => {
             card.style.transition = 'all 0.5s ease';
             card.style.opacity = '1';
