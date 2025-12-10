@@ -1,239 +1,218 @@
-// Cargar datos del sitio en el formulario de edición
-function loadSiteData(sitio) {
-    document.getElementById('emptyState').classList.add('hidden');
-    document.getElementById('editForm').classList.remove('hidden');
+document.addEventListener('DOMContentLoaded', () => {
 
-    document.getElementById('siteId').value = sitio.cod_sitioeco;
-    document.getElementById('neighborhood').value = sitio.nombarrio;
-    document.getElementById('address').value = sitio.direccion;
-    document.getElementById('siteName').value = sitio.nombre_sitio;
+    // Referencias a elementos del modal
+    const modal = document.getElementById('addressModal');
+    const btnOpenModal = document.getElementById('btnAbrirModalAdreess');
+    const btnCloseModal = document.getElementById('btnCloseAdress');
+    const btnSaveAddress = document.getElementById('btnSaveAdress');
+    const btnClearAddress = document.getElementById('btnClearAddress');
+    const btnClearLastField = document.getElementById('btnClearLastField');
+    
+    // Campos del formulario de dirección
+    const viaType = document.getElementById('viaType');
+    const viaNumber = document.getElementById('viaNumber');
+    const suffix = document.getElementById('suffix');
+    const distance = document.getElementById('distance');
+    const cardinalPoint = document.getElementById('cardinalPoint');
+    const generatedAddress = document.getElementById('generatedAddress');
+    const addressInput = document.getElementById('address');
 
-    // Guardar el código del sitio para usarlo al guardar
-    document.getElementById('editForm').dataset.codSitio = sitio.cod_sitioeco;
-
-    // Scroll to form on mobile/tablet
-    if (window.innerWidth < 1280) {
-        document.getElementById('editForm').scrollIntoView({
-            behavior: 'smooth',
-            block: 'nearest'
-        });
-    }
-}
-
-// ========================================
-// FUNCIÓN ACTUALIZADA CON AJAX
-// ========================================
-// Guardar cambios del sitio
-async function saveSite() {
-    // Obtener valores
-    const siteName = document.getElementById('siteName').value;
-    const codSitio = document.getElementById('editForm').dataset.codSitio;
-
-    // Validar que el nombre no esté vacío
-    if (siteName.trim() === '') {
-        alert('⚠️ Por favor ingresa un nombre para el sitio');
-        return;
+    // Función para abrir el modal
+    function openAddressModal() {
+        modal.classList.remove('hidden');
+        updateGeneratedAddress();
     }
 
-    // Confirmar antes de guardar
-    if (!confirm(`¿Deseas guardar los cambios?\n\nNuevo nombre: ${siteName}`)) {
-        return;
+    // Función para cerrar el modal
+    function closeAddressModal() {
+        modal.classList.add('hidden');
     }
 
-    try {
-        // Preparar datos para enviar
-        const formData = new FormData();
-        formData.append('cod_sitioeco', codSitio);    // ✅ CORREGIDO: cod_sitioeco
-        formData.append('nombre_sitio', siteName);
+    // Función para actualizar la dirección generada en tiempo real
+    function updateGeneratedAddress() {
+        let addressParts = [];
 
-        // Enviar datos al servidor
-        const response = await fetch('../controllers/controllerEditar.php', {
-            method: 'POST',
-            body: formData
-        });
-
-        // Obtener respuesta JSON
-        const result = await response.json();
-
-        // Verificar resultado
-        if (result.success) {
-            alert('✅ ' + result.message);
-            location.reload(); // Recargar para ver cambios
-        } else {
-            alert('❌ Error: ' + result.message);
+        // Tipo de Vía + Número Vía
+        if (viaType.value && viaNumber.value) {
+            addressParts.push(`${viaType.value} ${viaNumber.value}`);
+        } else if (viaType.value) {
+            addressParts.push(viaType.value);
+        } else if (viaNumber.value) {
+            addressParts.push(viaNumber.value);
         }
 
-    } catch (error) {
-        console.error('Error:', error);
-        alert('❌ Error al conectar con el servidor. Por favor intenta de nuevo.');
-    }
-}
-// ========================================
-
-// Cancelar edición
-function cancelEdit() {
-    document.getElementById('editForm').classList.add('hidden');
-    document.getElementById('emptyState').classList.remove('hidden');
-    document.getElementById('editForm').dataset.codSitio = '';
-    
-    // Limpiar campos
-    document.getElementById('siteId').value = '';
-    document.getElementById('neighborhood').value = '';
-    document.getElementById('address').value = '';
-    document.getElementById('siteName').value = '';
-}
-
-// ========================================
-// FUNCIÓN PARA VER DETALLES CON AJAX
-// ========================================
-async function viewDetails(sitio) {
-    try {
-        // Mostrar el modal inmediatamente (con loading)
-        document.getElementById('detailsModal').classList.remove('hidden');
-        document.body.style.overflow = 'hidden';
-        
-        // Mostrar "Cargando..." mientras se obtienen los datos
-        document.getElementById('modalNombre').textContent = 'Cargando...';
-        document.getElementById('modalId').textContent = 'Cargando...';
-        document.getElementById('modalBarrio').textContent = 'Cargando...';
-        document.getElementById('modalComuna').textContent = 'Cargando...';
-        document.getElementById('modalDireccion').textContent = 'Cargando...';
-
-        // Consultar al servidor para obtener la información completa
-        const response = await fetch(`../controllers/controllerVerDetalle.php?cod_sitioeco=${encodeURIComponent(sitio.cod_sitioeco)}`);
-        
-        const result = await response.json();
-
-        if (result.success) {
-            // Llenar el modal con los datos obtenidos del servidor
-            const sitioData = result.sitio;
-            document.getElementById('modalNombre').textContent = sitioData.nombre_sitio;
-            document.getElementById('modalId').textContent = sitioData.cod_sitioeco;
-            document.getElementById('modalBarrio').textContent = sitioData.nombarrio;
-            document.getElementById('modalComuna').textContent = sitioData.nomcomun || 'N/A';
-            document.getElementById('modalDireccion').textContent = sitioData.direccion;
-        } else {
-            // Si hay error, mostrar mensaje
-            alert('❌ Error: ' + result.message);
-            closeDetailsModal();
+        // Sufijo (opcional) - se agrega inmediatamente después del número de vía
+        if (suffix.value) {
+            if (addressParts.length > 0) {
+                addressParts[addressParts.length - 1] += suffix.value.toUpperCase();
+            } else {
+                addressParts.push(suffix.value.toUpperCase());
+            }
         }
 
-    } catch (error) {
-        console.error('Error:', error);
-        alert('❌ Error al obtener los detalles del sitio.');
-        closeDetailsModal();
+        // # + Distancia - El # se agrega automáticamente si hay distancia
+        if (distance.value) {
+            addressParts.push(`# ${distance.value}`);
+        }
+
+        // Punto Cardinal (opcional)
+        if (cardinalPoint.value) {
+            addressParts.push(cardinalPoint.value);
+        }
+
+        // Mostrar la dirección generada o un guion si está vacía
+        const finalAddress = addressParts.length > 0 ? addressParts.join(' ') : '-';
+        generatedAddress.textContent = finalAddress;
     }
-}
-// ========================================
 
-// Función para cerrar el modal de detalles
-function closeDetailsModal() {
-    document.getElementById('detailsModal').classList.add('hidden');
-    
-    // Restaurar scroll del body
-    document.body.style.overflow = 'auto';
-}
+    // Función para guardar la dirección
+    function saveAddress() {
+        const finalAddress = generatedAddress.textContent;
 
-// Cerrar modal al hacer clic fuera de él
-document.addEventListener('DOMContentLoaded', function() {
-    const modal = document.getElementById('detailsModal');
-    
+        // Validar que al menos haya algo de dirección
+        if (finalAddress === '-' || !viaType.value || !viaNumber.value) {
+            alert('Por favor completa al menos: Tipo de Vía y Número Vía');
+            return;
+        }
+
+        // Establecer la dirección en el campo principal
+        addressInput.value = finalAddress;
+        
+        // Cerrar el modal
+        closeAddressModal();
+    }
+
+    // Función para borrar todos los campos
+    function clearAllFields() {
+        viaType.value = '';
+        viaNumber.value = '';
+        suffix.value = '';
+        distance.value = '';
+        cardinalPoint.value = '';
+        updateGeneratedAddress();
+    }
+
+    // Función para borrar el último campo completado
+    function clearLastField() {
+        if (cardinalPoint.value) {
+            cardinalPoint.value = '';
+        } else if (distance.value) {
+            distance.value = '';
+        } else if (suffix.value) {
+            suffix.value = '';
+        } else if (viaNumber.value) {
+            viaNumber.value = '';
+        } else if (viaType.value) {
+            viaType.value = '';
+        }
+        updateGeneratedAddress();
+    }
+
+    // Convertir sufijo a mayúsculas automáticamente
+    suffix.addEventListener('input', function() {
+        this.value = this.value.toUpperCase();
+    });
+
+    // Event Listeners para abrir/cerrar modal
+    btnOpenModal.addEventListener('click', openAddressModal);
+    btnCloseModal.addEventListener('click', closeAddressModal);
+    btnSaveAddress.addEventListener('click', saveAddress);
+    btnClearAddress.addEventListener('click', clearAllFields);
+    btnClearLastField.addEventListener('click', clearLastField);
+
+    // Event Listeners para actualizar la dirección en tiempo real
+    viaType.addEventListener('change', updateGeneratedAddress);
+    viaNumber.addEventListener('input', updateGeneratedAddress);
+    suffix.addEventListener('input', updateGeneratedAddress);
+    distance.addEventListener('input', updateGeneratedAddress);
+    cardinalPoint.addEventListener('change', updateGeneratedAddress);
+
+    // Cerrar modal al hacer clic fuera de él
     modal.addEventListener('click', function(e) {
         if (e.target === modal) {
-            closeDetailsModal();
+            closeAddressModal();
         }
     });
 
     // Cerrar modal con la tecla Escape
     document.addEventListener('keydown', function(e) {
-        if (e.key === 'Escape') {
-            closeDetailsModal();
+        if (e.key === 'Escape' && !modal.classList.contains('hidden')) {
+            closeAddressModal();
         }
     });
-});
 
-// ========================================
-// FUNCIÓN PARA ANULAR SITIO CON AJAX
-// ========================================
-async function deactivateSite(codSitio, nombreSitio) {
-    // Confirmación única
-    if (!confirm(
-        `⚠️ ¿Estás seguro de que deseas anular el sitio "${nombreSitio}"?\n\n` +
-        `Esta acción cambiará el estado del sitio.`
-    )) {
-        return; // Si cancela, salimos
-    }
+    // Manejar el envío del formulario principal
+    document.getElementById('registerForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
 
-    try {
-        // Preparar datos para enviar
-        const formData = new FormData();
-        formData.append('cod_sitioeco', codSitio);
+        // Validar que todos los campos estén completos
+        const sitioEco = document.getElementById('siteName').value.trim();
+        const barrio = document.getElementById('barrio').value;
+        const direccion = addressInput.value.trim();
 
-        // Enviar petición al servidor
-        const response = await fetch('../controllers/controllerAnular.php', {
-            method: 'POST',
-            body: formData
-        });
-
-        // Obtener respuesta JSON
-        const result = await response.json();
-
-        // Verificar resultado
-        if (result.success) {
-            alert('✅ ' + result.message);
-            location.reload(); // Recargar para ver cambios
-        } else {
-            alert('❌ Error: ' + result.message);
+        if (!sitioEco || !barrio || !direccion) {
+            alert('Por favor completa todos los campos obligatorios');
+            return;
         }
 
-    } catch (error) {
-        console.error('Error:', error);
-        alert('❌ Error al conectar con el servidor. Por favor intenta de nuevo.');
-    }
-}
-// ========================================
+        // Crear FormData con los datos del formulario
+        const form = document.getElementById('registerForm');
+        const formData = new FormData(form);
 
-// Aplicar filtros
-function applyFilters() {
-    const comuna = document.getElementById('filterComuna').value;
-    const barrio = document.getElementById('filterBarrio').value;
+        try {
+            // Deshabilitar el botón de envío
+            const submitBtn = this.querySelector('button[type="submit"]');
+            const originalText = submitBtn.innerHTML;
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Registrando...';
 
-    // Construir URL con parámetros
-    let url = window.location.pathname + '?';
-    const params = [];
+            // Enviar datos al servidor
+            const response = await fetch('../controllers/controllerRegistrar.php', {
+                method: 'POST',
+                body: formData
+            });
 
-    if (comuna) {
-        params.push('comuna=' + encodeURIComponent(comuna));
-    }
-    if (barrio) {
-        params.push('barrio=' + encodeURIComponent(barrio));
-    }
+            const result = await response.json();
 
-    if (params.length > 0) {
-        url += params.join('&');
-        window.location.href = url;
-    } else {
-        alert('⚠️ Por favor selecciona al menos un filtro');
-    }
-}
+            if (result.success) {
+                // Mostrar mensaje de éxito
+                alert('✅ ' + result.message + '\nCódigo del sitio: ' + result.cod_sitioeco);
+                
+                // Redirigir a listar.php
+                window.location.href = 'listar.php';
+            } else {
+                // Mostrar mensaje de error
+                alert('❌ Error: ' + result.message);
+            }
 
-// Limpiar filtros
-function clearFilters() {
-    window.location.href = window.location.pathname;
-}
+            // Rehabilitar el botón
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = originalText;
 
-// Animación suave al cargar la página
-document.addEventListener('DOMContentLoaded', function() {
-    // Agregar animación de entrada a las cards
-    const cards = document.querySelectorAll('.card-hover');
-    cards.forEach((card, index) => {
-        card.style.opacity = '0';
-        card.style.transform = 'translateY(20px)';
-        
-        setTimeout(() => {
-            card.style.transition = 'all 0.5s ease';
-            card.style.opacity = '1';
-            card.style.transform = 'translateY(0)';
-        }, index * 100);
+        } catch (error) {
+            console.error('Error:', error);
+            alert('❌ Error al procesar la solicitud. Por favor intenta de nuevo.');
+            
+            // Rehabilitar el botón
+            const submitBtn = this.querySelector('button[type="submit"]');
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = '<i class="fas fa-map-marker-alt text-xl"></i> Registrar Sitio';
+        }
+    });
+
+    // Validación en tiempo real para el campo de nombre del sitio
+    document.getElementById('siteName').addEventListener('input', function() {
+        if (this.value.trim().length > 0) {
+            this.classList.remove('border-red-500');
+            this.classList.add('border-gray-300');
+        }
+    });
+
+    // Validación en tiempo real para el select de barrio
+    document.getElementById('barrio').addEventListener('change', function() {
+        if (this.value) {
+            this.classList.remove('border-red-500');
+            this.classList.add('border-eco-blue');
+        }
     });
 });

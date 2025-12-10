@@ -19,6 +19,23 @@ class modelAnular
         return $result && pg_num_rows($result) > 0;
     }
 
+    //Verificar si el sitio tiene territorios asociados
+    public function TieneTerritoriosAsociados($codSitioeco)
+    {
+        $sql = "SELECT COUNT(*) as total 
+                FROM tblterritoriopriorizado 
+                WHERE cod_sitioeco = $1";
+        
+        $result = pg_query_params($this->base->conectar, $sql, [$codSitioeco]);
+
+        if ($result && pg_num_rows($result) > 0) {
+            $row = pg_fetch_assoc($result);
+            return (int)$row['total'] > 0;
+        }
+
+        return false;
+    }
+
     // Anular un sitioECO (cambiar estado a 2)
     public function AnularSitioEco($codSitioeco)
     {

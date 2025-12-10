@@ -22,11 +22,7 @@ $barrios = $obj->ObtenerBarrios();
                 extend: {
                     colors: {
                         'eco-green-dark': '#005F3D',
-                        'eco-green-light': '#A5D7AE',
-                        'eco-blue-light': '#8EBBFF',
-                        'eco-blue': '#4A7BFF',
-                        'eco-cyan': '#9AC2DA',
-                        'eco-teal': '#3E6E83'
+                        'eco-green-light': '#A5D7AE'
                     }
                 }
             }
@@ -49,10 +45,10 @@ $barrios = $obj->ObtenerBarrios();
                     </div>
                 </div>
                 <div class="flex gap-3">
-                    <button onclick="window.location.href='registrar.php'" class="bg-eco-green-dark hover:bg-eco-teal text-white px-6 py-3 rounded-lg font-semibold transition-all shadow-md">
+                    <button onclick="window.location.href='registrar.php'" class="bg-eco-green-dark hover:bg-eco-green-light text-white px-6 py-3 rounded-lg font-semibold transition-all shadow-md">
                         <i class="fas fa-plus mr-2" hrf="registrar.php"></i>Registrar
                     </button>
-                    <button onclick="window.location.href='listar.php'"  class="bg-eco-blue hover:bg-eco-blue-light text-white px-6 py-3 rounded-lg font-semibold transition-all shadow-md">
+                    <button onclick="window.location.href='listar.php'" class="bg-eco-green-light hover:bg-eco-green-dark text-white px-6 py-3 rounded-lg font-semibold transition-all shadow-md">
                         <i class="fas fa-search mr-2" hrf="listar.php"></i>Consultar
                     </button>
                 </div>
@@ -98,7 +94,7 @@ $barrios = $obj->ObtenerBarrios();
                         <select
                             id="barrio"
                             name="barrio"
-                            class="w-full px-4 py-3 border-2 border-eco-blue rounded-full focus:outline-none focus:eco-blue transition-all bg-cyan-50 appearance-none cursor-pointer"
+                            class="w-full px-4 py-3 border-2 border-eco-green-dark rounded-lg focus:outline-none focus:border-eco-green-light transition-all bg-green-50 appearance-none cursor-pointer"
                             required>
                             <option value="">Seleccionar barrio</option>
                             <?php if (!empty($barrios)) { ?>
@@ -129,7 +125,7 @@ $barrios = $obj->ObtenerBarrios();
                             <button
                                 type="button"
                                 id="btnAbrirModalAdreess"
-                                class="bg-eco-blue hover:bg-eco-blue-light text-white px-6 py-3 rounded-lg font-semibold transition-all shadow-md whitespace-nowrap">
+                                class="bg-eco-green-dark hover:bg-eco-green-light text-white px-6 py-3 rounded-lg font-semibold transition-all shadow-md whitespace-nowrap">
                                 Ingresar
                             </button>
                         </div>
@@ -138,7 +134,7 @@ $barrios = $obj->ObtenerBarrios();
                     <!-- Submit Button -->
                     <button
                         type="submit"
-                        class="w-full bg-eco-green-dark hover:bg-eco-teal text-white px-6 py-4 rounded-lg font-bold text-lg transition-all shadow-lg flex items-center justify-center gap-3">
+                        class="w-full bg-eco-green-dark hover:bg-eco-green-light text-white px-6 py-4 rounded-lg font-bold text-lg transition-all shadow-lg flex items-center justify-center gap-3">
                         <i class="fas fa-map-marker-alt text-xl"></i>
                         Registrar Sitio
                     </button>
@@ -152,7 +148,7 @@ $barrios = $obj->ObtenerBarrios();
         <div class="bg-white rounded-xl shadow-2xl max-w-2xl w-full p-6 max-h-[90vh] overflow-y-auto">
             <div class="flex items-center justify-between mb-6">
                 <div class="flex items-center gap-3">
-                    <div class="bg-eco-teal text-white p-3 rounded-lg">
+                    <div class="bg-eco-green-dark text-white p-3 rounded-lg">
                         <i class="fas fa-location-dot text-xl"></i>
                     </div>
                     <h3 class="text-xl font-bold text-eco-green-dark">Ingreso de Dirección</h3>
@@ -166,10 +162,10 @@ $barrios = $obj->ObtenerBarrios();
                 <!-- Primera fila: Tipo de Vía, Número Vía y # -->
                 <div class="grid grid-cols-12 gap-3">
                     <div class="col-span-5">
-                        <label class="text-sm font-semibold text-eco-teal mb-2 block">
+                        <label class="text-sm font-semibold text-eco-green-dark mb-2 block">
                             Tipo de Vía
                         </label>
-                        <select id="viaType" class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-eco-blue focus:ring-2 focus:ring-eco-blue-light focus:outline-none">
+                        <select id="viaType" class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-eco-green-dark focus:ring-2 focus:ring-eco-green-light focus:outline-none">
                             <option value="">-</option>
                             <option value="Calle">Calle</option>
                             <option value="Carrera">Carrera</option>
@@ -180,29 +176,29 @@ $barrios = $obj->ObtenerBarrios();
                         </select>
                     </div>
                     <div class="col-span-5">
-                        <label class="text-sm font-semibold text-eco-teal mb-2 block">
+                        <label class="text-sm font-semibold text-eco-green-dark mb-2 block">
                             Número Vía
                         </label>
                         <input
                             type="text"
                             id="viaNumber"
-                            class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-eco-blue focus:ring-2 focus:ring-eco-blue-light focus:outline-none">
+                            class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-eco-green-dark focus:ring-2 focus:ring-eco-green-light focus:outline-none">
                     </div>
                     <div class="col-span-2">
-                        <label class="text-sm font-semibold text-eco-teal mb-2 block">
+                        <label class="text-sm font-semibold text-eco-green-dark mb-2 block">
                             #
                         </label>
                         <input
                             type="text"
                             id="hashNumber"
-                            class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-eco-blue focus:ring-2 focus:ring-eco-blue-light focus:outline-none">
+                            class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-eco-green-dark focus:ring-2 focus:ring-eco-green-light focus:outline-none">
                     </div>
                 </div>
 
                 <!-- Segunda fila: Sufijo/Letra y Distancia -->
                 <div class="grid grid-cols-2 gap-3">
                     <div>
-                        <label class="text-sm font-semibold text-eco-teal mb-2 block">
+                        <label class="text-sm font-semibold text-eco-green-dark mb-2 block">
                             Sufijo / Letra <span class="text-gray-400 text-xs">(opcional)</span>
                         </label>
                         <input
@@ -210,26 +206,26 @@ $barrios = $obj->ObtenerBarrios();
                             id="suffix"
                             placeholder="Ej: A, B, BIS"
                             maxlength="3"
-                            class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-eco-blue focus:ring-2 focus:ring-eco-blue-light focus:outline-none">
+                            class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-eco-green-dark focus:ring-2 focus:ring-eco-green-light focus:outline-none">
                     </div>
                     <div>
-                        <label class="text-sm font-semibold text-eco-teal mb-2 block">
+                        <label class="text-sm font-semibold text-eco-green-dark mb-2 block">
                             Distancia <span class="text-gray-400 text-xs">(opcional)</span>
                         </label>
                         <input
                             type="text"
                             id="distance"
                             placeholder="Ej: 25, 30"
-                            class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-eco-blue focus:ring-2 focus:ring-eco-blue-light focus:outline-none">
+                            class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-eco-green-dark focus:ring-2 focus:ring-eco-green-light focus:outline-none">
                     </div>
                 </div>
 
                 <!-- Tercera fila: Punto Cardinal (opcional) -->
                 <div>
-                    <label class="text-sm font-semibold text-eco-teal mb-2 block">
+                    <label class="text-sm font-semibold text-eco-green-dark mb-2 block">
                         Punto Cardinal <span class="text-gray-400 text-xs">(opcional)</span>
                     </label>
-                    <select id="cardinalPoint" class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-eco-blue focus:ring-2 focus:ring-eco-blue-light focus:outline-none">
+                    <select id="cardinalPoint" class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-eco-green-dark focus:ring-2 focus:ring-eco-green-light focus:outline-none">
                         <option value="">Ninguno</option>
                         <option value="Norte">Norte</option>
                         <option value="Sur">Sur</option>
@@ -243,7 +239,7 @@ $barrios = $obj->ObtenerBarrios();
                     <label class="text-sm font-bold text-eco-green-dark mb-2 block">
                         DIRECCIÓN GENERADA
                     </label>
-                    <div id="generatedAddress" class="text-lg font-semibold text-eco-teal min-h-[30px]">
+                    <div id="generatedAddress" class="text-lg font-semibold text-eco-green-dark min-h-[30px]">
                         -
                     </div>
                 </div>
@@ -264,7 +260,7 @@ $barrios = $obj->ObtenerBarrios();
                     </button>
                     <button
                         id="btnSaveAdress"
-                        class="flex-1 bg-eco-green-dark hover:bg-eco-teal text-white px-4 py-3 rounded-lg font-semibold transition-all shadow-md">
+                        class="flex-1 bg-eco-green-dark hover:bg-eco-green-light text-white px-4 py-3 rounded-lg font-semibold transition-all shadow-md">
                         <i class="fas fa-check mr-2"></i>
                         Guardar
                     </button>

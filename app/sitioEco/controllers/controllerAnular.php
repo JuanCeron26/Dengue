@@ -32,6 +32,15 @@ class AnularSitioEco
             exit;
         }
 
+        // ✅ NUEVO: Validar que NO tenga territorios asociados
+        if ($this->model->TieneTerritoriosAsociados($codSitioeco)) {
+            echo json_encode([
+                'success' => false,
+                'message' => "No se puede anular este sitio porque tiene territorios asociados. Primero debe eliminar los territorios."
+            ]);
+            exit;
+        }
+
         // Anular el sitioECO
         $result = $this->model->AnularSitioEco($codSitioeco);
 
@@ -63,3 +72,4 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         'message' => 'Método no permitido. Use POST'
     ]);
 }
+?>

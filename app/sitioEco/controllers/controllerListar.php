@@ -10,23 +10,32 @@ class ListarSitioEco
         $this->model = new modelListar();
     }
 
-    //Obtener todos los Sitios
+    // Obtener sitios con filtros opcionales
     public function MostrarSitioEco()
     {
-        return $this->model->ListarSitioEco();
+        $filtros = [];
+        
+        // Capturar filtros de la URL
+        if (isset($_GET['comuna']) && !empty($_GET['comuna'])) {
+            $filtros['comuna'] = $_GET['comuna'];
+        }
+        
+        if (isset($_GET['barrio']) && !empty($_GET['barrio'])) {
+            $filtros['barrio'] = $_GET['barrio'];
+        }
+
+        return $this->model->ListarSitioEco($filtros);
     }
 
-    //Obtener todos los Barrios
+    // Obtener todos los Barrios
     public function ObtenerBarrios()
     {
         return $this->model->SelectBarrios();
     }
 
-    //Obtener todas las Comunas
+    // Obtener todas las Comunas
     public function ObtenerComunas()
     {
         return $this->model->SelectComunas();
     }
-
-    
 }

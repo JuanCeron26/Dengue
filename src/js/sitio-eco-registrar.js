@@ -28,7 +28,7 @@ document.addEventListener('DOMContentLoaded', () => {
         modal.classList.add('hidden');
     }
 
-    // Función para actualizar la dirección generada en tiempo real
+    // ✅ FUNCIÓN CORREGIDA: Punto cardinal va DESPUÉS del número, ANTES del #
     function updateGeneratedAddress() {
         let addressParts = [];
 
@@ -50,14 +50,14 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
 
+        // ✅ Punto Cardinal - VA AQUÍ (después del número, antes del #)
+        if (cardinalPoint.value) {
+            addressParts.push(cardinalPoint.value);
+        }
+
         // # + Distancia - El # se agrega automáticamente si hay distancia
         if (distance.value) {
             addressParts.push(`# ${distance.value}`);
-        }
-
-        // Punto Cardinal (opcional)
-        if (cardinalPoint.value) {
-            addressParts.push(cardinalPoint.value);
         }
 
         // Mostrar la dirección generada o un guion si está vacía
@@ -178,20 +178,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 // Mostrar mensaje de éxito
                 alert('✅ ' + result.message + '\nCódigo del sitio: ' + result.cod_sitioeco);
                 
-                // Limpiar el formulario
-                document.getElementById('registerForm').reset();
-                addressInput.value = '';
-                
-                // Opcional: redirigir o actualizar la página
-                // window.location.href = 'consultar.php';
+                // ✅ REDIRIGIR A LISTAR.PHP
+                window.location.href = 'listar.php';
             } else {
                 // Mostrar mensaje de error
                 alert('❌ Error: ' + result.message);
+                
+                // Rehabilitar el botón si hay error
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = originalText;
             }
-
-            // Rehabilitar el botón
-            submitBtn.disabled = false;
-            submitBtn.innerHTML = originalText;
 
         } catch (error) {
             console.error('Error:', error);
@@ -216,7 +212,7 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('barrio').addEventListener('change', function() {
         if (this.value) {
             this.classList.remove('border-red-500');
-            this.classList.add('border-eco-blue');
+            this.classList.add('border-eco-green-dark');
         }
     });
 });

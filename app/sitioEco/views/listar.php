@@ -31,11 +31,7 @@ $sitiosPaginados = array_slice($sitioEco, $offset, $itemsPorPagina);
                 extend: {
                     colors: {
                         'eco-green-dark': '#005F3D',
-                        'eco-green-light': '#A5D7AE',
-                        'eco-blue-light': '#8EBBFF',
-                        'eco-blue': '#4A7BFF',
-                        'eco-cyan': '#9AC2DA',
-                        'eco-teal': '#3E6E83'
+                        'eco-green-light': '#A5D7AE'
                     }
                 }
             }
@@ -58,10 +54,10 @@ $sitiosPaginados = array_slice($sitioEco, $offset, $itemsPorPagina);
                     </div>
                 </div>
                 <div class="flex gap-3">
-                    <a href="registrar.php" class="bg-eco-green-dark hover:bg-eco-teal text-white px-6 py-3 rounded-lg font-semibold transition-all shadow-md inline-flex items-center">
+                    <a href="registrar.php" class="bg-eco-green-dark hover:bg-eco-green-light text-white px-6 py-3 rounded-lg font-semibold transition-all shadow-md inline-flex items-center">
                         <i class="fas fa-plus mr-2"></i>Registrar
                     </a>
-                    <a href="listar.php" class="bg-eco-blue hover:bg-eco-blue-light text-white px-6 py-3 rounded-lg font-semibold transition-all shadow-md inline-flex items-center">
+                    <a href="listar.php" class="bg-eco-green-light hover:bg-eco-green-dark text-white px-6 py-3 rounded-lg font-semibold transition-all shadow-md inline-flex items-center">
                         <i class="fas fa-search mr-2"></i>Consultar
                     </a>
                 </div>
@@ -77,7 +73,7 @@ $sitiosPaginados = array_slice($sitioEco, $offset, $itemsPorPagina);
                 </div>
 
                 <div class="flex-1 grid grid-cols-2 gap-4">
-                    <select id="filterComuna" class="px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-eco-blue focus:ring-2 focus:ring-eco-blue-light transition-all text-sm">
+                    <select id="filterComuna" class="px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-eco-green-light focus:ring-2 focus:ring-eco-green-light transition-all text-sm">
                         <option value="">Todas las comunas</option>
                         <?php foreach ($comunas as $comuna) { ?>
                             <option value="<?= $comuna['cod_comun'] ?>">
@@ -86,7 +82,7 @@ $sitiosPaginados = array_slice($sitioEco, $offset, $itemsPorPagina);
                         <?php } ?>
                     </select>
 
-                    <select id="filterBarrio" class="px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-eco-blue focus:ring-2 focus:ring-eco-blue-light transition-all text-sm">
+                    <select id="filterBarrio" class="px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-eco-green-light focus:ring-2 focus:ring-eco-green-light transition-all text-sm">
                         <option value="">Todos los barrios</option>
                         <?php foreach ($barrios as $barrio) { ?>
                             <option value="<?= $barrio['cod_barrio'] ?>">
@@ -97,7 +93,7 @@ $sitiosPaginados = array_slice($sitioEco, $offset, $itemsPorPagina);
                 </div>
 
                 <div class="flex gap-2">
-                    <button onclick="applyFilters()" class="bg-eco-green-dark hover:bg-eco-teal text-white px-5 py-2 rounded-lg font-semibold transition-all shadow-md">
+                    <button onclick="applyFilters()" class="bg-eco-green-dark hover:bg-eco-green-light text-white px-5 py-2 rounded-lg font-semibold transition-all shadow-md">
                         <i class="fas fa-search mr-1"></i>Buscar
                     </button>
                     <button onclick="clearFilters()" class="bg-gray-500 hover:bg-gray-600 text-white px-5 py-2 rounded-lg font-semibold transition-all shadow-md">
@@ -112,7 +108,7 @@ $sitiosPaginados = array_slice($sitioEco, $offset, $itemsPorPagina);
             <h3 class="text-lg font-bold text-gray-700">
                 Mostrando <?= count($sitiosPaginados) ?> de <?= $totalSitios ?> sitio<?= $totalSitios != 1 ? 's' : '' ?>
             </h3>
-            <button onclick="location.reload()" class="text-eco-blue hover:text-eco-green-dark font-semibold">
+            <button onclick="location.reload()" class="text-eco-green-dark hover:text-eco-green-light font-semibold">
                 <i class="fas fa-sync-alt mr-2"></i>Actualizar
             </button>
         </div>
@@ -128,8 +124,8 @@ $sitiosPaginados = array_slice($sitioEco, $offset, $itemsPorPagina);
                             $sitioJson = htmlspecialchars(json_encode($sitio), ENT_QUOTES, 'UTF-8');
                         ?>
                             <div class="bg-white rounded-xl shadow-lg overflow-hidden card-hover">
-                                <!-- Card Header con degradado igual al modal -->
-                                <div class="bg-gradient-to-r from-eco-green-dark to-eco-teal p-4 flex items-center justify-between">
+                                <!-- Card Header con degradado -->
+                                <div class="bg-gradient-to-r from-eco-green-dark to-eco-green-light p-4 flex items-center justify-between">
                                     <div class="flex items-center gap-3">
                                         <div class="bg-white bg-opacity-20 p-3 rounded-lg">
                                             <i class="fas fa-hospital text-white text-2xl"></i>
@@ -149,7 +145,7 @@ $sitiosPaginados = array_slice($sitioEco, $offset, $itemsPorPagina);
                                 <div class="p-5">
                                     <div class="space-y-3 mb-4">
                                         <div class="flex items-start gap-2">
-                                            <i class="fas fa-map-marked-alt text-eco-blue mt-1"></i>
+                                            <i class="fas fa-map-marked-alt text-eco-green-dark mt-1"></i>
                                             <div class="flex-1">
                                                 <p class="text-xs text-gray-500 font-semibold">Barrio</p>
                                                 <p class="text-sm text-gray-800"><?= htmlspecialchars($sitio['nombarrio']) ?></p>
@@ -168,12 +164,12 @@ $sitiosPaginados = array_slice($sitioEco, $offset, $itemsPorPagina);
                                     <!-- Botones de acción -->
                                     <div class="grid grid-cols-3 gap-2 pt-3 border-t border-gray-200">
                                         <button onclick="viewDetails(<?= $sitioJson ?>)"
-                                            class="bg-eco-cyan hover:bg-eco-teal text-white px-3 py-2 rounded-lg transition-all text-sm font-semibold"
+                                            class="bg-eco-green-light hover:bg-eco-green-dark text-white px-3 py-2 rounded-lg transition-all text-sm font-semibold"
                                             title="Ver Detalles">
                                             <i class="fas fa-eye"></i>
                                         </button>
                                         <button onclick='loadSiteData(<?= $sitioJson ?>)'
-                                            class="bg-eco-blue hover:bg-eco-green-dark text-white px-3 py-2 rounded-lg transition-all text-sm font-semibold"
+                                            class="bg-eco-green-dark hover:bg-eco-green-light text-white px-3 py-2 rounded-lg transition-all text-sm font-semibold"
                                             title="Editar">
                                             <i class="fas fa-edit"></i>
                                         </button>
@@ -207,7 +203,7 @@ $sitiosPaginados = array_slice($sitioEco, $offset, $itemsPorPagina);
                                 <!-- Botón anterior -->
                                 <?php if ($paginaActual > 1) { ?>
                                     <a href="?pagina=<?= $paginaActual - 1 ?>"
-                                        class="bg-eco-green-dark hover:bg-eco-teal text-white px-4 py-2 rounded-lg font-semibold transition-all">
+                                        class="bg-eco-green-dark hover:bg-eco-green-light text-white px-4 py-2 rounded-lg font-semibold transition-all">
                                         <i class="fas fa-chevron-left mr-1"></i>Anterior
                                     </a>
                                 <?php } ?>
@@ -235,7 +231,7 @@ $sitiosPaginados = array_slice($sitioEco, $offset, $itemsPorPagina);
                                 <!-- Botón siguiente -->
                                 <?php if ($paginaActual < $totalPaginas) { ?>
                                     <a href="?pagina=<?= $paginaActual + 1 ?>"
-                                        class="bg-eco-green-dark hover:bg-eco-teal text-white px-4 py-2 rounded-lg font-semibold transition-all">
+                                        class="bg-eco-green-dark hover:bg-eco-green-light text-white px-4 py-2 rounded-lg font-semibold transition-all">
                                         Siguiente<i class="fas fa-chevron-right ml-1"></i>
                                     </a>
                                 <?php } ?>
@@ -249,7 +245,7 @@ $sitiosPaginados = array_slice($sitioEco, $offset, $itemsPorPagina);
             <div class="col-span-4">
                 <div class="bg-white rounded-lg shadow-lg p-6 sticky top-6">
                     <div class="flex items-center gap-3 mb-6">
-                        <div class="bg-eco-blue text-white p-3 rounded-lg">
+                        <div class="bg-eco-green-dark text-white p-3 rounded-lg">
                             <i class="fas fa-edit text-xl"></i>
                         </div>
                         <h2 class="text-xl font-bold text-eco-green-dark">Editar Sitio</h2>
@@ -262,8 +258,8 @@ $sitiosPaginados = array_slice($sitioEco, $offset, $itemsPorPagina);
 
                     <div id="editForm" class="hidden">
                         <!-- Non-editable Information -->
-                        <div class="bg-eco-blue-light bg-opacity-20 rounded-lg p-4 mb-4">
-                            <div class="flex items-center gap-2 text-sm font-semibold text-eco-teal mb-3">
+                        <div class="bg-eco-green-light bg-opacity-20 rounded-lg p-4 mb-4">
+                            <div class="flex items-center gap-2 text-sm font-semibold text-eco-green-dark mb-3">
                                 <i class="fas fa-lock"></i>
                                 <span>Información No Modificable</span>
                             </div>
@@ -307,7 +303,7 @@ $sitiosPaginados = array_slice($sitioEco, $offset, $itemsPorPagina);
                                     <i class="fas fa-home text-xs"></i>
                                     Nombre del Sitio
                                 </label>
-                                <input type="text" id="siteName" class="w-full px-3 py-2 border-2 border-eco-green-dark rounded-lg mt-1 focus:ring-2 focus:ring-eco-green-light focus:outline-none" placeholder="Ingresa el nombre del sitio">
+                                <input type="text" id="siteName" class="w-full px-3 py-2 border-2 border-eco-green-light rounded-lg mt-1 focus:ring-2 focus:ring-eco-green-light focus:outline-none" placeholder="Ingresa el nombre del sitio">
                                 <p class="text-xs text-gray-500 mt-1 flex items-center gap-1">
                                     <i class="fas fa-info-circle"></i>
                                     Este es el único campo modificable
@@ -317,7 +313,7 @@ $sitiosPaginados = array_slice($sitioEco, $offset, $itemsPorPagina);
 
                         <!-- Action Buttons -->
                         <div class="flex gap-3">
-                            <button onclick="saveSite()" class="flex-1 bg-eco-green-dark hover:bg-eco-teal text-white px-4 py-3 rounded-lg font-semibold transition-all shadow-md">
+                            <button onclick="saveSite()" class="flex-1 bg-eco-green-dark hover:bg-eco-green-light text-white px-4 py-3 rounded-lg font-semibold transition-all shadow-md">
                                 <i class="fas fa-save mr-2"></i>Guardar
                             </button>
                             <button onclick="cancelEdit()" class="flex-1 bg-gray-400 hover:bg-gray-500 text-white px-4 py-3 rounded-lg font-semibold transition-all shadow-md">
@@ -334,7 +330,7 @@ $sitiosPaginados = array_slice($sitioEco, $offset, $itemsPorPagina);
     <div id="detailsModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
         <div class="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
             <!-- Modal Header -->
-            <div class="bg-gradient-to-r from-eco-green-dark to-eco-teal p-6 rounded-t-2xl">
+            <div class="bg-gradient-to-r from-eco-green-dark to-eco-green-light p-6 rounded-t-2xl">
                 <div class="flex items-center justify-between">
                     <div class="flex items-center gap-4">
                         <div class="bg-white bg-opacity-20 p-4 rounded-xl">
@@ -354,7 +350,7 @@ $sitiosPaginados = array_slice($sitioEco, $offset, $itemsPorPagina);
             <!-- Modal Body -->
             <div class="p-6">
                 <!-- Nombre del Sitio -->
-                <div class="bg-gradient-to-r from-eco-blue-light to-eco-cyan bg-opacity-20 rounded-xl p-5 mb-4">
+                <div class="bg-gradient-to-r from-eco-green-light to-eco-green-light bg-opacity-20 rounded-xl p-5 mb-4">
                     <div class="flex items-center gap-3 mb-2">
                         <i class="fas fa-hospital-alt text-eco-green-dark text-xl"></i>
                         <h4 class="text-sm font-bold text-gray-400 uppercase tracking-wide">Nombre del Sitio</h4>
@@ -365,18 +361,18 @@ $sitiosPaginados = array_slice($sitioEco, $offset, $itemsPorPagina);
                 <!-- Información en Grid -->
                 <div class="grid grid-cols-2 gap-4 mb-4">
                     <!-- ID -->
-                    <div class="bg-gray-50 rounded-lg p-4 border-l-4 border-eco-blue">
+                    <div class="bg-gray-50 rounded-lg p-4 border-l-4 border-eco-green-dark">
                         <div class="flex items-center gap-2 mb-2">
-                            <i class="fas fa-hashtag text-eco-blue"></i>
+                            <i class="fas fa-hashtag text-eco-green-dark"></i>
                             <p class="text-xs font-bold text-gray-600 uppercase">Código</p>
                         </div>
                         <p id="modalId" class="text-sm font-mono text-gray-800 break-all"></p>
                     </div>
 
                     <!-- Comuna -->
-                    <div class="bg-gray-50 rounded-lg p-4 border-l-4 border-eco-teal">
+                    <div class="bg-gray-50 rounded-lg p-4 border-l-4 border-eco-green-dark">
                         <div class="flex items-center gap-2 mb-2">
-                            <i class="fas fa-city text-eco-teal"></i>
+                            <i class="fas fa-city text-eco-green-dark"></i>
                             <p class="text-xs font-bold text-gray-600 uppercase">Comuna</p>
                         </div>
                         <p id="modalComuna" class="text-sm font-semibold text-gray-800"></p>
@@ -392,9 +388,9 @@ $sitiosPaginados = array_slice($sitioEco, $offset, $itemsPorPagina);
                     </div>
 
                     <!-- Dirección -->
-                    <div class="bg-gray-50 rounded-lg p-4 border-l-4 border-red-500">
+                    <div class="bg-gray-50 rounded-lg p-4 border-l-4 border-eco-green-dark">
                         <div class="flex items-center gap-2 mb-2">
-                            <i class="fas fa-location-dot text-red-500"></i>
+                            <i class="fas fa-location-dot text-eco-green-dark"></i>
                             <p class="text-xs font-bold text-gray-600 uppercase">Dirección</p>
                         </div>
                         <p id="modalDireccion" class="text-sm font-semibold text-gray-800"></p>
@@ -403,7 +399,7 @@ $sitiosPaginados = array_slice($sitioEco, $offset, $itemsPorPagina);
 
                 <!-- Botón cerrar -->
                 <button onclick="closeDetailsModal()"
-                    class="w-full bg-eco-green-dark hover:bg-eco-teal text-white px-6 py-3 rounded-lg font-bold transition-all shadow-lg">
+                    class="w-full bg-eco-green-dark hover:bg-eco-green-light text-white px-6 py-3 rounded-lg font-bold transition-all shadow-lg">
                     <i class="fas fa-check mr-2"></i>Aceptar
                 </button>
             </div>
