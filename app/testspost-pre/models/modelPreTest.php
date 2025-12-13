@@ -1,4 +1,4 @@
-<?php 
+<?php
 include_once '../../../conexionBD/BaseDatos.php';
 
 class modelPreTest
@@ -37,6 +37,89 @@ class modelPreTest
         return $result;
     }
 
-    
+    // AGREGAR ESTE MÉTODO - Obtener preguntas con sus opciones desde tblpreguntarespuesta
+    public function ObtenerPreguntaRespuesta($cod_tipo_form)
+    {
+        $sql = "SELECT 
+            p.cod_pregunta, 
+            p.enunciado_pregunta, 
+            p.cod_tipo_form, 
+            o.cod_opcionesres,
+            o.enunciado as opcion_enunciado, 
+            o.codigo_opcion, 
+            pr.cod_pregresp
+        FROM tblpregunta p
+        INNER JOIN tblpreguntarespuesta pr ON pr.cod_pregunta = p.cod_pregunta
+        INNER JOIN tbloprespuesta o ON o.cod_opcionesres = pr.cod_opcionesres
+        WHERE p.cod_tipo_form = $1
+        ORDER BY p.cod_pregunta, o.cod_opcionesres";
+
+        $result = pg_query_params($this->conexion, $sql, array($cod_tipo_form));
+
+        return $result;
+    }
+
+    // Guardar respuestas en tbldatorespuesta
+    public function guardarRespuestas($cod_controlactividadeco, $resultados)
+    {
+        pg_query($this->conexion, "BEGIN");
+
+        try {
+            foreach ($resultados as $cod_pregresp => $total) {
+                if ($total > 0) {
+                    // Primero verificar si existe
+                    $sqlCheck = "SELECT cod_datorespuesta 
+                            FROM tbldatorespuesta 
+                            WHERE cod_controlactividadeco = $1 
+                            AND cod_pregresp = $2";
+
+                    $resultCheck = pg_query_params(
+                        $this->conexion,
+                        $sqlCheck,
+                        array($cod_controlactividadeco, $cod_pregresp)
+                    );
+
+                    if (pg_num_rows($resultCheck) > 0) {
+                        // UPDATE si existe
+                        $sqlUpdate = "UPDATE tbldatorespuesta 
+                                 SET total_respuesta = $1
+                                 WHERE cod_controlactividadeco = $2 
+                                 AND cod_pregresp = $3";
+
+                        $result = pg_query_params(
+                            $this->conexion,
+                            $sqlUpdate,
+                            array($total, $cod_controlactividadeco, $cod_pregresp)
+                        );
+                    } else {
+                        // INSERT si no existe
+                        $sqlInsert = "INSERT INTO tbldatorespuesta
+                                 (cod_controlactividadeco, cod_pregresp, total_respuesta)
+                                 VALUES ($1, $2, $3)";
+
+                        $result = pg_query_params(
+                            $this->conexion,
+                            $sqlInsert,
+                            array($cod_controlactividadeco, $cod_pregresp, $total)
+                        );
+                    }
+
+                    if (!$result) {
+                        throw new Exception("Error al guardar respuesta: " . pg_last_error($this->conexion));
+                    }
+
+                    pg_free_result($resultCheck);
+                    if (isset($result)) {
+                        pg_free_result($result);
+                    }
+                }
+            }
+
+            pg_query($this->conexion, "COMMIT");
+            return true;
+        } catch (Exception $e) {
+            pg_query($this->conexion, "ROLLBACK");
+            throw $e;
+        }
+    }
 }
-?>

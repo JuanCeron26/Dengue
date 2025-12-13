@@ -14,6 +14,7 @@ class CounterManager {
         if (element) {
             const currentValue = parseInt(element.textContent);
             element.textContent = currentValue + 1;
+            this.syncWithInput(id);
             this.updateTotal();
         }
     }
@@ -24,8 +25,18 @@ class CounterManager {
             const currentValue = parseInt(element.textContent);
             if (currentValue > 0) {
                 element.textContent = currentValue - 1;
+                this.syncWithInput(id);
                 this.updateTotal();
             }
+        }
+    }
+
+    // Sincronizar valor del contador con el input hidden
+    syncWithInput(id) {
+        const element = document.getElementById(id);
+        const inputField = document.getElementById('input_' + id);
+        if (element && inputField) {
+            inputField.value = element.textContent;
         }
     }
 
@@ -49,6 +60,7 @@ class CounterManager {
                 const element = document.getElementById(id);
                 if (element) {
                     element.textContent = '0';
+                    this.syncWithInput(id);
                 }
             });
             this.updateTotal();
@@ -65,31 +77,6 @@ class CounterManager {
             }
         });
         return values;
-    }
-
-    // Método para guardar los datos (opcional, para futuro uso)
-    async saveData() {
-        const data = this.getCounterValues();
-        console.log('Datos a guardar:', data);
-        
-        // Aquí puedes hacer una llamada AJAX para guardar en la BD
-        /*
-        try {
-            const response = await fetch('guardar_respuestas.php', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(data)
-            });
-            
-            const result = await response.json();
-            console.log('Respuesta del servidor:', result);
-            return result;
-        } catch (error) {
-            console.error('Error al guardar:', error);
-        }
-        */
     }
 }
 
@@ -130,10 +117,4 @@ function getCounterValues() {
         return counterManager.getCounterValues();
     }
     return {};
-}
-
-function saveData() {
-    if (counterManager) {
-        return counterManager.saveData();
-    }
 }
