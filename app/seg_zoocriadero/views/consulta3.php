@@ -1,3 +1,15 @@
+<?php
+session_start();
+$nombre   = $_SESSION["nombre"] ?? 'Usuario';
+$apellido = $_SESSION["apellido"] ?? 'Prueba';
+$rol      = $_SESSION["rol"] ?? 'Administrador';
+$nombreCompleto = mb_strtoupper($nombre . ' ' . $apellido, 'UTF-8');
+$inicial = substr($nombre, 0, 1);
+$final   = substr($apellido, 0, 1);
+$comodin = strtoupper($inicial . $final);
+$permiso = $_SESSION["permiso"] ?? '';
+?>
+
 <!doctype html>
 <html lang="es">
 
@@ -7,6 +19,7 @@
     <title>ZooMonitor Pro — Seguimientos</title>
     <link rel="stylesheet" href="../../../src/css/styles.css">
     <link rel="stylesheet" href="../../../src/css/iziToast.min.css">
+    <script type="text/javascript" src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
     <script defer src="../../../src/js/segzoo-consultar.js"></script>
 
     <style>
@@ -116,6 +129,9 @@
 </head>
 
 <body class="min-h-screen bg-sky-100 font-sans text-slate-700 antialiased overflow-x-hidden">
+
+
+    <?php include_once '../../../src/includes/aside-segzoo.php'; ?>
 
     <!-- Overlay oscuro -->
     <div id="overlay" class="fixed inset-0 bg-black/40 backdrop-blur-sm z-40 hidden"></div>
@@ -279,6 +295,8 @@
 
     </aside>
 
+
+
     <!-- Contenido principal (wrapper para animación) -->
     <div id="contentWrapper" class="content-wrapper">
 
@@ -295,14 +313,14 @@
                         </svg>
                     </div>
                     <div>
-                        <div class="text-xl font-extrabold text-sky-900">ZooMonitor Pro</div>
+                        <div class="text-xl font-extrabold text-sky-900">Seguimiento Zoocriadero</div>
                         <div class="text-xs text-slate-500">Consulta de seguimientos</div>
                     </div>
                 </div>
 
                 <div class="ml-auto">
                     <div class="rounded-full bg-sky-100 py-1.5 px-3 text-sm text-sky-700 font-semibold border border-sky-300">
-                        Usuario: <strong class="ml-1">JuanCeron26</strong>
+                        Usuario: <strong class="ml-1"><?php echo $nombreCompleto; ?></strong>
                     </div>
                 </div>
             </div>
@@ -321,7 +339,7 @@
                             </svg>
                         </div>
                         <div>
-                            <h3 class="text-xl font-bold text-sky-900">Filtros</h3>
+                            <h3 class="text-xl font-bold text-sky-900">Filtros de búsqueda</h3>
                             <p class="text-xs text-slate-500">Escoge alguna opcion</p>
                         </div>
                     </div>
@@ -356,10 +374,94 @@
                 </div>
             </aside>
 
-            <!-- CONTENIDO -->
             <section class="col-span-12 lg:col-span-9">
+                <div class="card-elegant p-6 mb-8 bg-gradient-to-br from-blue-50 to-blue-50 border-2 border-blue-300">
 
-                <div class="mb-8 flex items-center justify-between">
+                    <div class="flex items-center gap-3 mb-6">
+                        <div class="w-12 h-12 rounded-xl bg-blue-400 text-white flex items-center justify-center shadow-lg">
+                            <svg class="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                            </svg>
+                        </div>
+                        <div>
+                            <h2 class="text-2xl font-bold text-blue-900">Generar Reporte Excel</h2>
+                            <p class="text-sm text-blue-600">Filtra y exporta los datos de seguimiento</p>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+
+                        <!-- Filtro Fecha Inicio -->
+                        <div>
+                            <label for="fechaInicio" class="block text-sm font-semibold text-gray-700 mb-2">
+                                Fecha Inicio
+                            </label>
+                            <input type="date" id="fechaInicio"
+                                class="w-full p-3 border-2 border-sky-300 rounded-xl focus:outline-none focus:ring-4 focus:ring-purple-300 transition duration-200">
+                        </div>
+
+                        <!-- Filtro Fecha Fin -->
+                        <div>
+                            <label for="fechaFin" class="block text-sm font-semibold text-gray-700 mb-2">
+                                Fecha Fin
+                            </label>
+                            <input type="date" id="fechaFin"
+                                class="w-full p-3 border-2 border-sky-300 rounded-xl focus:outline-none focus:ring-4 focus:ring-blue-300 transition duration-200">
+                        </div>
+
+                        <!-- Filtro Zoocriadero -->
+                        <div>
+                            <label for="filtroZooReporte" class="block text-sm font-semibold text-gray-700 mb-2">
+                                Zoocriadero
+                            </label>
+                            <select id="filtroZooReporte"
+                                class="form-select w-full p-3 border-2 border-sky-300 rounded-xl bg-white focus:outline-none focus:ring-4 focus:ring-blue-300 transition duration-200">
+                                <option value="">Todos los zoocriaderos</option>
+                            </select>
+                        </div>
+
+                        <!-- Filtro Tanque -->
+                        <div>
+                            <label for="filtroTanqueReporte" class="block text-sm font-semibold text-gray-700 mb-2">
+                                Tanque
+                            </label>
+                            <select id="filtroTanqueReporte" disabled
+                                class="form-select w-full p-3 border-2 border-blue-300 rounded-xl bg-gray-100 focus:outline-none focus:ring-4 focus:ring-sky-300 transition duration-200">
+                                <option value="">Todos los tanques</option>
+                            </select>
+                        </div>
+
+                    </div>
+
+                    <!-- Botones -->
+                    <div class="flex gap-3">
+                        <button id="btnGenerarReporte"
+                            class="cursor-pointer flex-1 py-3 px-6 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-bold rounded-xl transition-all duration-300 hover:scale-105 shadow-lg flex items-center justify-center gap-2">
+                            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                            </svg>
+                            Generar Reporte Excel
+                        </button>
+
+                        <button id="btnLimpiarFiltros"
+                            class="cursor-pointer py-3 px-6 bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold rounded-xl transition-all duration-300 hover:scale-105 flex items-center justify-center gap-2">
+                            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                            </svg>
+                            Limpiar Filtros
+                        </button>
+                    </div>
+
+                </div>
+            </section>
+
+            <!-- CONTENIDO -->
+            <section class="col-span-12 lg:col-span-9 ">
+
+                <div class="mb-8 flex items-center justify-between text-center">
                     <div>
                         <h1 class="text-4xl font-black text-sky-900">Seguimientos Registrados</h1>
                         <p class="text-slate-600 mt-1">5 registros encontrados</p>
@@ -501,6 +603,8 @@
 
 
     <script src="../../../src/js/iziToast.min.js"></script>
+    <script src="../../../src/js/aside.js"></script>
+    <script src="../../../src/js/segzoo-exportar.js"></script>
 
 
 </body>

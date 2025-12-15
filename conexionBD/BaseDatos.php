@@ -13,7 +13,7 @@ class BaseDatos
     {
         $this->user = 'postgres';
         $this->password = $contra;
-        $this->dbname = 'bd_dengue';
+        $this->dbname = 'bd_dengue_ceron';
         $this->port = '5432';
         $this->host = 'localhost';
 

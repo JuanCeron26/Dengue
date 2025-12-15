@@ -1,0 +1,698 @@
+/* ============================================================
+   VARIABLES Y CONFIGURACIÓN BASE
+   ============================================================ */
+:root {
+  --verde-oscuro: #0f5a45;
+  --verde-principal: #138f6d;
+  --verde-claro: #d9f1e7;
+  --verde-super-claro: #eaf8f1;
+  --verde-tab: #79c4a8;
+  --texto-verde: #106852;
+}
+
+/* ============================================================
+   ANIMACIONES GENERALES
+   ============================================================ */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes zoomIn {
+  from {
+    opacity: 0;
+    transform: scale(0.85);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes slideInFromTop {
+  from {
+    opacity: 0;
+    transform: translateY(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideInFromLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideInFromRight {
+  from {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes bounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -1000px 0;
+  }
+  100% {
+    background-position: 1000px 0;
+  }
+}
+
+@keyframes rotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ============================================================
+   CLASES DE ANIMACIÓN
+   ============================================================ */
+.animate-fadeIn {
+  animation: fadeIn 0.3s ease-out forwards;
+}
+
+.animate-zoomIn {
+  animation: zoomIn 0.25s ease-out;
+}
+
+.animate-slideInFromTop {
+  animation: slideInFromTop 0.4s ease-out;
+}
+
+.animate-slideInFromLeft {
+  animation: slideInFromLeft 0.5s ease-out;
+}
+
+.animate-slideInFromRight {
+  animation: slideInFromRight 0.5s ease-out;
+}
+
+.animate-fadeInUp {
+  animation: fadeInUp 0.4s ease-out;
+}
+
+/* ============================================================
+   MEJORAS DEL BODY Y LAYOUT
+   ============================================================ */
+body {
+  position: relative;
+  overflow-x: hidden;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: 
+    radial-gradient(circle at 20% 30%, rgba(19, 143, 109, 0.03) 0%, transparent 50%),
+    radial-gradient(circle at 80% 70%, rgba(121, 196, 168, 0.04) 0%, transparent 50%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+main {
+  position: relative;
+  z-index: 1;
+  animation: fadeInUp 0.6s ease-out;
+}
+
+/* ============================================================
+   HEADER MEJORADO
+   ============================================================ */
+header {
+  box-shadow: 0 4px 20px rgba(15, 90, 69, 0.15);
+  transition: all 0.3s ease;
+  animation: slideInFromTop 0.5s ease-out;
+}
+
+header .flex.items-center.gap-4 {
+  transition: transform 0.3s ease;
+}
+
+header .flex.items-center.gap-4:hover {
+  transform: translateX(5px);
+}
+
+header .w-8.h-8.rounded-full {
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+header .w-8.h-8.rounded-full:hover {
+  transform: scale(1.15);
+  box-shadow: 0 4px 12px rgba(255, 255, 255, 0.3);
+}
+
+/* ============================================================
+   CARDS Y CONTENEDORES
+   ============================================================ */
+.card-rounded {
+  border-radius: 18px;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  position: relative;
+  overflow: hidden;
+}
+
+.card-rounded::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s ease;
+}
+
+.card-rounded:hover::before {
+  left: 100%;
+}
+
+.card-rounded:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 20px 40px rgba(15, 90, 69, 0.2);
+}
+
+aside .card-rounded {
+  animation: slideInFromLeft 0.6s ease-out;
+}
+
+section .card-rounded {
+  animation: slideInFromRight 0.6s ease-out;
+}
+
+/* ============================================================
+   INPUTS Y FORMULARIOS
+   ============================================================ */
+.input-pill {
+  border-radius: 9999px;
+  transition: all 0.3s ease;
+  border: 2px solid transparent;
+}
+
+.input-pill:focus {
+  outline: none;
+  border-color: var(--verde-principal);
+  box-shadow: 0 0 0 4px rgba(19, 143, 109, 0.1);
+  transform: scale(1.02);
+}
+
+.input-pill:hover {
+  background-color: rgba(234, 248, 241, 0.7);
+}
+
+select.input-pill {
+  cursor: pointer;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3E%3Cpath stroke='%23106852' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3E%3C/svg%3E");
+  background-position: right 1rem center;
+  background-repeat: no-repeat;
+  background-size: 1.5em 1.5em;
+  padding-right: 3rem;
+}
+
+select.input-pill:focus {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3E%3Cpath stroke='%23138f6d' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M6 8l4 4 4-4'/%3E%3C/svg%3E");
+}
+
+/* ============================================================
+   BOTONES MEJORADOS
+   ============================================================ */
+button {
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+button::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.3);
+  transform: translate(-50%, -50%);
+  transition: width 0.6s, height 0.6s;
+}
+
+button:active::after {
+  width: 300px;
+  height: 300px;
+}
+
+button[type="submit"],
+button[type="button"] {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+button:active {
+  transform: translateY(0);
+}
+
+/* Botón registrar con animación especial */
+#openRegister {
+  animation: pulse 2s infinite;
+}
+
+#openRegister:hover {
+  animation: none;
+  transform: scale(1.1) translateY(-2px);
+}
+
+/* Botones de acción en tabla */
+.btnEditar,
+.btnEliminar,
+a[href*="detalle"],
+a[href*="exportar"] {
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px;
+  border-radius: 8px;
+}
+
+.btnEditar:hover {
+  background-color: rgba(59, 130, 246, 0.1);
+  transform: scale(1.1) rotate(5deg);
+}
+
+.btnEliminar:hover {
+  background-color: rgba(239, 68, 68, 0.1);
+  transform: scale(1.1) rotate(-5deg);
+}
+
+a[href*="detalle"]:hover {
+  background-color: rgba(16, 185, 129, 0.1);
+  transform: scale(1.1);
+}
+
+a[href*="exportar"]:hover {
+  background-color: rgba(245, 158, 11, 0.1);
+  transform: scale(1.1) translateY(-2px);
+}
+
+.btnEditar img,
+.btnEliminar img,
+a[href*="detalle"] img,
+a[href*="exportar"] img {
+  transition: all 0.3s ease;
+}
+
+.btnEditar:hover img,
+.btnEliminar:hover img,
+a[href*="detalle"]:hover img,
+a[href*="exportar"]:hover img {
+  filter: brightness(1.2);
+}
+
+/* ============================================================
+   TABS MEJORADOS
+   ============================================================ */
+.tab-btn,
+.tab-btn-edit,
+[data-tab],
+[data-tab-edit] {
+  position: relative;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.tab-btn::before,
+.tab-btn-edit::before,
+[data-tab]::before,
+[data-tab-edit]::before {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  height: 3px;
+  background: white;
+  transition: width 0.3s ease;
+}
+
+.tab-btn:hover::before,
+.tab-btn-edit:hover::before,
+[data-tab]:hover::before,
+[data-tab-edit]:hover::before {
+  width: 100%;
+}
+
+.tab-btn:hover,
+.tab-btn-edit:hover,
+[data-tab]:hover,
+[data-tab-edit]:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+}
+
+/* ============================================================
+   TABLA MEJORADA
+   ============================================================ */
+#tblRegistros {
+  border-collapse: separate;
+  border-spacing: 0 8px;
+}
+
+#tblRegistros thead tr {
+  box-shadow: 0 2px 10px rgba(15, 90, 69, 0.1);
+}
+
+#tblRegistros thead th {
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-size: 0.85rem;
+  padding: 16px 12px;
+  position: relative;
+}
+
+#tblRegistros thead th::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 10%;
+  width: 80%;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--verde-principal), transparent);
+}
+
+#tblRegistros tbody tr {
+  background: white;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+#tblRegistros tbody tr:hover {
+  transform: translateY(-3px) scale(1.01);
+  box-shadow: 0 8px 20px rgba(15, 90, 69, 0.15);
+  background: linear-gradient(135deg, #ffffff 0%, #f0fdf7 100%);
+}
+
+#tblRegistros tbody tr:hover td {
+  color: var(--verde-oscuro);
+}
+
+#tblRegistros tbody td {
+  padding: 16px 12px;
+  transition: all 0.3s ease;
+}
+
+#tblRegistros tbody tr:first-child {
+  animation: fadeInUp 0.4s ease-out;
+}
+
+#tblRegistros tbody tr:nth-child(2) {
+  animation: fadeInUp 0.5s ease-out;
+}
+
+#tblRegistros tbody tr:nth-child(3) {
+  animation: fadeInUp 0.6s ease-out;
+}
+
+#tblRegistros tbody tr:nth-child(n+4) {
+  animation: fadeInUp 0.7s ease-out;
+}
+
+/* ============================================================
+   MODALES MEJORADOS
+   ============================================================ */
+.modal-backdrop {
+  z-index: 60;
+  backdrop-filter: blur(8px);
+  animation: fadeIn 0.3s ease-out;
+}
+
+.modal-front {
+  z-index: 70;
+  animation: zoomIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+#modalRegisterBackdrop .modal-front,
+#modalEditarBackdrop .modal-front {
+  box-shadow: 0 25px 50px rgba(15, 90, 69, 0.3);
+}
+
+#modalAddressBackdrop .modal-front,
+#btnEditarDireccion .modal-front {
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+}
+
+/* Header de modales */
+.modal-front > div:first-child {
+  background: linear-gradient(135deg, var(--verde-claro) 0%, var(--verde-super-claro) 100%);
+  border-bottom: 3px solid var(--verde-tab);
+}
+
+.modal-front > div:first-child h3 {
+  animation: slideInFromLeft 0.5s ease-out;
+}
+
+.modal-front > div:first-child img {
+  animation: bounce 1s ease-in-out infinite;
+}
+
+/* Botón cerrar modal */
+.modal-front button[id*="close"] {
+  transition: all 0.3s ease;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-front button[id*="close"]:hover {
+  background: rgba(239, 68, 68, 0.1);
+  color: #dc2626;
+  transform: rotate(90deg) scale(1.2);
+}
+
+/* ============================================================
+   DIRECCION GENERADA
+   ============================================================ */
+#direccionGenerada,
+#direccionGeneradaEdit {
+  transition: all 0.3s ease;
+  border: 2px solid transparent;
+}
+
+#direccionGenerada:not(:empty),
+#direccionGeneradaEdit:not(:empty) {
+  border-color: var(--verde-principal);
+  animation: pulse 0.5s ease;
+}
+
+/* ============================================================
+   BARRA DE PROGRESO (ELIMINAR)
+   ============================================================ */
+#progressBar {
+  transition: transform 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 0 10px rgba(34, 197, 94, 0.5);
+}
+
+#progressBar:not(.scale-x-0) {
+  transform: scaleX(1) !important;
+}
+
+/* ============================================================
+   EFECTOS HOVER ESPECIALES
+   ============================================================ */
+.overflow-auto::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.overflow-auto::-webkit-scrollbar-track {
+  background: var(--verde-super-claro);
+  border-radius: 10px;
+}
+
+.overflow-auto::-webkit-scrollbar-thumb {
+  background: var(--verde-principal);
+  border-radius: 10px;
+  transition: background 0.3s ease;
+}
+
+.overflow-auto::-webkit-scrollbar-thumb:hover {
+  background: var(--verde-oscuro);
+}
+
+/* ============================================================
+   LOADING Y ESTADOS
+   ============================================================ */
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.loading {
+  pointer-events: none;
+  opacity: 0.6;
+  position: relative;
+}
+
+.loading::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 30px;
+  height: 30px;
+  margin: -15px 0 0 -15px;
+  border: 3px solid var(--verde-claro);
+  border-top-color: var(--verde-principal);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+/* ============================================================
+   RESPONSIVE ANIMATIONS
+   ============================================================ */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ============================================================
+   EFECTOS ADICIONALES SUTILES
+   ============================================================ */
+label {
+  transition: all 0.2s ease;
+}
+
+label:hover {
+  color: var(--verde-principal);
+  transform: translateX(2px);
+}
+
+/* Efecto shimmer para cards al cargar */
+.card-rounded.loading-shimmer {
+  background: linear-gradient(
+    90deg,
+    var(--verde-super-claro) 0px,
+    var(--verde-claro) 40px,
+    var(--verde-super-claro) 80px
+  );
+  background-size: 1000px;
+  animation: shimmer 2s infinite;
+}
+
+/* ============================================================
+   FILTROS - ANIMACIONES DE ENTRADA
+   ============================================================ */
+#formFilters > div:nth-child(1) {
+  animation: fadeInUp 0.3s ease-out;
+}
+
+#formFilters > div:nth-child(2) {
+  animation: fadeInUp 0.4s ease-out;
+}
+
+#formFilters > div:nth-child(3) {
+  animation: fadeInUp 0.5s ease-out;
+}
+
+#formFilters > div:nth-child(4) {
+  animation: fadeInUp 0.6s ease-out;
+}
+
+#formFilters .flex.gap-3 {
+  animation: fadeInUp 0.7s ease-out;
+}
+
+/* ============================================================
+   MEJORAS EN BOTONES DE ACCIÓN
+   ============================================================ */
+.space-x-2 {
+  gap: 8px;
+}
+
+.space-x-2 > * {
+  animation: fadeIn 0.3s ease-out;
+  animation-fill-mode: both;
+}
+
+.space-x-2 > *:nth-child(1) {
+  animation-delay: 0.1s;
+}
+
+.space-x-2 > *:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.space-x-2 > *:nth-child(3) {
+  animation-delay: 0.3s;
+}
+
+.space-x-2 > *:nth-child(4) {
+  animation-delay: 0.4s;
+}

@@ -47,6 +47,7 @@ class User extends modelUser
             "id_cedula" => $post['numero_documento'],
             "correo_electronico" => $post['correo'],
             "contraseña" => $post['password'],
+            "cod_estado" => 1
         ];
 
         $registrar = $this->InsertUsuario($datos);

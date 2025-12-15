@@ -171,4 +171,9 @@ class controllerZoo extends ModelZoo
 
         return $this->GetSeguimientoById($cod_segzooact);
     }
+
+    public function TraerSeguimientosFiltrados($get)
+    {
+        return $this->GetSeguimientosFiltrados($get);
+    }
 }

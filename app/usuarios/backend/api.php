@@ -1,5 +1,5 @@
 <?php
-
+session_start();
 include_once '../controllers/controllerUser.php';
 header('Content-Type: application/json; charset=utf-8');
 
@@ -34,6 +34,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
                 # code...
                 break;
         }
+    }
+    if (isset($_GET['cerrar_sesion'])) {
+        session_destroy();
+        $_SESSION = [];
+        header("Content-Type: text/html; charset=utf-8");
+        echo "<script>window.location.replace('../../login')</script>";
     }
 }
 

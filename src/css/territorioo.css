@@ -1,0 +1,605 @@
+/* ========================================
+   🎨 VARIABLES DE COLOR Y TEMA
+   ======================================== */
+:root {
+    --color-primary: #0e7e5aca;
+    --color-secondary: #02588e;
+    --color-tertiary: #7DD3C0;
+    --color-border: #A0CED9;
+    --color-background-glass: rgba(255, 255, 255, 0.88);
+    --color-background-dark: rgba(255, 255, 255, 0.68);
+    --color-shadow: rgba(6, 78, 59, 0.15);
+    --color-shadow-hover: rgba(4, 79, 164, 0.35);
+}
+
+/* ========================================
+   💎 EFECTOS GLASS Y CONTENEDORES
+   ======================================== */
+.glass {
+    background: var(--color-background-glass);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    box-shadow: 0 8px 32px var(--color-shadow);
+}
+
+.glass-dark {
+    background: var(--color-background-dark);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid var(--color-border);
+}
+
+/* ========================================
+   🔘 BOTONES PRINCIPALES
+   ======================================== */
+.btn-gradient {
+    background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%);
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.75rem;
+    font-weight: 700;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 15px var(--color-shadow);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.btn-gradient:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px var(--color-shadow-hover);
+}
+
+.btn-gradient:active {
+    transform: translateY(0);
+}
+
+.btn-secondary {
+    background: var(--color-secondary);
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.75rem;
+    font-weight: 700;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 15px var(--color-shadow);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.btn-secondary:hover {
+    background: var(--color-primary);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px var(--color-shadow-hover);
+}
+
+.btn-cancel {
+    background: transparent;
+    border: 2px solid #ef4444;
+    color: #ef4444;
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.75rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.btn-cancel:hover {
+    background: #fef2f2;
+    transform: scale(1.03);
+}
+
+.btn-floating {
+    width: 4rem;
+    height: 4rem;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--color-secondary), var(--color-primary));
+    color: white;
+    font-size: 1.5rem;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 8px 24px var(--color-shadow);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-floating:hover {
+    transform: scale(1.15) rotate(90deg);
+    box-shadow: 0 12px 35px var(--color-shadow-hover);
+}
+
+.btn-icon-secondary {
+    padding: 0.75rem;
+    background: var(--color-background-dark);
+    border: 2px solid var(--color-border);
+    border-radius: 0.75rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-icon-secondary:hover {
+    border-color: var(--color-tertiary);
+    background: white;
+    transform: scale(1.08);
+}
+
+.btn-toggle {
+    flex: 1;
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.75rem;
+    font-weight: 600;
+    border: 2px solid var(--color-border);
+    background: var(--color-background-dark);
+    color: #475569;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.btn-toggle.active {
+    background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
+    color: white;
+    border-color: transparent;
+    box-shadow: 0 4px 15px var(--color-shadow);
+}
+
+.btn-toggle:hover:not(.active) {
+    border-color: var(--color-tertiary);
+    background: white;
+}
+
+/* ========================================
+   📝 CAMPOS DE FORMULARIO
+   ======================================== */
+.input-field {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 2px solid var(--color-border);
+    border-radius: 0.75rem;
+    background: var(--color-background-dark);
+    backdrop-filter: blur(10px);
+    transition: all 0.3s ease;
+    font-size: 0.95rem;
+    color: #1e293b;
+}
+
+.input-field:focus {
+    outline: none;
+    border-color: var(--color-tertiary);
+    box-shadow: 0 0 0 4px rgba(125, 211, 192, 0.25);
+    background: white;
+}
+
+.input-field::placeholder {
+    color: #94a3b8;
+}
+
+.label-field {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #334155;
+    margin-bottom: 0.5rem;
+}
+
+/* ========================================
+   🎴 CARDS DE TERRITORIOS
+   ======================================== */
+.card-territorio {
+    background: var(--color-background-glass);
+    backdrop-filter: blur(10px);
+    border-radius: 1.5rem;
+    padding: 1rem;
+    box-shadow: 0 1px 20px var(--color-shadow);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    max-width: 320px;
+}
+
+.card-territorio:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 16px 45px var(--color-shadow-hover);
+}
+
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.25rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid var(--color-border);
+}
+
+.card-date {
+    background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 0.75rem;
+    font-weight: 700;
+    font-size: 0.875rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+#cardsContainer {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); /* 🔥 hace las cards más cercanas */
+    column-gap: 15px !important;  /* 🔥 disminuye separación horizontal */
+    row-gap: 30px;               /* no afecta horizontal, solo vertical */
+}
+
+.card-actions {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.action-btn-icon {
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 0.625rem;
+    background: var(--color-background-dark);
+    border: 2px solid var(--color-border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.action-btn-icon:hover {
+    background: var(--color-tertiary);
+    transform: scale(1.15) rotate(5deg);
+    border-color: var(--color-tertiary);
+    box-shadow: 0 4px 15px rgba(125, 211, 192, 0.4);
+}
+
+.action-btn-icon i {
+    font-size: 1rem;
+    color: var(--color-primary);
+    transition: color 0.3s ease;
+}
+
+.action-btn-icon:hover i {
+    color: white;
+}
+
+.card-body {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+}
+
+.card-leader-name {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: var(--color-primary);
+    margin-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.card-info-comuna,
+.card-info-barrio,
+.card-info-sitio,
+.card-info-liderazgo {
+    padding: 0.4rem;
+    background: var(--color-background-dark);
+    border-radius: 0.625rem;
+    font-size: 0.9rem;
+    color: #475569;
+    border-left: 4px solid var(--color-tertiary);
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.1rem;
+}
+
+.card-info-comuna:hover,
+.card-info-barrio:hover,
+.card-info-sitio:hover,
+.card-info-liderazgo:hover {
+    background: white;
+    border-left-color: var(--color-secondary);
+    transform: translateX(4px);
+}
+
+.card-footer-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 2px solid var(--color-border);
+}
+
+.participant-badge {
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+    background: var(--color-secondary);
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 0.75rem;
+    font-weight: 700;
+    box-shadow: 0 4px 12px rgba(5, 150, 105, 0.3);
+}
+
+.participant-count {
+    font-size: 1.125rem;
+}
+
+.btn-evento {
+    background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
+    color: white;
+    padding: 0.625rem 1.25rem;
+    border-radius: 0.75rem;
+    font-weight: 700;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 12px var(--color-shadow);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.btn-evento:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px var(--color-shadow-hover);
+}
+
+/* ========================================
+   🪟 MODALES
+   ======================================== */
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.65);
+    backdrop-filter: blur(6px);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    padding: 1rem;
+}
+
+.modal-overlay.flex {
+    display: flex;
+}
+
+.modal-content {
+    width: 100%;
+    max-width: 48rem;
+    background: var(--color-background-glass);
+    backdrop-filter: blur(20px);
+    padding: 2rem;
+    border-radius: 1.75rem;
+    box-shadow: 0 25px 70px rgba(0, 0, 0, 0.4);
+    animation: modalAppear 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    max-height: 90vh;
+    overflow-y: auto;
+    border: 1px solid rgba(255, 255, 255, 0.4);
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.75rem;
+}
+
+.modal-title {
+    font-size: 1.75rem;
+    font-weight: 800;
+    color: var(--color-primary);
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.modal-close {
+    width: 2.75rem;
+    height: 2.75rem;
+    border-radius: 0.625rem;
+    background: var(--color-background-dark);
+    border: 2px solid var(--color-border);
+    font-size: 1.25rem;
+    color: #64748b;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-close:hover {
+    color: white;
+    background: #ef4444;
+    border-color: #ef4444;
+    transform: scale(1.1) rotate(90deg);
+}
+
+.modal-footer {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-top: 2rem;
+    flex-wrap: wrap;
+} 
+
+
+/* ========================================
+   📄 PAGINACIÓN
+   ======================================== */
+.pagination-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.625rem;
+    flex-wrap: wrap;
+}
+
+.pagination-container button {
+    min-width: 2.5rem;
+    padding: 0.625rem 1rem;
+    background: var(--color-background-glass);
+    border: 2px solid var(--color-border);
+    border-radius: 0.625rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    color: var(--color-primary);
+}
+
+.pagination-container button:hover:not(:disabled):not(.active) {
+    background: var(--color-tertiary);
+    border-color: var(--color-tertiary);
+    color: white;
+    transform: scale(1.08);
+}
+
+.pagination-container button.active {
+    background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
+    color: white;
+    border-color: transparent;
+    box-shadow: 0 4px 15px var(--color-shadow);
+}
+
+.pagination-container button:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+/* ========================================
+   ✨ ANIMACIONES
+   ======================================== */
+@keyframes modalAppear {
+    from {
+        opacity: 0;
+        transform: scale(0.92) translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+@keyframes fadeInLeft {
+    from {
+        opacity: 0;
+        transform: translateX(-40px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes fadeInRight {
+    from {
+        opacity: 0;
+        transform: translateX(40px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.aside-animate {
+    animation: fadeInLeft 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.main-animate {
+    animation: fadeInRight 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ========================================
+   🎨 UTILIDADES
+   ======================================== */
+.text-primary {
+    color: var(--color-primary);
+}
+
+.text-secondary {
+    color: var(--color-secondary);
+}
+
+.text-tertiary {
+    color: var(--color-tertiary);
+}
+
+/* ========================================
+   📜 SCROLLBAR PERSONALIZADO
+   ======================================== */
+::-webkit-scrollbar {
+    width: 12px;
+    height: 12px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--color-background-dark);
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: linear-gradient(135deg, var(--color-secondary), var(--color-primary));
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
+}
+
+/* ========================================
+   📱 RESPONSIVE
+   ======================================== */
+@media (max-width: 1024px) {
+    .modal-content {
+        padding: 1.5rem;
+        max-width: 95%;
+    }
+    
+    .modal-title {
+        font-size: 1.5rem;
+    }
+}
+
+@media (max-width: 640px) {
+    .modal-title {
+        font-size: 1.25rem;
+    }
+    
+    .card-leader-name {
+        font-size: 1.25rem;
+    }
+    
+    .btn-floating {
+        width: 3.5rem;
+        height: 3.5rem;
+        font-size: 1.25rem;
+    }
+}

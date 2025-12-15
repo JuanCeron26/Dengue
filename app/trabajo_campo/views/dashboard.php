@@ -1,5 +1,13 @@
 <?php
-
+session_start();
+$nombre   = $_SESSION["nombre"] ?? 'Usuario';
+$apellido = $_SESSION["apellido"] ?? 'Prueba';
+$rol      = $_SESSION["rol"] ?? 'Administrador';
+$nombreCompleto = mb_strtoupper($nombre . ' ' . $apellido, 'UTF-8');
+$inicial = substr($nombre, 0, 1);
+$final   = substr($apellido, 0, 1);
+$comodin = strtoupper($inicial . $final);
+$permiso = $_SESSION["permiso"] ?? '';
 ?>
 
 <!DOCTYPE html>
@@ -9,7 +17,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="../../../src/css/styles.css">
-    <title>Dashboard</title>
+    <title>Trabajo de Campo</title>
 </head>
 
 <body class="bg-gray-50 text-gray-800 min-h-screen flex flex-col">
@@ -29,11 +37,11 @@
 
         <div class="flex items-center space-x-4">
             <div class="text-right">
-                <p class="font-medium">Juan José Cerón Arcos</p>
-                <p class="text-gray-500">Inspector</p>
+                <p class="font-medium"><?php echo $nombreCompleto; ?></p>
+                <p class="text-gray-500"><?php echo $rol; ?></p>
             </div>
             <div class="cursor-pointer bg-green-600 text-white font-semibold rounded-full h-10 w-10 flex items-center justify-center hover:scale-110 transition-transform select-none">
-                JC
+                <?php echo $comodin; ?>
             </div>
         </div>
     </header>

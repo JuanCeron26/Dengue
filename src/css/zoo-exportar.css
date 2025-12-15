@@ -1,0 +1,334 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #1592D4 0%, #2DA9E9 100%);
+    padding: 20px;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.container {
+    max-width: 900px;
+    width: 100%;
+}
+
+.controls {
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    margin-bottom: 20px;
+    box-shadow: 0 10px 40px rgba(21, 146, 212, 0.3);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 4px solid #2DA9E9;
+}
+
+.controls h2 {
+    color: #1592D4;
+    font-size: 24px;
+    font-weight: 600;
+}
+
+.btn-group {
+    display: flex;
+    gap: 10px;
+}
+
+button {
+    padding: 12px 24px;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 14px;
+    font-family: inherit;
+}
+
+.btn-pdf {
+    background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+    color: white;
+}
+
+.btn-pdf:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(231, 76, 60, 0.4);
+}
+
+.btn-pdf:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.btn-back {
+    background: #D3E4F2;
+    color: #1592D4;
+    border: 2px solid #9ACDF0;
+}
+
+.btn-back:hover {
+    background: #9ACDF0;
+    color: white;
+}
+
+#pdfContent {
+    background: white;
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0 10px 40px rgba(21, 146, 212, 0.3);
+    border-top: 5px solid #2DA9E9;
+}
+
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 3px solid #2DA9E9;
+    padding-bottom: 20px;
+    margin-bottom: 30px;
+}
+
+.logo-section {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.logo {
+    width: 100px;
+    height: 100px;
+    object-fit: contain;
+}
+
+.header-text h1 {
+    color: #1592D4;
+    font-size: 18px;
+    margin-bottom: 5px;
+    font-weight: 700;
+}
+
+.header-text p {
+    color: #2DA9E9;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.doc-title {
+    text-align: right;
+}
+
+.doc-title h2 {
+    color: #1592D4;
+    font-size: 24px;
+    margin-bottom: 5px;
+    font-weight: 700;
+}
+
+.doc-title p {
+    color: #9ACDF0;
+    font-size: 12px;
+}
+
+.info-section {
+    margin-bottom: 30px;
+}
+
+.section-title {
+    background: linear-gradient(135deg, #2DA9E9 0%, #1592D4 100%);
+    color: white;
+    padding: 14px 20px;
+    border-radius: 10px;
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    box-shadow: 0 4px 15px rgba(45, 169, 233, 0.3);
+}
+
+.info-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+.info-item {
+    background: #E3F0FF;
+    padding: 18px;
+    border-radius: 10px;
+    border-left: 5px solid #2DA9E9;
+    transition: transform 0.2s ease;
+}
+
+.info-item:hover {
+    transform: translateX(3px);
+    box-shadow: 0 4px 12px rgba(45, 169, 233, 0.2);
+}
+
+.info-label {
+    color: #1592D4;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    margin-bottom: 5px;
+    letter-spacing: 0.5px;
+}
+
+.info-value {
+    color: #2c3e50;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.full-width {
+    grid-column: 1 / -1;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+    background: white;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(45, 169, 233, 0.15);
+}
+
+thead {
+    background: linear-gradient(135deg, #2DA9E9 0%, #1592D4 100%);
+    color: white;
+}
+
+th {
+    padding: 16px;
+    text-align: left;
+    font-weight: 700;
+    font-size: 14px;
+    letter-spacing: 0.3px;
+}
+
+td {
+    padding: 14px 16px;
+    border-bottom: 1px solid #D3E4F2;
+    color: #2c3e50;
+    font-size: 14px;
+}
+
+tbody tr {
+    transition: background-color 0.2s ease;
+}
+
+tbody tr:hover {
+    background: #E3F0FF;
+}
+
+tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.no-data {
+    text-align: center;
+    padding: 40px;
+    color: #9ACDF0;
+    font-style: italic;
+    font-size: 14px;
+}
+
+.footer {
+    margin-top: 40px;
+    padding-top: 20px;
+    border-top: 2px solid #D3E4F2;
+    text-align: center;
+    color: #9ACDF0;
+    font-size: 12px;
+}
+
+.footer p {
+    margin: 5px 0;
+}
+
+.badge {
+    display: inline-block;
+    padding: 6px 14px;
+    background: linear-gradient(135deg, #2DA9E9 0%, #1592D4 100%);
+    color: white;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 700;
+    box-shadow: 0 2px 8px rgba(45, 169, 233, 0.3);
+}
+
+
+@media print {
+    body {
+        background: white;
+        padding: 0;
+    }
+
+    .controls {
+        display: none;
+    }
+
+    #pdfContent {
+        box-shadow: none;
+        border-top: none;
+    }
+
+    .info-item:hover {
+        transform: none;
+        box-shadow: none;
+    }
+
+    tbody tr:hover {
+        background: transparent;
+    }
+}
+
+@media screen and (max-width: 768px) {
+    .controls {
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .controls h2 {
+        text-align: center;
+    }
+
+    .btn-group {
+        width: 100%;
+        flex-direction: column;
+    }
+
+    button {
+        width: 100%;
+    }
+
+    .info-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .header {
+        flex-direction: column;
+        text-align: center;
+        gap: 20px;
+    }
+
+    .doc-title {
+        text-align: center;
+    }
+
+    #pdfContent {
+        padding: 20px;
+    }
+}

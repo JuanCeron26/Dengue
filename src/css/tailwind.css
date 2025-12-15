@@ -1,1 +1,14 @@
 @import "tailwindcss";
+@import 'tailwind-scrollbar-hide/v4';
+
+@theme {
+    --color-verde-oscuro: #2d5016;
+    --color-verde-medio: #4a7c29;
+    --color-verde-claro: #6fb33f;
+    --color-azul-oscuro: #0077c8;
+    --color-azul-claro: #64b5f6;
+    --color-fondo-claro: #a3e4c7ff;
+    --color-gris-texto: #2c3e50;
+    --color-eco-green-dark: #005F3D;
+    --color-eco-green-light: #A5D7AE;
+}

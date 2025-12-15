@@ -72,15 +72,15 @@
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
                     <div>
                         <label for="ph" class="block font-semibold mb-1 text-gray-700">pH</label>
-                        <input type="number" step="0.1" id="ph" name="ph" class="w-full p-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-4 focus:ring-sky-300 transition duration-200" placeholder="Ej: 7.2" required>
+                        <input type="number" step="0.1" id="ph" name="ph" class="w-full p-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-4 focus:ring-sky-300 transition duration-200" placeholder="Ej: 7" required>
                     </div>
                     <div>
                         <label for="temperatura" class="block font-semibold mb-1 text-gray-700">Temperatura (°T)</label>
-                        <input type="number" step="0.1" id="temperatura" name="temperatura" class="w-full p-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-4 focus:ring-sky-300 transition duration-200" placeholder="Ej: 28.5" required>
+                        <input type="number" step="0.1" id="temperatura" name="temperatura" class="w-full p-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-4 focus:ring-sky-300 transition duration-200" placeholder="Ej: 28" required>
                     </div>
                     <div>
                         <label for="cloro" class="block font-semibold mb-1 text-gray-700">Cloro (mg/L)</label>
-                        <input type="number" step="0.01" id="cloro" name="cloro" class="w-full p-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-4 focus:ring-sky-300 transition duration-200" placeholder="Ej: 0.05">
+                        <input type="number" step="0.01" id="cloro" name="cloro" class="w-full p-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-4 focus:ring-sky-300 transition duration-200" placeholder="Ej: 5">
                     </div>
                 </div>
 
@@ -113,7 +113,7 @@
             </div>
 
             <div class="bg-white shadow-xl rounded-2xl p-8 transition-all duration-300 hover:shadow-2xl hover:translate-y-[-5px]">
-                <h2 class="text-2xl font-bold mb-6 text-sky-700">3. Detalles Adicionales y Operario</h2>
+                <h2 class="text-2xl font-bold mb-6 text-sky-700">4. Detalles Adicionales y Operario</h2>
                 <div class="space-y-6">
                     <div>
                         <label for="observaciones" class="block font-semibold mb-1 text-gray-700">Observaciones</label>

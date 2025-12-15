@@ -149,19 +149,15 @@ document.addEventListener('DOMContentLoaded', () => {
                     </span>
                 </div>
 
-                <!-- Acciones permitidas -->
+                <!-- Acciones permitidas 
                 <p class="text-sm text-gray-700 bg-white px-3 py-1 rounded-lg shadow-inner border inline-block mt-2">
                     Acciones permitidas: <span class="font-semibold">15</span> / 20
                 </p>
+                -->
             </div>
 
             <!--Botones-->
             <div class="flex space-x-3">
-                <button data-id="${perfil.cod_permiso}" type="button" class="btn-ver-permisos cursor-pointer px-4 py-2 rounded-xl bg-white border border-gray-300 text-gray-700 
-                    font-semibold hover:bg-gray-100 hover:border-gray-400 transition
-                    shadow-sm hover:shadow-md">
-                        Ver Acciones
-                </button>
 
                 <button data-id="${perfil.cod_permiso}" type="button" class="btn-editar-permisos px-4 py-2 rounded-xl bg-emerald-600 text-white font-semibold 
                 hover:bg-emerald-700 cursor-pointer transition transform 
@@ -671,7 +667,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     btnCrearRol.addEventListener('click', () => abrirModalCrear('Rol'));
     // Evento para el botón de crear Segmento
-    btnCrearSegmento.addEventListener('click', () => abrirModalCrear('Segmento'));
+    // btnCrearSegmento.addEventListener('click', () => abrirModalCrear('Segmento'));
 
     cerrarCrearRol.addEventListener('click', cerrarModalCrear);
     modalCrearRol.addEventListener('click', (e) => {

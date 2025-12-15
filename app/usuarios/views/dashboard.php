@@ -1,3 +1,14 @@
+<?php
+session_start();
+$nombre   = $_SESSION["nombre"] ?? 'Usuario';
+$apellido = $_SESSION["apellido"] ?? 'Prueba';
+$rol      = $_SESSION["rol"] ?? 'Administrador';
+$nombreCompleto = mb_strtoupper($nombre . ' ' . $apellido, 'UTF-8');
+$inicial = substr($nombre, 0, 1);
+$final   = substr($apellido, 0, 1);
+$comodin = strtoupper($inicial . $final);
+$permiso = $_SESSION["permiso"] ?? '';
+?>
 <!DOCTYPE html>
 <html lang="es">
 
@@ -6,6 +17,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="../../../src/css/styles.css">
     <link rel="stylesheet" href="../../../src/css/iziToast.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <title>Gestión de Usuarios</title>
 
     <style>
@@ -43,11 +55,12 @@
                 box-shadow: 0 0 20px rgba(34, 197, 94, 0.8);
             }
         }
-
     </style>
 </head>
 
 <body class="min-h-screen w-full bg-gray-50">
+
+    <?php include_once '../../../src/includes/aside-usuarios.php'; ?>
 
     <div id="layout" class="min-h-screen flex flex-col">
 
@@ -66,11 +79,11 @@
 
             <div class="flex items-center space-x-5">
                 <div class="text-right">
-                    <p class="font-semibold text-gray-300 select-none">Juan José Cerón</p>
-                    <p class="text-blue-400 text-sm select-none">Administrador</p>
+                    <p class="font-semibold text-gray-300 select-none"><?php echo $nombreCompleto; ?></p>
+                    <p class="text-blue-400 text-sm select-none"><?php echo $rol; ?></p>
                 </div>
                 <div class="cursor-pointer bg-blue-700 text-white font-semibold rounded-full h-12 w-12 flex items-center justify-center ring-2 ring-blue-500 hover:ring-4 hover:bg-blue-800 transition duration-300 ease-in-out transform hover:scale-110 select-none">
-                    JC
+                    <?php echo $comodin; ?>
                 </div>
             </div>
         </header>
@@ -104,53 +117,7 @@
                 </div>
 
                 <div id="divUsuarios" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-                    <div class="user-card bg-white rounded-2xl p-6 shadow-xl border border-gray-200 hover:shadow-blue-300/50 transition-all duration-300 transform hover:scale-[1.03] float-soft" data-rol="Administrador">
 
-                        <div class="flex items-center space-x-4 border-b border-gray-200 pb-4 mb-4">
-                            <div class="bg-blue-600 text-white font-bold rounded-full h-14 w-14 flex items-center justify-center text-xl ring-2 ring-blue-400 select-none pulse-glow">
-                                JC
-                            </div>
-                            <div>
-                                <h3 class="text-xl font-extrabold text-gray-800 select-none">Juan José Cerón</h3>
-                                <p class="text-sm text-blue-600 font-semibold select-none">Administrador</p>
-                            </div>
-                        </div>
-
-                        <div class="space-y-3">
-                            <p class="text-gray-600 flex items-center">
-                                <span class="text-blue-500 mr-3">📧</span>
-                                <span class="font-medium truncate" title="juan.ceron@email.com">juan.ceron@email.com</span>
-                            </p>
-                            <p class="text-gray-600 flex items-center">
-                                <span class="text-blue-500 mr-3">🆔</span>
-                                <span class="font-medium">C.C. 1002345678</span>
-                            </p>
-                            <p class="text-gray-600 flex items-center">
-                                <span class="text-blue-500 mr-3">🏷️</span>
-                                <span class="bg-green-100 text-green-700 text-xs font-bold px-2 py-0.5 rounded-full uppercase tracking-wider border border-green-300">Empleado</span>
-                            </p>
-                        </div>
-
-                        <div class="mt-6 flex justify-between space-x-3">
-                            <button
-                                class="flex-1 bg-blue-600 text-white py-2 rounded-lg font-semibold text-sm hover:bg-blue-700 transition duration-200 transform hover:scale-[1.05] shadow-md hover:shadow-blue-500/50"
-                                title="Ver detalles completos">
-                                Ver Detalle
-                            </button>
-                            <button
-                                class="bg-yellow-500 text-white p-2 rounded-lg hover:bg-yellow-600 transition duration-200 transform hover:rotate-6"
-                                title="Editar">
-                                <img src="../../../src/icons/icono_edit.png" class="w-5 h-5" alt="">
-                            </button>
-                            <button
-                                class="bg-red-600 text-white p-2 rounded-lg hover:bg-red-700 transition duration-200 transform hover:-rotate-6"
-                                title="Eliminar">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-                                </svg>
-                            </button>
-                        </div>
-                    </div>
                 </div>
 
             </main>
@@ -221,11 +188,11 @@
         </main>
 
         <!-- Modal Editar Usuario -->
-        <div id="modalEditarUsuario" class="hidden fixed inset-0 bg-black bg-opacity-50 items-center justify-center z-50 h-screen w-full">
-            <div class="bg-white rounded-2xl p-6 w-96 relative m-auto">
+        <div id="modalEditarUsuario" class="hidden fixed inset-0 bg-black bg-opacity-50 items-center justify-center z-50 h-screen w-full overflow-auto">
+            <div class="bg-white rounded-2xl p-6 w-96 relative m-auto overflow-auto">
                 <button id="cerrarModal" type="button" class="absolute top-3 right-3 text-gray-500 hover:text-gray-800 text-2xl">&times;</button>
                 <h2 class="text-xl font-bold mb-4">Editar Usuario</h2>
-                <form id="formEditarUsuario" class="space-y-4">
+                <form id="formEditarUsuario" class="space-y-4 overflow-auto">
                     <!-- ID oculto -->
                     <input type="hidden" id="idUsuario" name="idUsuario">
 
@@ -355,6 +322,7 @@
 
     <script src="../../../src/js/iziToast.min.js"></script>
     <script src="../../../src/js/usuarios-main.js"></script>
+    <script src="../../../src/js/aside.js"></script>
 </body>
 
 </html>

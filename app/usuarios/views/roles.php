@@ -1,3 +1,11 @@
+<?php
+session_start();
+$rol = $_SESSION["rol"];
+$nombreCompleto = mb_strtoupper($_SESSION["nombre"] .  ' ' . $_SESSION["apellido"], 'UTF-8'); // GóMEZ
+$inicial = substr($_SESSION["nombre"], 0, 1);
+$final = substr($_SESSION["apellido"], 0, 1);
+$comodin = strtoupper($inicial . $final);
+?>
 <!DOCTYPE html>
 <html lang="es">
 
@@ -58,6 +66,8 @@
 
 <body class="min-h-screen w-full bg-gray-50">
 
+    <?php include_once '../../../src/includes/aside-usuarios.php'; ?>
+
     <div class="min-h-screen flex flex-col">
 
         <header
@@ -79,12 +89,12 @@
 
             <div class="flex items-center space-x-5">
                 <div class="text-right">
-                    <p class="font-semibold text-gray-300">Juan José Cerón</p>
-                    <p class="text-violet-400 text-sm">Administrador</p>
+                    <p class="font-semibold text-gray-300"><?php echo $nombreCompleto; ?></p>
+                    <p class="text-violet-400 text-sm"><?php echo $rol; ?></p>
                 </div>
                 <div
                     class="cursor-pointer bg-violet-700 text-white font-semibold rounded-full h-12 w-12 flex items-center justify-center ring-2 ring-violet-500 hover:ring-4 hover:bg-violet-800 transition transform hover:scale-110">
-                    JC
+                    <?php echo $comodin; ?>
                 </div>
             </div>
         </header>
@@ -139,10 +149,12 @@
                                 <h2 class="font-extrabold text-2xl text-purple-700 flex items-center">
                                     <span class="mr-3">🎯</span> Segmentos
                                 </h2>
+                                <!--
                                 <button id="btnCrearSegmento"
                                     class="bg-purple-500 text-white p-2 rounded-full font-semibold text-sm hover:bg-purple-600 cursor-pointer transition transform hover:scale-105 shadow-md">
                                     + Crear Segmento
                                 </button>
+                                -->
                             </div>
 
                             <input type="text" placeholder="Buscar Segmento..."
@@ -151,19 +163,16 @@
                             <div id="listaSegmentos" class="space-y-3 h-64 overflow-y-auto pr-2">
                                 <div class="flex justify-between items-center p-3 bg-gray-50 border rounded-lg hover:bg-purple-50 transition duration-200">
                                     <span class="font-medium text-gray-800">CONTROL BIOLOGICO</span>
-                                    <button class="text-xs text-purple-500 hover:text-purple-700">Editar</button>
+
                                 </div>
                                 <div class="flex justify-between items-center p-3 bg-gray-50 border rounded-lg hover:bg-purple-50 transition duration-200">
                                     <span class="font-medium text-gray-800">ECOSALUD</span>
-                                    <button class="text-xs text-purple-500 hover:text-purple-700">Editar</button>
                                 </div>
                                 <div class="flex justify-between items-center p-3 bg-gray-50 border rounded-lg hover:bg-purple-50 transition duration-200">
                                     <span class="font-medium text-gray-800">ADMINISTRACION</span>
-                                    <button class="text-xs text-purple-500 hover:text-purple-700">Editar</button>
                                 </div>
                                 <div class="flex justify-between items-center p-3 bg-gray-50 border rounded-lg hover:bg-purple-50 transition duration-200">
                                     <span class="font-medium text-gray-800">JEFES DIRECTORIOS</span>
-                                    <button class="text-xs text-purple-500 hover:text-purple-700">Editar</button>
                                 </div>
                             </div>
                         </div>
@@ -205,48 +214,7 @@
                         <!-- LISTA DE PERFILES -->
                         <div id="listaPermisosPerfiles" class="space-y-4 h-96 overflow-y-auto pr-2">
 
-                            <div class="bg-gray-50 p-5 rounded-xl border border-gray-200 shadow-sm
-                                hover:shadow-lg transition duration-200 hover:bg-emerald-50 
-                                flex justify-between items-center">
 
-                                <div class="space-y-2">
-
-                                    <!-- ROL -->
-                                    <p class="font-bold text-2xl text-gray-900">Coordinador</p>
-
-                                    <!-- Segmento y submodulo -->
-                                    <div class="flex flex-wrap gap-2">
-                                        <span class="bg-emerald-100 text-emerald-800 px-3 py-1 rounded-lg text-sm font-semibold">
-                                            Control Biológico
-                                        </span>
-
-                                        <span class="bg-emerald-100 text-emerald-800 px-3 py-1 rounded-lg text-sm font-semibold">
-                                            Zoocriaderos
-                                        </span>
-                                    </div>
-
-                                    <!-- Acciones permitidas -->
-                                    <p class="text-sm text-gray-700 bg-white px-3 py-1 rounded-lg shadow-inner border inline-block mt-2">
-                                        Acciones permitidas: <span class="font-semibold">15</span> / 20
-                                    </p>
-                                </div>
-
-                                <!--Botones-->
-                                <div class="flex space-x-3">
-                                    <button type="button" class="cursor-pointer px-4 py-2 rounded-xl bg-white border border-gray-300 text-gray-700 
-                                        font-semibold hover:bg-gray-100 hover:border-gray-400 transition
-                                        shadow-sm hover:shadow-md">
-                                        Ver Acciones
-                                    </button>
-
-                                    <button id="btnModalEditarPermisos" type="button" class="px-4 py-2 rounded-xl bg-emerald-600 text-white font-semibold 
-                                    hover:bg-emerald-700 cursor-pointer transition transform 
-                                        hover:scale-105 shadow-md">
-                                        Editar Permisos
-                                    </button>
-                                </div>
-
-                            </div>
 
 
                         </div>
@@ -320,6 +288,7 @@
     <script src="../../../src/js/iziToast.min.js"></script>
     <script src="../../../src/js/roles-main.js"></script>
     <script src="../../../src/js/permisos.js"></script>
+    <script src="../../../src/js/aside.js"></script>
 </body>
 
 </html>

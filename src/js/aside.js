@@ -9,7 +9,6 @@ window.addEventListener('load', () => {
     document.addEventListener('click', (e) => {
         if (!aside.contains(e.target) && !btnAside.contains(e.target)) {
             aside.classList.add("-translate-x-full");
-
         }
     })
 

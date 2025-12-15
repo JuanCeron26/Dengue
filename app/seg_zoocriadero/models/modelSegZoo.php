@@ -29,7 +29,7 @@ class ModelZoo
     {
         $id = (int)$cod_zoo;
         $conexion = $this->conexion;
-        $sql = "SELECT tt.*, zt.cod_zootanque, zt.nombre
+        $sql = "SELECT tt.*, zt.cod_zootanque, zt.nom_zootanque as nombre
             FROM tblzootanque zt
             INNER JOIN tbltipotanque tt ON tt.cod_tipotanque = zt.cod_tipotanque
             INNER JOIN tblzoocriadero z ON z.cod_zoo = zt.cod_zoo
@@ -92,7 +92,7 @@ class ModelZoo
             STRING_AGG(taz.nombre_actividad, ' - ' ORDER BY taz.nombre_actividad) as actividades,
             z.cod_zoo, 
             z.nombre_zoo, 
-            zt.nombre as nombre_tanque, 
+            zt.nom_zootanque as nombre_tanque, 
             tt.nomtiptan as tipo_tanque, 
             u.nombre_usu, 
             u.apellido_usu
@@ -118,7 +118,7 @@ class ModelZoo
             sza.observaciones,
             z.cod_zoo, 
             z.nombre_zoo, 
-            zt.nombre, 
+            zt.nom_zootanque, 
             tt.nomtiptan, 
             u.nombre_usu, 
             u.apellido_usu
@@ -149,7 +149,7 @@ class ModelZoo
             STRING_AGG(taz.nombre_actividad, ' - ' ORDER BY taz.nombre_actividad) as actividades,
             z.cod_zoo, 
             z.nombre_zoo, 
-            zt.nombre as nombre_tanque, 
+            zt.nom_zootanque as nombre_tanque, 
             tt.nomtiptan as tipo_tanque, 
             u.nombre_usu, 
             u.apellido_usu
@@ -177,7 +177,7 @@ class ModelZoo
             sz.id_zooadmin,
             z.cod_zoo, 
             z.nombre_zoo, 
-            zt.nombre, 
+            zt.nom_zootanque, 
             tt.nomtiptan, 
             u.nombre_usu, 
             u.apellido_usu
@@ -238,5 +238,82 @@ class ModelZoo
         return $this->objDB->Anular("tblsegzooact", $datos, $cod);
     }
 
+    // Reportes
 
+    protected function GetSeguimientosFiltrados($get)
+    {
+        $fecha_inicio = $get['fecha_inicio'] ?? null;
+        $fecha_fin = $get['fecha_fin'] ?? null;
+        $cod_zoo = $get['cod_zoo'] ?? null;
+        $cod_tanque = $get['cod_tanque'] ?? null;
+
+        $sql = "SELECT 
+        sza.cod_segzooact, 
+        sza.fecha_actividad, 
+        sza.ph, 
+        sza.temperatura, 
+        sza.cloro,
+        sza.alevines_nacimiento,
+        sza.muerte_hembras,
+        sza.muerte_machos,
+        sza.observaciones,
+        STRING_AGG(taz.nombre_actividad, ' - ' ORDER BY taz.nombre_actividad) as actividades,
+        z.cod_zoo, 
+        z.nombre_zoo, 
+        zt.nom_zootanque as nombre_tanque, 
+        tt.nomtiptan as tipo_tanque, 
+        u.nombre_usu, 
+        u.apellido_usu
+        FROM tblsegzooact sza
+        INNER JOIN tblsegzooact_actividades sa ON sa.cod_segzooact = sza.cod_segzooact
+        INNER JOIN tbltipoactividadzoo taz ON sa.cod_tipoactividadzoo = taz.cod_tipoactividadzoo
+        INNER JOIN tblseguimientozoo sz ON sz.cod_segzoo = sza.cod_segzoo
+        INNER JOIN tblzoocriadero z ON z.cod_zoo = sz.cod_zoo
+        INNER JOIN tblzootanque zt ON zt.cod_zootanque = sz.cod_zootanque
+        INNER JOIN tblzooadmin za ON za.id_zooadmin = sz.id_zooadmin
+        INNER JOIN tblusuarios u ON u.id_usuarios = za.id_usuarios
+        INNER JOIN tbltipotanque tt ON tt.cod_tipotanque = zt.cod_tipotanque
+        WHERE sza.cod_estado = 1";
+
+        // Aplicar filtros dinámicamente
+        if ($fecha_inicio) {
+            $sql .= " AND sza.fecha_actividad >= '$fecha_inicio'";
+        }
+        if ($fecha_fin) {
+            $sql .= " AND sza.fecha_actividad <= '$fecha_fin'";
+        }
+        if ($cod_zoo) {
+            $sql .= " AND z.cod_zoo = $cod_zoo";
+        }
+        if ($cod_tanque) {
+            $sql .= " AND zt.cod_zootanque = $cod_tanque";
+        }
+
+        $sql .= " GROUP BY 
+        sza.cod_segzooact, 
+        sza.fecha_actividad, 
+        sza.ph, 
+        sza.temperatura, 
+        sza.cloro,
+        sza.alevines_nacimiento,
+        sza.muerte_hembras,
+        sza.muerte_machos,
+        sza.observaciones,
+        z.cod_zoo, 
+        z.nombre_zoo, 
+        zt.nom_zootanque, 
+        tt.nomtiptan, 
+        u.nombre_usu, 
+        u.apellido_usu
+        ORDER BY sza.fecha_actividad DESC";
+
+        $ejecutar = pg_query($this->conexion, $sql);
+        if ($ejecutar) {
+            return pg_fetch_all($ejecutar) ?: [];
+        }
+        return [];
+    }
 }
+
+/* $obj = (new ModelZoo())->GetSeguimientos();
+print_r($obj); */

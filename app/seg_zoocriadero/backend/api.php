@@ -1,4 +1,5 @@
 <?php
+session_start();
 header('Content-Type: application/json; charset=utf-8');
 include_once '../controllers/controllerSegZoo.php';
 
@@ -49,10 +50,22 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
                 }
                 break;
 
+            case 'traer_seguimientos_filtrados':
+                $seg = $objZoo->TraerSeguimientosFiltrados($_GET);
+                echo json_encode($seg);
+                break;
+
             default:
                 # code...
                 break;
         }
+    }
+
+    if (isset($_GET['cerrar_sesion'])) {
+        session_destroy();
+        $_SESSION = [];
+        header("Content-Type: text/html; charset=utf-8");
+        echo "<script>window.location.replace('../../login')</script>";
     }
 }
 
