@@ -294,10 +294,21 @@
 
 <body class="bg-linear-to-br from-gray-50 to-gray-100 min-h-screen">
 
+    <?php include_once '../../../src/includes/aside-etapas/aside-etapa1.php'; ?>
     <!-- Barra de Progreso de Etapas (REUTILIZABLE) -->
+
+
     <div class="bg-white shadow-lg border-b-4 border-indigo-500 sticky top-0 z-40">
         <div class="container mx-auto px-6 py-3">
+
             <div class="flex items-center justify-between max-w-4xl mx-auto">
+
+                <div class="absolute top-2 left-5">
+                    <a href="#" id="btnMenu">
+                        <img id="btnMenu2" src="../../../src/icons/ecosalud.png" alt="" class=" h-12 w-12 hover:scale-110 hover:translate-y-2 transition-all ease-in-out duration-300">
+                    </a>
+                </div>
+
                 <!-- Etapa 1 - ACTIVA -->
                 <div class="flex flex-col items-center stage-indicator cursor-pointer">
                     <div class="w-14 h-14 rounded-full bg-gradient-to-br from-indigo-500 to-indigo-600 text-white flex items-center justify-center text-xl font-bold shadow-lg ring-4 ring-indigo-200">
@@ -457,6 +468,39 @@
                         </div>
                     </div>
                 </nav>
+            </div>
+
+            <!-- BOTÓN SIGUIENTE ETAPA -->
+            <div class="mt-10 flex justify-center" id="btnSiguienteEtp">
+                <button
+                    class="group w-[85%] relative overflow-hidden
+                px-6 py-4 rounded-2xl
+                bg-gradient-to-r from-indigo-600 via-purple-600 to-indigo-700
+                text-white font-extrabold text-sm tracking-wider
+                shadow-xl shadow-indigo-500/40
+                cursor-pointer
+                transition-all duration-300 ease-out
+                hover:scale-[1.03] hover:-translate-y-1
+                hover:shadow-2xl hover:shadow-indigo-600/60
+                active:scale-95">
+
+                    <!-- Efecto brillo -->
+                    <span
+                        class="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100
+                transition-opacity duration-300 rounded-2xl">
+                    </span>
+
+                    <!-- Contenido -->
+                    <span class="relative z-10 flex items-center justify-center gap-3">
+                        <span class="text-lg"></span>
+                        SIGUIENTE ETAPA
+                        <svg class="w-5 h-5 transform transition-transform duration-300 group-hover:translate-x-1"
+                            fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M9 5l7 7-7 7" />
+                        </svg>
+                    </span>
+                </button>
             </div>
         </aside>
 
@@ -1439,6 +1483,26 @@
     <script src="../../../src/js/asistencia.js"></script>
     <script src="../../../src/js/ecosalud-terr.js"></script>
     <script src="../../../src/js/focos-seccion8.js"></script>
+    <script>
+        const btnSigEtapa = document.getElementById('btnSiguienteEtp')
+        btnSigEtapa.addEventListener('click', () => {
+            window.location.href = 'etapa2.php'
+        })
+    </script>
+    <script>
+        const btnAside = document.getElementById("btnMenu2");
+        const aside = document.getElementById("aside");
+
+        btnAside.addEventListener('click', () => {
+            aside.classList.toggle("-translate-x-full");
+        });
+
+        document.addEventListener('click', (e) => {
+            if (!aside.contains(e.target) && !btnAside.contains(e.target)) {
+                aside.classList.add("-translate-x-full");
+            }
+        })
+    </script>
 
 
 </body>

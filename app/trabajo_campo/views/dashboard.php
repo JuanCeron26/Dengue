@@ -22,6 +22,7 @@ $permiso = $_SESSION["permiso"] ?? '';
 
 <body class="bg-gray-50 text-gray-800 min-h-screen flex flex-col">
 
+    <?php include_once '../../../src/includes/aside-trabajocampo.php'; ?>
     <header class="flex justify-between items-center px-6 py-4 bg-white shadow-sm">
         <div class="flex items-center space-x-3">
             <div class="bg-green-500 p-2 rounded-lg">
@@ -221,6 +222,8 @@ $permiso = $_SESSION["permiso"] ?? '';
             animation: fadeInUp 0.6s ease forwards;
         }
     </style>
+
+    <script src="../../../src/js/aside.js"></script>
 
 </body>
 

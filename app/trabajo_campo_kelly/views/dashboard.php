@@ -20,10 +20,15 @@ $permiso = $_SESSION["permiso"] ?? '';
     <title>Trabajo de Campo</title>
 </head>
 
-<body class="bg-gray-50 text-gray-800 min-h-screen flex flex-col">
+<body class="bg-gray-50 text-gray-800 min-h-screen flex flex-col relative">
+
+    <div class="absolute mt-20 left-5">
+        <a href="#" id="btnMenu">
+            <img id="btnMenu2" src="../../../src/icons/ecosalud.png" alt="" class=" h-12 w-12 hover:scale-110 hover:translate-y-2 transition-all ease-in-out duration-300">
+        </a>
+    </div>
 
     <?php include_once '../../../src/includes/aside-trabajocampo.php'; ?>
-
     <header class="flex justify-between items-center px-6 py-4 bg-white shadow-sm">
         <div class="flex items-center space-x-3">
             <div class="bg-green-500 p-2 rounded-lg">
@@ -224,7 +229,21 @@ $permiso = $_SESSION["permiso"] ?? '';
         }
     </style>
 
-    <script src="../../../src/js/aside.js"></script>
+    <script>
+        const btnAside = document.getElementById("btnMenu");
+        const aside = document.getElementById("aside");
+
+        btnAside.addEventListener('click', () => {
+            aside.classList.toggle("-translate-x-full");
+        });
+
+        document.addEventListener('click', (e) => {
+            if (!aside.contains(e.target) && !btnAside.contains(e.target)) {
+                aside.classList.add("-translate-x-full");
+            }
+        })
+    </script>
+
 </body>
 
 

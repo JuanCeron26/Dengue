@@ -116,7 +116,7 @@ document.addEventListener("DOMContentLoaded", () => {
       if (data.mensaje == "exito") {
         iziToast.success({ title: "Bienvenido", message: "Inicio de sesión exitoso" });
         console.log(data.usuario);
-        
+
         const segmento = data.usuario.segmento
         const rol = data.usuario.rol
         const modulo = data.usuario.modulo ? data.usuario.modulo : '';
@@ -136,7 +136,7 @@ document.addEventListener("DOMContentLoaded", () => {
             url = "../seg_zoocriadero/views/consulta3.php"
             break;
           case '8': // Auxiliar Control Biologico Trabajo de Campo
-            url = "../trabajo_campo/views/dashboard.php"
+            url = "../trabajo_campo_kelly/views/dashboard.php"
             break;
 
           case 'Jefes Directores':
@@ -146,7 +146,7 @@ document.addEventListener("DOMContentLoaded", () => {
         setTimeout(() => {
           window.location.replace(url);
         }, 2000);
-        
+
       } else {
         iziToast.error({ title: "Error", message: data.mensaje || "Credenciales incorrectas" });
       }

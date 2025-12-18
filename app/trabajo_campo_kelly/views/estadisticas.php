@@ -1,19 +1,31 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Estadísticas - Actividades</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="../../../src/css/styles.css">
     <style>
-        .stat-card { transition: transform 0.2s; }
-        .stat-card:hover { transform: translateY(-5px); }
-        .barra { background: #10B981; height: 30px; border-radius: 5px; }
+        .stat-card {
+            transition: transform 0.2s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .barra {
+            background: #10B981;
+            height: 30px;
+            border-radius: 5px;
+        }
     </style>
 </head>
+
 <body class="bg-gray-100 p-6">
     <div class="max-w-6xl mx-auto">
-        
+
         <!-- Header -->
         <div class="bg-white rounded-lg shadow p-6 mb-6">
             <h1 class="text-3xl font-bold text-gray-800">📊 Estadísticas de Actividades</h1>
@@ -132,15 +144,71 @@
         }
 
         function usarEjemplo() {
-            datos = [
-                {nombre_sitio: 'Parque Central', nombre_deposito: 'Tanque 500L', nombre_actividad: 'Inspección', fecha_actividad: '2024-11-15', cod_act_campo: 4, positivo_larvas_aedes: 'No', positivo_pupas: 'No', positivo_culex: 'No'},
-                {nombre_sitio: 'Parque Central', nombre_deposito: 'Tanque 500L', nombre_actividad: 'Siembra', fecha_actividad: '2024-11-16', cod_act_campo: 1},
-                {nombre_sitio: 'Escuela Norte', nombre_deposito: 'Alberca', nombre_actividad: 'Inspección', fecha_actividad: '2024-11-18', cod_act_campo: 4, positivo_larvas_aedes: 'Sí', positivo_pupas: 'No', positivo_culex: 'No'},
-                {nombre_sitio: 'Escuela Norte', nombre_deposito: 'Alberca', nombre_actividad: 'Siembra', fecha_actividad: '2024-11-19', cod_act_campo: 1},
-                {nombre_sitio: 'Hospital Sur', nombre_deposito: 'Cisterna', nombre_actividad: 'Inspección', fecha_actividad: '2024-11-20', cod_act_campo: 4, positivo_larvas_aedes: 'No', positivo_pupas: 'Sí', positivo_culex: 'No'},
-                {nombre_sitio: 'Centro Comunitario', nombre_deposito: 'Tanque 1000L', nombre_actividad: 'Resiembra', fecha_actividad: '2024-11-22', cod_act_campo: 2},
-                {nombre_sitio: 'Parque Central', nombre_deposito: 'Fuente', nombre_actividad: 'Seguimiento', fecha_actividad: '2024-11-25', cod_act_campo: 3},
-                {nombre_sitio: 'Hospital Sur', nombre_deposito: 'Cisterna', nombre_actividad: 'Seguimiento', fecha_actividad: '2024-11-28', cod_act_campo: 3},
+            datos = [{
+                    nombre_sitio: 'Parque Central',
+                    nombre_deposito: 'Tanque 500L',
+                    nombre_actividad: 'Inspección',
+                    fecha_actividad: '2024-11-15',
+                    cod_act_campo: 4,
+                    positivo_larvas_aedes: 'No',
+                    positivo_pupas: 'No',
+                    positivo_culex: 'No'
+                },
+                {
+                    nombre_sitio: 'Parque Central',
+                    nombre_deposito: 'Tanque 500L',
+                    nombre_actividad: 'Siembra',
+                    fecha_actividad: '2024-11-16',
+                    cod_act_campo: 1
+                },
+                {
+                    nombre_sitio: 'Escuela Norte',
+                    nombre_deposito: 'Alberca',
+                    nombre_actividad: 'Inspección',
+                    fecha_actividad: '2024-11-18',
+                    cod_act_campo: 4,
+                    positivo_larvas_aedes: 'Sí',
+                    positivo_pupas: 'No',
+                    positivo_culex: 'No'
+                },
+                {
+                    nombre_sitio: 'Escuela Norte',
+                    nombre_deposito: 'Alberca',
+                    nombre_actividad: 'Siembra',
+                    fecha_actividad: '2024-11-19',
+                    cod_act_campo: 1
+                },
+                {
+                    nombre_sitio: 'Hospital Sur',
+                    nombre_deposito: 'Cisterna',
+                    nombre_actividad: 'Inspección',
+                    fecha_actividad: '2024-11-20',
+                    cod_act_campo: 4,
+                    positivo_larvas_aedes: 'No',
+                    positivo_pupas: 'Sí',
+                    positivo_culex: 'No'
+                },
+                {
+                    nombre_sitio: 'Centro Comunitario',
+                    nombre_deposito: 'Tanque 1000L',
+                    nombre_actividad: 'Resiembra',
+                    fecha_actividad: '2024-11-22',
+                    cod_act_campo: 2
+                },
+                {
+                    nombre_sitio: 'Parque Central',
+                    nombre_deposito: 'Fuente',
+                    nombre_actividad: 'Seguimiento',
+                    fecha_actividad: '2024-11-25',
+                    cod_act_campo: 3
+                },
+                {
+                    nombre_sitio: 'Hospital Sur',
+                    nombre_deposito: 'Cisterna',
+                    nombre_actividad: 'Seguimiento',
+                    fecha_actividad: '2024-11-28',
+                    cod_act_campo: 3
+                },
             ];
             filtrados = datos;
             llenarFiltros();
@@ -219,10 +287,10 @@
         function crearBarras(id, data) {
             const div = document.getElementById(id);
             div.innerHTML = '';
-            
+
             const max = Math.max(...Object.values(data));
-            
-            Object.entries(data).sort((a,b) => b[1] - a[1]).forEach(([nombre, valor]) => {
+
+            Object.entries(data).sort((a, b) => b[1] - a[1]).forEach(([nombre, valor]) => {
                 const ancho = (valor / max) * 100;
                 div.innerHTML += `
                     <div class="mb-3">
@@ -247,9 +315,9 @@
 
             document.getElementById('efectividad').style.display = 'block';
 
-            const pos = insp.filter(d => 
-                d.positivo_larvas_aedes === 'Sí' || 
-                d.positivo_pupas === 'Sí' || 
+            const pos = insp.filter(d =>
+                d.positivo_larvas_aedes === 'Sí' ||
+                d.positivo_pupas === 'Sí' ||
                 d.positivo_culex === 'Sí'
             ).length;
 
@@ -264,4 +332,5 @@
         }
     </script>
 </body>
+
 </html>

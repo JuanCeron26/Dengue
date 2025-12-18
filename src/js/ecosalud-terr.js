@@ -34,26 +34,26 @@ document.addEventListener('DOMContentLoaded', () => {
     // ============================
     function configurarValidacionesRegistro() {
         // Validación Cédula (solo números, máx 10)
-        if (inCelular) {
-            inCelular.addEventListener('input', function (e) {
+        if (inCedula) {
+            inCedula.addEventListener('input', function (e) {
                 this.value = this.value.replace(/[^0-9]/g, '');
                 if (this.value.length > 10) {
                     this.value = this.value.slice(0, 10);
                 }
             });
-        }
 
-        // Validación al perder el foco
-        inCelular.addEventListener('blur', function (e) {
-            if (this.value.length > 0 && this.value.length < 10) {
-                iziToast.warning({
-                    title: '⚠️ Celular incompleto',
-                    message: 'El celular debe tener exactamente 10 dígitos',
-                    position: 'topRight',
-                    timeout: 3000
-                });
-            }
-        });
+            inCedula.addEventListener('blur', function (e) {
+                const length = this.value.length;
+                if (length > 0 && (length < 8 || length > 10)) {
+                    iziToast.warning({
+                        title: '⚠️ Cédula inválida',
+                        message: 'La cédula debe tener entre 8 y 10 dígitos',
+                        position: 'topRight',
+                        timeout: 3000
+                    });
+                }
+            });
+        }
 
         // Validación Nombre (solo letras y espacios)
         if (inNombre) {
@@ -181,8 +181,8 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!inCedula.value.trim()) {
             iziToast.warning({ title: '⚠ Campo requerido', message: 'La cédula del líder es obligatoria', position: 'topRight', timeout: 3000 });
             todosValidos = false;
-        } else if (inCedula.value.trim().length < 6 || inCedula.value.trim().length > 10) {
-            iziToast.error({ title: '❌ Cédula inválida', message: 'La cédula debe tener entre 6 y 10 dígitos', position: 'topRight', timeout: 3000 });
+        } else if (inCedula.value.trim().length < 8 || inCedula.value.trim().length > 10) {
+            iziToast.error({ title: '❌ Cédula inválida', message: 'La cédula debe tener entre 8 y 10 dígitos', position: 'topRight', timeout: 3000 });
             todosValidos = false;
         }
 

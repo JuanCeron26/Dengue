@@ -1,7 +1,62 @@
 // ================================
 // SISTEMA DE CARDS MODERNO Y ELEGANTE
 // ================================
+// ================================
+// OBJETO ALERTAS - SWEETALERT2
+// ================================
+const alertas = {
+    eliminar: (mensaje = '¿Deseas anular esta actividad?') => {
+        return Swal.fire({
+            title: '¡Cuidado!',
+            text: mensaje,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Sí, anular',
+            cancelButtonText: 'Cancelar',
+            confirmButtonColor: '#dc2626',
+            cancelButtonColor: '#6b7280',
+            reverseButtons: true
+        });
+    },
 
+    exitoEspecial: (mensaje) => {
+        return Swal.fire({
+            icon: 'success',
+            title: '¡Éxito!',
+            text: mensaje,
+            confirmButtonColor: '#10b981'
+        });
+    },
+
+    error: (mensaje) => {
+        return Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: mensaje,
+            confirmButtonColor: '#dc2626'
+        });
+    },
+
+    cargando: (mensaje = 'Procesando...') => {
+        Swal.fire({
+            title: mensaje,
+            allowOutsideClick: false,
+            allowEscapeKey: false,
+            didOpen: () => {
+                Swal.showLoading();
+            }
+        });
+    },
+
+    cerrarCargando: () => {
+        Swal.close();
+    }
+};
+
+// ================================
+// SISTEMA DE CARDS MODERNO Y ELEGANTE
+// ================================
+// ... resto de tu código ...
 let todasLasActividades = [];
 let actividadesFiltradas = [];
 let paginaActual = 0;
@@ -13,26 +68,26 @@ const ITEMS_POR_PAGINA = 9;
 function pintarCards(actividades) {
     todasLasActividades = actividades;
     actividadesFiltradas = actividades;
-    
+
     // Organizar actividades por tipo
     const organizadas = organizarActividadesPorTipo(actividades);
-    
+
     const contenedor = document.getElementById("contenedor_actividades");
     contenedor.innerHTML = "";
-    
+
     // Crear secciones por tipo de actividad
     if (organizadas.inspecciones.length > 0) {
         contenedor.appendChild(crearSeccionActividades('Inspecciones', organizadas.inspecciones, 'emerald'));
     }
-    
+
     if (organizadas.siembras.length > 0) {
         contenedor.appendChild(crearSeccionActividades('Siembras', organizadas.siembras, 'teal'));
     }
-    
+
     if (organizadas.seguimientos.length > 0) {
         contenedor.appendChild(crearSeccionActividades('Seguimientos', organizadas.seguimientos, 'cyan'));
     }
-    
+
     if (organizadas.resiembras.length > 0) {
         contenedor.appendChild(crearSeccionActividades('Resiembras', organizadas.resiembras, 'green'));
     }
@@ -48,33 +103,33 @@ function organizarActividadesPorTipo(actividades) {
             .map(a => a.cod_actividad_padre)
             .filter(Boolean)
     );
-    
+
     const seguimientosConResiembra = new Set(
         actividades.filter(a => a.cod_act_campo == 2)
             .map(a => a.cod_actividad_padre)
             .filter(Boolean)
     );
-    
+
     const siembrasConSeguimiento = new Set(
         actividades.filter(a => a.cod_act_campo == 3)
             .map(a => a.cod_actividad_padre)
             .filter(Boolean)
     );
-    
+
     const resultado = {
         inspecciones: [],
         siembras: [],
         seguimientos: [],
         resiembras: []
     };
-    
+
     actividades.forEach(ac => {
         const esInspeccion = ac.cod_act_campo == 4;
         const esSiembra = ac.cod_act_campo == 1;
         const esSeguimiento = ac.cod_act_campo == 3;
         const esResiembra = ac.cod_act_campo == 2;
         const idActividad = ac.cod_actividadtrabajocampo;
-        
+
         // Filtrar actividades que ya tienen hijos
         if (esInspeccion && !inspeccionesConSiembra.has(idActividad)) {
             resultado.inspecciones.push(ac);
@@ -86,12 +141,12 @@ function organizarActividadesPorTipo(actividades) {
             resultado.resiembras.push(ac);
         }
     });
-    
+
     // Ordenar por fecha (más recientes primero)
     Object.keys(resultado).forEach(tipo => {
         resultado[tipo].sort((a, b) => new Date(b.fecha_actividad) - new Date(a.fecha_actividad));
     });
-    
+
     return resultado;
 }
 
@@ -101,40 +156,40 @@ function organizarActividadesPorTipo(actividades) {
 function crearSeccionActividades(titulo, actividades, color) {
     const seccion = document.createElement('div');
     seccion.className = 'mb-10 fade-in-section';
-    
+
     const colores = {
-        emerald: { 
-            bg: 'bg-emerald-50', 
-            border: 'border-emerald-500', 
-            text: 'text-emerald-700', 
-            icon: 'bg-gradient-to-br from-emerald-500 to-emerald-600' 
+        emerald: {
+            bg: 'bg-emerald-50',
+            border: 'border-emerald-500',
+            text: 'text-emerald-700',
+            icon: 'bg-gradient-to-br from-emerald-500 to-emerald-600'
         },
-        teal: { 
-            bg: 'bg-teal-50', 
-            border: 'border-teal-500', 
-            text: 'text-teal-700', 
-            icon: 'bg-gradient-to-br from-teal-500 to-teal-600' 
+        teal: {
+            bg: 'bg-teal-50',
+            border: 'border-teal-500',
+            text: 'text-teal-700',
+            icon: 'bg-gradient-to-br from-teal-500 to-teal-600'
         },
-        cyan: { 
-            bg: 'bg-cyan-50', 
-            border: 'border-cyan-500', 
-            text: 'text-cyan-700', 
-            icon: 'bg-gradient-to-br from-cyan-500 to-cyan-600' 
+        cyan: {
+            bg: 'bg-cyan-50',
+            border: 'border-cyan-500',
+            text: 'text-cyan-700',
+            icon: 'bg-gradient-to-br from-cyan-500 to-cyan-600'
         },
-        green: { 
-            bg: 'bg-green-50', 
-            border: 'border-green-500', 
-            text: 'text-green-700', 
-            icon: 'bg-gradient-to-br from-green-500 to-green-600' 
+        green: {
+            bg: 'bg-green-50',
+            border: 'border-green-500',
+            text: 'text-green-700',
+            icon: 'bg-gradient-to-br from-green-500 to-green-600'
         }
     };
-    
+
     const c = colores[color];
-    
+
     // Mostrar solo las 3 más recientes inicialmente
     const actividadesVisibles = actividades.slice(0, 3);
     const hayMas = actividades.length > 3;
-    
+
     seccion.innerHTML = `
         <div class="mb-4 flex items-center justify-between">
             <div class="flex items-center gap-3">
@@ -168,7 +223,7 @@ function crearSeccionActividades(titulo, actividades, color) {
             </div>
         ` : ''}
     `;
-    
+
     return seccion;
 }
 
@@ -194,49 +249,49 @@ function crearCard(ac, color) {
     const esSeguimiento = ac.cod_act_campo == 3;
     const esResiembra = ac.cod_act_campo == 2;
     const idActividad = ac.cod_actividadtrabajocampo;
-    
+
     let tipoActividad = "Inspección";
     if (esSiembra) tipoActividad = "Siembra";
     else if (esSeguimiento) tipoActividad = "Seguimiento";
     else if (esResiembra) tipoActividad = "Resiembra";
-    
+
     const colores = {
-        emerald: { 
-            border: 'border-emerald-400', 
+        emerald: {
+            border: 'border-emerald-400',
             badge: 'bg-gradient-to-r from-emerald-100 to-emerald-200 text-emerald-800',
             hover: 'hover:border-emerald-600',
             shadow: 'hover:shadow-emerald-200'
         },
-        teal: { 
-            border: 'border-teal-400', 
+        teal: {
+            border: 'border-teal-400',
             badge: 'bg-gradient-to-r from-teal-100 to-teal-200 text-teal-800',
             hover: 'hover:border-teal-600',
             shadow: 'hover:shadow-teal-200'
         },
-        cyan: { 
-            border: 'border-cyan-400', 
+        cyan: {
+            border: 'border-cyan-400',
             badge: 'bg-gradient-to-r from-cyan-100 to-cyan-200 text-cyan-800',
             hover: 'hover:border-cyan-600',
             shadow: 'hover:shadow-cyan-200'
         },
-        green: { 
-            border: 'border-green-400', 
+        green: {
+            border: 'border-green-400',
             badge: 'bg-gradient-to-r from-green-100 to-green-200 text-green-800',
             hover: 'hover:border-green-600',
             shadow: 'hover:shadow-green-200'
         }
     };
-    
+
     const c = colores[color];
-    
+
     // Formatear fecha
     const fecha = new Date(ac.fecha_actividad);
-    const fechaFormateada = fecha.toLocaleDateString('es-CO', { 
-        day: '2-digit', 
-        month: 'short', 
-        year: 'numeric' 
+    const fechaFormateada = fecha.toLocaleDateString('es-CO', {
+        day: '2-digit',
+        month: 'short',
+        year: 'numeric'
     });
-    
+
     return `
         <div class="card-actividad bg-white rounded-2xl shadow-lg border-2 ${c.border} ${c.hover} ${c.shadow} transition-all duration-300 transform hover:-translate-y-1 hover:shadow-2xl overflow-hidden"
              data-id="${idActividad}" 
@@ -416,7 +471,7 @@ function getDataAttributesEditar(ac, tipoActividad, esSiembra, esResiembra) {
 // ======================================================
 function getBotonesAccion(ac, esInspeccion, esSiembra, esSeguimiento, esResiembra) {
     const idActividad = ac.cod_actividadtrabajocampo;
-    
+
     if (esInspeccion) {
         return `
             <button class="btn-siembra action-button bg-gradient-to-br from-emerald-50 to-green-50 hover:from-emerald-100 hover:to-green-100 text-emerald-600 p-2 rounded-lg transition shadow-sm border border-emerald-200" 
@@ -435,7 +490,7 @@ function getBotonesAccion(ac, esInspeccion, esSiembra, esSeguimiento, esResiembr
             </button>
         `;
     }
-    
+
     if (esSiembra) {
         return `
             <button class="btn-seguimiento action-button bg-gradient-to-br from-cyan-50 to-teal-50 hover:from-cyan-100 hover:to-teal-100 text-cyan-600 p-2 rounded-lg transition shadow-sm border border-cyan-200" 
@@ -449,7 +504,7 @@ function getBotonesAccion(ac, esInspeccion, esSiembra, esSeguimiento, esResiembr
             </button>
         `;
     }
-    
+
     if (esResiembra) {
         return `
             <button class="btn-seguimiento-resiembra action-button bg-gradient-to-br from-cyan-50 to-blue-50 hover:from-cyan-100 hover:to-blue-100 text-cyan-600 p-2 rounded-lg transition shadow-sm border border-cyan-200" 
@@ -463,7 +518,7 @@ function getBotonesAccion(ac, esInspeccion, esSiembra, esSeguimiento, esResiembr
             </button>
         `;
     }
-    
+
     if (esSeguimiento) {
         return `
             <button class="btn-resiembra action-button bg-gradient-to-br from-green-50 to-emerald-50 hover:from-green-100 hover:to-emerald-100 text-green-600 p-2 rounded-lg transition shadow-sm border border-green-200"
@@ -484,51 +539,51 @@ function getBotonesAccion(ac, esInspeccion, esSiembra, esSeguimiento, esResiembr
             </button>
         `;
     }
-    
+
     return '';
 }
 
 // ======================================================
 // EVENT LISTENERS
 // ======================================================
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     // Event delegation para todos los botones
-    document.addEventListener('click', function(e) {
+    document.addEventListener('click', function (e) {
         const target = e.target.closest('button');
         if (!target) return;
-        
+
         // Siembra
         if (target.classList.contains('btn-siembra')) {
             abrirFormularioSiembra(target);
         }
-        
+
         // Seguimiento
         if (target.classList.contains('btn-seguimiento')) {
             abrirSeguimiento(target);
         }
-        
+
         // Seguimiento de Resiembra
         if (target.classList.contains('btn-seguimiento-resiembra')) {
             abrirSeguimientoResiembra(target);
         }
-        
+
         // Resiembra
         if (target.classList.contains('btn-resiembra')) {
             abrirResiembra(target);
         }
-        
+
         // Ver detalles
         if (target.classList.contains('btn-ver')) {
             mostrarDetalles(target);
         }
-        
+
         // Ver más
         if (target.classList.contains('btn-ver-mas')) {
             const seccion = target.dataset.seccion;
             mostrarTodasLasCards(seccion, target.dataset.color);
             target.style.display = 'none';
         }
-        
+
         // Cargar más
         if (target.classList.contains('btn-cargar-mas')) {
             // Implementar lógica de scroll infinito si se necesita
@@ -542,22 +597,22 @@ document.addEventListener('DOMContentLoaded', function() {
 function mostrarTodasLasCards(seccion, color) {
     const organizadas = organizarActividadesPorTipo(todasLasActividades);
     let actividades = [];
-    
+
     if (seccion === 'inspecciones') actividades = organizadas.inspecciones;
     else if (seccion === 'siembras') actividades = organizadas.siembras;
     else if (seccion === 'seguimientos') actividades = organizadas.seguimientos;
     else if (seccion === 'resiembras') actividades = organizadas.resiembras;
-    
+
     const container = document.querySelector(`.cards-container[data-seccion="${seccion}"]`);
     if (!container) return;
-    
+
     // Animar la expansión
     container.style.maxHeight = container.scrollHeight + 'px';
     container.style.transition = 'max-height 0.5s ease-out';
-    
+
     // Renderizar todas las cards
     container.innerHTML = actividades.map(ac => crearCard(ac, color)).join('');
-    
+
     // Animar la aparición de las nuevas cards
     setTimeout(() => {
         container.querySelectorAll('.card-actividad').forEach((card, index) => {
@@ -576,48 +631,84 @@ document.addEventListener("click", async function (e) {
         const btn = e.target.closest(".btn-anular");
         const idActividad = btn.dataset.id;
 
+        console.log('🎯 CLICK EN ANULAR');
+        console.log('ID de actividad:', idActividad);
+
         if (!idActividad) {
             alertas.error('No se encontró el ID de la actividad');
             return;
         }
 
         const resultado = await alertas.eliminar('¿Deseas anular esta inspección?');
-        
+        console.log('Resultado de confirmación:', resultado);
+
         if (resultado.isConfirmed) {
             alertas.cargando('Anulando inspección...');
 
             try {
-                const response = await fetch("http://localhost/PROYECTO/trabajocampo/controller/actividadescontrol.php?accion=anular", {
+                const url = "../controller/actividadescontrol.php?accion=anular";
+                const body = `id_actividad=${idActividad}`;
+
+                console.log('🚀 ENVIANDO REQUEST:');
+                console.log('URL:', url);
+                console.log('Body:', body);
+
+                const response = await fetch(url, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/x-www-form-urlencoded'
                     },
-                    body: `id_actividad=${idActividad}`
+                    body: body
                 });
 
-                const data = await response.json();
+                console.log('📡 RESPONSE RECIBIDO:');
+                console.log('Status:', response.status);
+                console.log('OK:', response.ok);
+
+                const text = await response.text();
+                console.log('📄 TEXTO CRUDO:', text);
+
+                let data;
+                try {
+                    data = JSON.parse(text);
+                    console.log('✅ JSON PARSEADO:', data);
+                } catch (parseError) {
+                    console.error('❌ ERROR AL PARSEAR JSON:', parseError);
+                    console.error('Texto recibido:', text);
+                    alertas.cerrarCargando();
+                    alertas.error('El servidor devolvió una respuesta inválida');
+                    return;
+                }
+
                 alertas.cerrarCargando();
 
                 if (data.success) {
+                    console.log('✅ ÉXITO');
                     await alertas.exitoEspecial(data.mensaje || 'La inspección ha sido anulada');
+
                     // Animar y eliminar la card
                     const card = btn.closest('.card-actividad');
-                    card.style.animation = 'fadeOut 0.3s ease-out';
-                    setTimeout(() => {
-                        card.remove();
-                    }, 300);
+                    if (card) {
+                        card.style.animation = 'fadeOut 0.3s ease-out';
+                        setTimeout(() => {
+                            card.remove();
+                        }, 300);
+                    }
                 } else {
+                    console.error('❌ ERROR DEL SERVIDOR:', data);
                     alertas.error(data.mensaje || data.error || 'No se pudo anular');
                 }
             } catch (err) {
                 alertas.cerrarCargando();
-                console.error('Error:', err);
-                alertas.error('No se pudo completar la operación');
+                console.error('❌ ERROR EN FETCH:', err);
+                console.error('Tipo de error:', err.name);
+                console.error('Mensaje:', err.message);
+                console.error('Stack:', err.stack);
+                alertas.error('No se pudo completar la operación: ' + err.message);
             }
         }
     }
 });
-
 // ======================================================
 // ANIMACIONES CSS
 // ======================================================
@@ -671,8 +762,8 @@ document.head.appendChild(estilosAnimaciones);
 // CONTROL DEL MENÚ LATERAL
 // ============================================
 
-document.addEventListener('DOMContentLoaded', function() {
-    
+document.addEventListener('DOMContentLoaded', function () {
+
     // Elementos del DOM
     const btnAside = document.getElementById('btn-aside');
     const aside = document.getElementById('aside');
@@ -693,7 +784,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // ============================================
     function toggleMenu() {
         isMenuOpen = !isMenuOpen;
-        
+
         if (isMenuOpen) {
             // Abrir menú
             aside.classList.remove('-translate-x-full');
@@ -710,9 +801,9 @@ document.addEventListener('DOMContentLoaded', function() {
     // ============================================
     // EVENTOS DEL MENÚ
     // ============================================
-    
+
     // Click en la barra lateral izquierda para abrir
-    btnAside.addEventListener('click', function(e) {
+    btnAside.addEventListener('click', function (e) {
         e.stopPropagation();
         if (!isMenuOpen) {
             toggleMenu();
@@ -720,22 +811,22 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     // Click fuera del menú para cerrar
-    document.addEventListener('click', function(e) {
-        if (isMenuOpen && 
-            !aside.contains(e.target) && 
+    document.addEventListener('click', function (e) {
+        if (isMenuOpen &&
+            !aside.contains(e.target) &&
             !btnAside.contains(e.target)) {
             toggleMenu();
         }
     });
 
     // Prevenir que clicks dentro del aside lo cierren
-    aside.addEventListener('click', function(e) {
+    aside.addEventListener('click', function (e) {
         e.stopPropagation();
     });
 
     // Cerrar menú al hacer click en enlaces
     menuLinks.forEach(link => {
-        link.addEventListener('click', function() {
+        link.addEventListener('click', function () {
             setTimeout(() => {
                 if (isMenuOpen) {
                     toggleMenu();
@@ -747,7 +838,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // ============================================
     // CERRAR MENÚ CON TECLA ESC
     // ============================================
-    document.addEventListener('keydown', function(e) {
+    document.addEventListener('keydown', function (e) {
         if (e.key === 'Escape' && isMenuOpen) {
             toggleMenu();
         }
@@ -758,24 +849,24 @@ document.addEventListener('DOMContentLoaded', function() {
     // ============================================
     function markActiveLink() {
         const currentPage = window.location.pathname.split('/').pop();
-        
+
         menuLinks.forEach(link => {
             const linkHref = link.getAttribute('href');
             if (!linkHref) return;
-            
+
             const linkPage = linkHref.split('/').pop();
-            
-            if (linkPage === currentPage || 
+
+            if (linkPage === currentPage ||
                 (currentPage === '' && linkPage === 'inicio.php')) {
-                
+
                 // Agregar borde izquierdo destacado
                 link.style.borderLeft = '3px solid var(--verde-principal, #10b981)';
                 link.style.paddingLeft = '5px';
-                
+
                 // Hacer el icono más visible
                 const img = link.querySelector('img');
                 const icon = link.querySelector('i');
-                
+
                 if (img) {
                     img.style.filter = 'brightness(1.2) drop-shadow(0 0 8px rgba(16, 185, 129, 0.5))';
                 }
@@ -792,13 +883,13 @@ document.addEventListener('DOMContentLoaded', function() {
     // ============================================
     // HOVER EFFECT EN LA BARRA DE ACTIVACIÓN
     // ============================================
-    btnAside.addEventListener('mouseenter', function() {
+    btnAside.addEventListener('mouseenter', function () {
         if (!isMenuOpen) {
             this.style.backgroundColor = 'rgba(100, 116, 139, 0.6)';
         }
     });
 
-    btnAside.addEventListener('mouseleave', function() {
+    btnAside.addEventListener('mouseleave', function () {
         if (!isMenuOpen) {
             this.style.backgroundColor = 'rgba(100, 116, 139, 0.4)';
         }
@@ -809,16 +900,16 @@ document.addEventListener('DOMContentLoaded', function() {
     // ============================================
     const images = aside.querySelectorAll('img');
     images.forEach(img => {
-        img.addEventListener('error', function() {
+        img.addEventListener('error', function () {
             // Si la imagen no carga, usar un ícono de Font Awesome como fallback
             const parent = this.parentElement;
             this.style.display = 'none';
-            
+
             // Crear ícono de respaldo
             const fallbackIcon = document.createElement('i');
             fallbackIcon.className = 'fas fa-image text-2xl text-gray-400';
             parent.appendChild(fallbackIcon);
-            
+
             console.warn(`⚠️ Imagen no encontrada: ${this.src}`);
         });
     });
@@ -832,7 +923,7 @@ document.addEventListener('DOMContentLoaded', function() {
 // ============================================
 // FUNCIÓN GLOBAL PARA ABRIR/CERRAR DESDE OTROS SCRIPTS
 // ============================================
-window.toggleSidebar = function() {
+window.toggleSidebar = function () {
     const aside = document.getElementById('aside');
     const btnAside = document.getElementById('btn-aside');
     if (aside && btnAside) {

@@ -44,6 +44,78 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // ============================================================
+    // FUNCIONES DE VALIDACIÓN EN TIEMPO REAL
+    // ============================================================
+
+    // Solo permite letras, espacios, tildes y ñ
+    function permitirSoloLetras(e) {
+        const char = String.fromCharCode(e.which || e.keyCode);
+        const regex = /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]$/;
+
+        if (!regex.test(char)) {
+            e.preventDefault();
+            return false;
+        }
+    }
+
+    // Solo permite números
+    function permitirSoloNumeros(e) {
+        const char = String.fromCharCode(e.which || e.keyCode);
+        const regex = /^[0-9]$/;
+
+        if (!regex.test(char)) {
+            e.preventDefault();
+            return false;
+        }
+    }
+
+    // Validar longitud de cédula (8-10 dígitos)
+    function validarLongitudCedula(input) {
+        const valor = input.value;
+        const length = valor.length;
+
+        if (length > 10) {
+            input.value = valor.slice(0, 10);
+            mostrarAdvertencia('La cédula no puede tener más de 10 dígitos');
+        }
+    }
+
+    // Validar longitud de celular (10 dígitos exactos)
+    function validarLongitudCelular(input) {
+        const valor = input.value;
+        const length = valor.length;
+
+        if (length > 10) {
+            input.value = valor.slice(0, 10);
+            mostrarAdvertencia('El celular debe tener exactamente 10 dígitos');
+        }
+    }
+
+    // Limpiar caracteres no permitidos del valor
+    function limpiarCaracteresNoPermitidos(input, tipo) {
+        let valor = input.value;
+
+        if (tipo === 'letras') {
+            valor = valor.replace(/[^a-zA-ZáéíóúÁÉÍÓÚñÑ\s]/g, '');
+        } else if (tipo === 'numeros') {
+            valor = valor.replace(/[^0-9]/g, '');
+        }
+
+        input.value = valor;
+    }
+
+    // Añadir indicadores visuales de validación
+    function agregarIndicadorValidacion(input, esValido) {
+        if (esValido) {
+            input.classList.remove('border-red-500');
+            input.classList.add('border-green-500');
+        } else {
+            input.classList.remove('border-green-500');
+            input.classList.add('border-red-500');
+        }
+    }
+
+    // ============================================================
     // VARIABLES GLOBALES PARA PAGINACIÓN
     // ============================================================
     let paginaActual = 1;
@@ -94,6 +166,151 @@ document.addEventListener("DOMContentLoaded", () => {
     const camposDireccion = [tipoVia, numeroVia, numero, sufijo, distancia];
 
     // ============================================================
+    // APLICAR VALIDACIONES EN TIEMPO REAL - MODO NUEVO
+    // ============================================================
+
+    // NOMBRE RESPONSABLE
+    if (rNombre) {
+        rNombre.addEventListener('keypress', permitirSoloLetras);
+        rNombre.addEventListener('input', function () {
+            limpiarCaracteresNoPermitidos(this, 'letras');
+        });
+        rNombre.addEventListener('paste', function (e) {
+            setTimeout(() => limpiarCaracteresNoPermitidos(this, 'letras'), 0);
+        });
+    }
+
+    // APELLIDO RESPONSABLE
+    if (rApellido) {
+        rApellido.addEventListener('keypress', permitirSoloLetras);
+        rApellido.addEventListener('input', function () {
+            limpiarCaracteresNoPermitidos(this, 'letras');
+        });
+        rApellido.addEventListener('paste', function (e) {
+            setTimeout(() => limpiarCaracteresNoPermitidos(this, 'letras'), 0);
+        });
+    }
+
+    // CÉDULA
+    if (rCedula) {
+        rCedula.addEventListener('keypress', permitirSoloNumeros);
+        rCedula.addEventListener('input', function () {
+            limpiarCaracteresNoPermitidos(this, 'numeros');
+            validarLongitudCedula(this);
+        });
+        rCedula.addEventListener('paste', function (e) {
+            setTimeout(() => {
+                limpiarCaracteresNoPermitidos(this, 'numeros');
+                validarLongitudCedula(this);
+            }, 0);
+        });
+        rCedula.addEventListener('blur', function () {
+            const length = this.value.length;
+            agregarIndicadorValidacion(this, length >= 8 && length <= 10);
+        });
+    }
+
+    // CELULAR
+    if (rCelular) {
+        rCelular.addEventListener('keypress', permitirSoloNumeros);
+        rCelular.addEventListener('input', function () {
+            limpiarCaracteresNoPermitidos(this, 'numeros');
+            validarLongitudCelular(this);
+        });
+        rCelular.addEventListener('paste', function (e) {
+            setTimeout(() => {
+                limpiarCaracteresNoPermitidos(this, 'numeros');
+                validarLongitudCelular(this);
+            }, 0);
+        });
+        rCelular.addEventListener('blur', function () {
+            agregarIndicadorValidacion(this, this.value.length === 10);
+        });
+    }
+
+    // CÉDULA EXISTENTE (modo asociar)
+    if (rCedulaExistente) {
+        rCedulaExistente.addEventListener('keypress', permitirSoloNumeros);
+        rCedulaExistente.addEventListener('input', function () {
+            limpiarCaracteresNoPermitidos(this, 'numeros');
+            validarLongitudCedula(this);
+        });
+        rCedulaExistente.addEventListener('paste', function (e) {
+            setTimeout(() => {
+                limpiarCaracteresNoPermitidos(this, 'numeros');
+                validarLongitudCedula(this);
+            }, 0);
+        });
+    }
+
+    // NOMBRE DEL SITIO
+    const nombreSitio = qs('nombre_sitio');
+    if (nombreSitio) {
+        nombreSitio.addEventListener('keypress', permitirSoloLetras);
+        nombreSitio.addEventListener('input', function () {
+            limpiarCaracteresNoPermitidos(this, 'letras');
+        });
+        nombreSitio.addEventListener('paste', function (e) {
+            setTimeout(() => limpiarCaracteresNoPermitidos(this, 'letras'), 0);
+        });
+    }
+
+    // ============================================================
+    // APLICAR VALIDACIONES EN TIEMPO REAL - MODO EDITAR
+    // ============================================================
+
+    const editNombreResp = qs('edit_nombre_responsable');
+    if (editNombreResp) {
+        editNombreResp.addEventListener('keypress', permitirSoloLetras);
+        editNombreResp.addEventListener('input', function () {
+            limpiarCaracteresNoPermitidos(this, 'letras');
+        });
+        editNombreResp.addEventListener('paste', function (e) {
+            setTimeout(() => limpiarCaracteresNoPermitidos(this, 'letras'), 0);
+        });
+    }
+
+    const editApellidoResp = qs('edit_apellido_responsable');
+    if (editApellidoResp) {
+        editApellidoResp.addEventListener('keypress', permitirSoloLetras);
+        editApellidoResp.addEventListener('input', function () {
+            limpiarCaracteresNoPermitidos(this, 'letras');
+        });
+        editApellidoResp.addEventListener('paste', function (e) {
+            setTimeout(() => limpiarCaracteresNoPermitidos(this, 'letras'), 0);
+        });
+    }
+
+    const editCelular = qs('edit_celular');
+    if (editCelular) {
+        editCelular.addEventListener('keypress', permitirSoloNumeros);
+        editCelular.addEventListener('input', function () {
+            limpiarCaracteresNoPermitidos(this, 'numeros');
+            validarLongitudCelular(this);
+        });
+        editCelular.addEventListener('paste', function (e) {
+            setTimeout(() => {
+                limpiarCaracteresNoPermitidos(this, 'numeros');
+                validarLongitudCelular(this);
+            }, 0);
+        });
+        editCelular.addEventListener('blur', function () {
+            agregarIndicadorValidacion(this, this.value.length === 10);
+        });
+    }
+
+    const editNombreSitio = qs('edit_nombre_sitio');
+    if (editNombreSitio) {
+        editNombreSitio.addEventListener('keypress', permitirSoloLetras);
+        editNombreSitio.addEventListener('input', function () {
+            limpiarCaracteresNoPermitidos(this, 'letras');
+        });
+        editNombreSitio.addEventListener('paste', function (e) {
+            setTimeout(() => limpiarCaracteresNoPermitidos(this, 'letras'), 0);
+        });
+    }
+
+    // ============================================================
     // FUNCIÓN: LISTAR SITIOS CON FILTROS Y PAGINACIÓN
     // ============================================================
     function listarSitiosConFiltros() {
@@ -140,6 +357,7 @@ document.addEventListener("DOMContentLoaded", () => {
         actualizarTabla(sitiosPagina);
         actualizarBotonesPaginacion();
     }
+
 
     // ============================================================
     // FUNCIÓN: ACTUALIZAR TABLA
@@ -223,7 +441,6 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         });
     }
-
     // ============================================================
     // FUNCIÓN: CARGAR OPCIONES DE FILTROS
     // ============================================================
@@ -232,7 +449,6 @@ document.addEventListener("DOMContentLoaded", () => {
             .then(res => res.json())
             .then(data => {
                 if (data.success && Array.isArray(data.data)) {
-                    // Actualizar select de SITIOS
                     const selectSitio = document.querySelector("select[name='f_sitio']");
                     if (selectSitio) {
                         const valorActual = selectSitio.value;
@@ -248,7 +464,6 @@ document.addEventListener("DOMContentLoaded", () => {
                         if (valorActual) selectSitio.value = valorActual;
                     }
 
-                    // Actualizar select de BARRIOS
                     const selectBarrio = document.querySelector("select[name='f_barrio']");
                     if (selectBarrio) {
                         const valorActual = selectBarrio.value;
@@ -392,7 +607,10 @@ document.addEventListener("DOMContentLoaded", () => {
     // ============================================================
     // VALIDACIÓN: RESPONSABLE
     // ============================================================
-    function validarYContinuarASitio() {
+    // ============================================================
+    // VALIDACIÓN: RESPONSABLE
+    // ============================================================
+    async function validarYContinuarASitio() {
         if (modoRegistro === "nuevo") {
             const nombre = rNombre.value.trim();
             const apellido = rApellido.value.trim();
@@ -419,8 +637,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 return;
             }
 
-            if (cedula.length !== 10) {
-                mostrarError("El documento debe tener exactamente 10 dígitos");
+            if (cedula.length < 8 || cedula.length > 10) {
+                mostrarError("El documento debe tener entre 8 y 10 dígitos");
                 return;
             }
 
@@ -434,6 +652,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 return;
             }
         } else {
+            // MODO EXISTENTE: Validar que la cédula exista en la BD
             const cedula = rCedulaExistente.value.trim();
 
             if (!cedula) {
@@ -441,8 +660,61 @@ document.addEventListener("DOMContentLoaded", () => {
                 return;
             }
 
-            if (!validarSoloNumeros(cedula) || cedula.length !== 10) {
-                mostrarError("La cédula debe tener 10 dígitos numéricos");
+            if (!validarSoloNumeros(cedula) || cedula.length < 8 || cedula.length > 10) {
+                mostrarError("La cédula debe tener entre 8 y 10 dígitos numéricos");
+                return;
+            }
+
+            // 🔍 VALIDAR SI LA CÉDULA EXISTE EN LA BASE DE DATOS
+            try {
+                const response = await fetch(`../controller/sitio.php?accion=verificar_cedula&cedula=${cedula}`);
+                const result = await response.json();
+
+                if (!result.existe) {
+                    iziToast.error({
+                        title: '❌ Cédula No Encontrada',
+                        message: `
+                            <div style="text-align: left; line-height: 1.6;">
+                                <strong>No existe un responsable con la cédula: ${cedula}</strong><br><br>
+                                👉 Por favor, verifique el número o use el modo<br>
+                                <strong>"REGISTRAR RESPONSABLE NUEVO"</strong>
+                            </div>
+                        `,
+                        position: 'center',
+                        timeout: 6000,
+                        backgroundColor: '#dc2626',
+                        messageColor: '#fff',
+                        titleColor: '#fff',
+                        progressBarColor: '#fff',
+                        close: true,
+                        closeOnClick: false,
+                        displayMode: 2,
+                        layout: 2
+                    });
+                    return; // ❌ NO PERMITIR AVANZAR
+                }
+
+                // ✅ Si existe, mostrar información del responsable encontrado
+                iziToast.success({
+                    title: '✅ Responsable Encontrado',
+                    message: `
+                        <div style="text-align: left; line-height: 1.6;">
+                            📝 <strong>${result.responsable.nombre_responsable} ${result.responsable.apellido_responsable}</strong><br>
+                            🆔 Cédula: ${result.responsable.cedula}<br>
+                            📱 Celular: ${result.responsable.celular}
+                        </div>
+                    `,
+                    position: 'topRight',
+                    timeout: 4000,
+                    backgroundColor: '#10b981',
+                    messageColor: '#fff',
+                    titleColor: '#fff',
+                    close: true
+                });
+
+            } catch (error) {
+                console.error('Error al verificar cédula:', error);
+                mostrarError('Error al verificar la cédula en el sistema');
                 return;
             }
         }
@@ -466,12 +738,6 @@ document.addEventListener("DOMContentLoaded", () => {
     // ============================================================
     // VALIDACIÓN: ANTES DE ENVIAR EL FORMULARIO
     // ============================================================
-    // ============================================================
-    // VALIDACIÓN: ANTES DE ENVIAR EL FORMULARIO
-    // ============================================================
-    // ============================================================
-    // VALIDACIÓN: ANTES DE ENVIAR EL FORMULARIO
-    // ============================================================
     if (formRegister) {
         formRegister.addEventListener("submit", async function (e) {
             e.preventDefault();
@@ -484,6 +750,24 @@ document.addEventListener("DOMContentLoaded", () => {
                 mostrarError("Debe completar todos los datos del sitio");
                 showTab("sitio");
                 return false;
+            }
+
+            // Validación adicional de longitud mínima de cédula
+            if (modoRegistro === "nuevo") {
+                const cedVal = rCedula?.value || '';
+                const celVal = rCelular?.value || '';
+
+                if (cedVal.length < 8) {
+                    mostrarError('La cédula debe tener mínimo 8 dígitos');
+                    showTab("responsable");
+                    return false;
+                }
+
+                if (celVal.length !== 10) {
+                    mostrarError('El celular debe tener exactamente 10 dígitos');
+                    showTab("responsable");
+                    return false;
+                }
             }
 
             let datos = {
@@ -523,7 +807,6 @@ document.addEventListener("DOMContentLoaded", () => {
                         formRegister.reset();
                     }, 1500);
                 }
-                //  NUEVO: Manejo de sitios duplicados
                 else if (result.existe_sitio) {
                     const tipoDup = result.tipo_duplicado === 'nombre' ? 'NOMBRE' : 'DIRECCIÓN';
                     iziToast.error({
@@ -666,13 +949,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
                     const content = qs('detalleContent');
                     content.innerHTML = `
-                            <p><strong>Nombre Sitio:</strong> ${data.nombre_sitio}</p>
-                            <p><strong>Dirección:</strong> ${data.direccion_sitio}</p>
-                            <p><strong>Barrio:</strong> ${data.nombarrio}</p>
-                            <p><strong>Responsable:</strong> ${data.nombre_responsable} ${data.apellido_responsable}</p>
-                            <p><strong>Cédula:</strong> ${data.cedula}</p>
-                            <p><strong>Celular:</strong> ${data.celular}</p>
-                        `;
+                        <p><strong>Nombre Sitio:</strong> ${data.nombre_sitio}</p>
+                        <p><strong>Dirección:</strong> ${data.direccion_sitio}</p>
+                        <p><strong>Barrio:</strong> ${data.nombarrio}</p>
+                        <p><strong>Responsable:</strong> ${data.nombre_responsable} ${data.apellido_responsable}</p>
+                        <p><strong>Cédula:</strong> ${data.cedula}</p>
+                        <p><strong>Celular:</strong> ${data.celular}</p>
+                    `;
                     qs('modalDetalle').classList.remove('hidden');
                 } catch (error) {
                     mostrarError('Error al cargar el detalle del sitio');
@@ -711,7 +994,6 @@ document.addEventListener("DOMContentLoaded", () => {
                         qs('edit_direccion_sitio').value = data.direccion_sitio;
                         qs('edit_cod_barrio').value = data.cod_barrio;
 
-                        // 🔒 DESHABILITAR EL CAMPO DE CÉDULA
                         const inputCedula = qs('edit_cedula');
                         inputCedula.disabled = true;
                         inputCedula.classList.add('bg-gray-100', 'cursor-not-allowed', 'opacity-70');
@@ -723,6 +1005,22 @@ document.addEventListener("DOMContentLoaded", () => {
                         console.error('Error cargando datos:', err);
                         mostrarError('Error al cargar los datos del sitio');
                     });
+            });
+        });
+
+        // Manejar botones de exportar (dropdown)
+        document.querySelectorAll('.btnExportar').forEach(btn => {
+            btn.addEventListener('click', function (e) {
+                e.stopPropagation();
+
+                document.querySelectorAll('.menuExportar').forEach(menu => {
+                    if (menu !== this.nextElementSibling) {
+                        menu.classList.add('hidden');
+                    }
+                });
+
+                const menu = this.nextElementSibling;
+                menu.classList.toggle('hidden');
             });
         });
     }
@@ -845,8 +1143,8 @@ document.addEventListener("DOMContentLoaded", () => {
             return;
         }
 
-        if (cedula.length !== 10) {
-            mostrarError("El documento debe tener exactamente 10 dígitos");
+        if (cedula.length < 8 || cedula.length > 10) {
+            mostrarError("El documento debe tener entre 8 y 10 dígitos");
             return;
         }
 
@@ -874,20 +1172,27 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-
+    // ============================================================
+    // FORMULARIO DE EDICIÓN: SUBMIT
+    // ============================================================
     if (qs('formEditar')) {
         qs('formEditar').addEventListener('submit', async function (e) {
             e.preventDefault();
 
-            //  OBTENER TODOS LOS DATOS DEL FORMULARIO
+            const celVal = editCelular?.value || '';
+
+            if (celVal.length !== 10) {
+                mostrarError('El celular debe tener exactamente 10 dígitos');
+                return false;
+            }
+
             const formData = new FormData();
 
-            // Agregar campos manualmente para asegurar que todos se envíen
             formData.append('accion', 'editar');
             formData.append('cod_sitiocontrolbiolo', qs('edit_cod_sitio').value);
             formData.append('nombre_responsable', qs('edit_nombre_responsable').value);
             formData.append('apellido_responsable', qs('edit_apellido_responsable').value);
-            formData.append('cedula', qs('edit_cedula').value); // ✅ Se envía pero NO se actualizará
+            formData.append('cedula', qs('edit_cedula').value);
             formData.append('celular', qs('edit_celular').value);
             formData.append('nombre_sitio', qs('edit_nombre_sitio').value);
             formData.append('direccion_sitio', qs('edit_direccion_sitio').value);
@@ -992,37 +1297,9 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-
     // ============================================================
-    // PASO 1: AGREGAR ESTE CÓDIGO DENTRO DE reasignarEventos()
-    // Justo después del código de btnEditar (al final de la función)
+    // BOTÓN EXPORTAR TODOS Y CERRAR MENÚS
     // ============================================================
-
-    //  NUEVO: Manejar botones de exportar (dropdown)
-    document.querySelectorAll('.btnExportar').forEach(btn => {
-        btn.addEventListener('click', function (e) {
-            e.stopPropagation();
-
-            // Cerrar otros menús abiertos
-            document.querySelectorAll('.menuExportar').forEach(menu => {
-                if (menu !== this.nextElementSibling) {
-                    menu.classList.add('hidden');
-                }
-            });
-
-            // Toggle del menú actual
-            const menu = this.nextElementSibling;
-            menu.classList.toggle('hidden');
-        });
-    });
-
-    // ============================================================
-    // PASO 2: AGREGAR ESTE CÓDIGO DESPUÉS DE reasignarEventos()
-    // Al mismo nivel que los otros event listeners
-    // (busca donde están los listeners de btnFilter, btnReset, etc.)
-    // ============================================================
-
-    //  NUEVO: Botón Exportar Todos
     if (qs('btnExportarTodos')) {
         qs('btnExportarTodos').addEventListener('click', function (e) {
             e.stopPropagation();
@@ -1031,16 +1308,13 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    //  NUEVO: Cerrar menús al hacer clic fuera
     document.addEventListener('click', function (e) {
-        // Cerrar menús de exportar individuales
         if (!e.target.closest('.btnExportar') && !e.target.closest('.menuExportar')) {
             document.querySelectorAll('.menuExportar').forEach(menu => {
                 menu.classList.add('hidden');
             });
         }
 
-        // Cerrar menú de exportar todos
         if (!e.target.closest('#btnExportarTodos') && !e.target.closest('#menuExportarTodos')) {
             const menuTodos = qs('menuExportarTodos');
             if (menuTodos) {
@@ -1050,73 +1324,15 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     // ============================================================
-    // PASO 3: ACTUALIZAR LA FUNCIÓN actualizarTabla()
-    // REEMPLAZA COMPLETAMENTE la función actualizarTabla con esta versión
-    // ============================================================
-
-    function actualizarTabla(sitios) {
-        const tbody = document.querySelector('#tblRegistros tbody');
-
-        if (!sitios || sitios.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="5" class="py-4 text-center text-gray-500">No hay registros disponibles</td></tr>';
-            return;
-        }
-
-        tbody.innerHTML = sitios.map(s => `
-            <tr class="border-b text-center hover:bg-[color:var(--verde-super-claro)] transition-colors">
-                <td class="py-2 px-4">${s.cod_sitiocontrolbiolo}</td>
-                <td class="py-2 px-4">${s.nombre_sitio}</td>
-                <td class="py-2 px-4">${s.direccion_sitio}</td>
-                <td class="py-2 px-4">${s.nombre_responsable || '-'} ${s.apellido_responsable || ''}</td>
-                <td class="py-2 px-4 space-x-2 flex justify-center">
-                    <!-- Editar -->
-                    <button type="button" class="btnEditar p-2 rounded-lg hover:bg-blue-50 hover:scale-110 transition-transform" 
-                            data-id="${s.cod_sitiocontrolbiolo}&accion=editar" title="Editar">
-                        <img src="../../../src/icons/icono_edit.png" class="w-5 h-5">
-                    </button>
-                    
-                    <!-- Ver detalle -->
-                    <button type="button" class="btnDetalle p-2 rounded-lg hover:bg-green-50 hover:scale-110 transition-transform" 
-                            data-id="${s.cod_sitiocontrolbiolo}" title="Ver detalle">
-                        <img src="../../../src/icons/zoom.png" class="w-5 h-5">
-                    </button>
-                    
-                    <!-- Eliminar -->
-                    <button type="button" class="btnEliminar p-2 rounded-lg hover:bg-red-50 hover:scale-110 transition-transform" 
-                            data-id="${s.cod_sitiocontrolbiolo}" title="Eliminar">
-                        <img src="../../../src/icons/trash-2.svg" class="w-5 h-5">
-                    </button>
-                    
-                    <!-- Dropdown de Exportar -->
-                    <div class="relative inline-block">
-                        <button type="button" class="btnExportar p-2 rounded-lg hover:bg-yellow-50 hover:scale-110 transition-transform" 
-                                data-id="${s.cod_sitiocontrolbiolo}" title="Exportar">
-                            <img src="../../../src/icons/upload.svg" alt="Exportar" class="w-5 h-5">
-                        </button>
-                        
-                        <div class="menuExportar hidden absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-xl border-2 border-[color:var(--verde-principal)] z-50">
-                            <a href="exportar.php?id=${s.cod_sitiocontrolbiolo}&formato=pdf" 
-                            class="block px-4 py-3 hover:bg-[color:var(--verde-super-claro)] transition-colors rounded-t-lg text-gray-700">
-                                <i class="fas fa-file-pdf text-red-600 mr-2"></i> Exportar a PDF
-                            </a>
-                            <a href="exportar.php?id=${s.cod_sitiocontrolbiolo}&formato=excel" 
-                            class="block px-4 py-3 hover:bg-[color:var(--verde-super-claro)] transition-colors rounded-b-lg text-gray-700">
-                                <i class="fas fa-file-excel text-green-600 mr-2"></i> Exportar a Excel
-                            </a>
-                        </div>
-                    </div>
-                </td>
-            </tr>
-        `).join('');
-
-        // Reasignar eventos después de actualizar la tabla
-        reasignarEventos();
-    }
-
-    // ============================================================
     // CARGAR AL INICIO
     // ============================================================
     listarSitiosConFiltros();
     cargarOpcionesFiltros();
 
+    console.log('✅ Sistema cargado con validaciones en tiempo real activadas');
+
 }); // FIN DEL DOMContentLoaded
+
+
+
+

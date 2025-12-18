@@ -45,7 +45,7 @@ function mostrarDetalles(btn) {
         const esPositivo = valueBinario === '1';
         const colorBg = esPositivo ? 'bg-red-50' : 'bg-emerald-50';
         const colorBorder = esPositivo ? 'border-red-300' : 'border-emerald-300';
-
+        
         return `
             <div class="p-3 ${colorBg} ${colorBorder} border-2 rounded-lg shadow-md text-center">
                 <p class="font-semibold text-sm text-gray-700 mb-1">${label}</p>
@@ -141,7 +141,7 @@ function mostrarDetalles(btn) {
     `;
 
     const modalHtml = `
-        <div id="modalDetalles" class="fixed inset-0 bg-black/50 bg-opacity-70 flex items-center justify-center z-50 p-4 transition-opacity duration-300 ease-out opacity-0" 
+        <div id="modalDetalles" class="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50 p-4 transition-opacity duration-300 ease-out opacity-0" 
              style="transition-delay: 100ms;">
             <div class="bg-white w-full max-w-2xl p-6 rounded-2xl shadow-2xl transform transition-transform duration-300 ease-out scale-95" 
                  id="modalContent">
@@ -222,7 +222,7 @@ document.addEventListener("click", async (e) => {
 
     try {
         const resp = await fetch(
-            `../controllers/actividadescontrol.php?accion=informe&id=${idActividad}`
+            `http://localhost/PROYECTO/Dengue/app/trabajo_campo/controller/actividadescontrol.php?accion=informe&id=${idActividad}`
         );
 
         const data = await resp.json();
@@ -436,7 +436,7 @@ document.addEventListener("click", async (e) => {
 async function exportarPDF(data) {
     try {
         const resp = await fetch(
-            `../controllers/exportarinforme.php`,
+            `http://localhost/PROYECTO/Dengue/app/trabajo_campo/controller/exportarinforme.php`,
             {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },

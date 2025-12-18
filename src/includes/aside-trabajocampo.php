@@ -44,7 +44,7 @@
             </span>
         </a>
 
-        <a href="estadisticas.php" class="group flex flex-col items-center">
+        <a href="../../INFORMES/actividadescampo/views/estadisticas.php" class="group flex flex-col items-center">
             <div class="transition-all duration-300 group-hover:scale-125 group-hover:-translate-y-1">
                 <img src="../../../src/icons/search.png" alt="" class="w-7 h-7">
             </div>
@@ -58,7 +58,7 @@
     </div>
 
     <div class="flex flex-col items-center">
-        <a href="#" class="group flex flex-col items-center">
+        <a href="../../zoocriadero/backend/api.php?cerrar_sesion" class="group flex flex-col items-center">
             <div class="transition-all duration-300 group-hover:scale-125 group-hover:-translate-y-1">
                 <img src="../../../src/icons/cerrar-sesion.png" alt="" class="w-7 h-7">
             </div>

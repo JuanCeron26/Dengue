@@ -9,7 +9,7 @@ window.actividadesGlobales = [];
 // ================================
 // CONFIGURACIÓN DE RUTAS
 // ================================
-const BASE_URL = '../controller/actividadescontrol.php';
+const BASE_URL = '/PROYECTO/Dengue/app/trabajo_campo/controller/actividadescontrol.php';
 
 // ================================
 // INICIALIZACIÓN AL CARGAR LA PÁGINA
@@ -44,7 +44,7 @@ function cargarSitios() {
         })
         .then(data => {
             console.log('✅ Sitios cargados:', data.length);
-
+            
             const selectSitio = document.getElementById("select_sitio");
             if (selectSitio) {
                 selectSitio.innerHTML = '<option value="">Seleccione un sitio...</option>';
@@ -86,7 +86,7 @@ function cargarDepositos() {
         })
         .then(data => {
             console.log('✅ Depósitos cargados:', data.length);
-
+            
             const selectDeposito = document.getElementById("select_deposito");
             if (selectDeposito) {
                 selectDeposito.innerHTML = '<option value="">Seleccione un depósito...</option>';
@@ -111,7 +111,7 @@ function cargarUsuarios() {
         })
         .then(data => {
             console.log('✅ Usuarios cargados:', data.length);
-
+            
             document.querySelectorAll(".select_usuario").forEach(select => {
                 select.innerHTML = '<option value="" disabled selected>-- Seleccione --</option>';
                 data.forEach(usu => {
@@ -135,7 +135,7 @@ function cargarTiposActividad() {
         })
         .then(data => {
             console.log('✅ Tipos de actividad cargados:', data.length);
-
+            
             const selectTipoActividad = document.getElementById("tipo_actividad_filtro");
             if (selectTipoActividad) {
                 selectTipoActividad.innerHTML = '<option value="">Todas las actividades</option>';
@@ -160,10 +160,10 @@ function cargarActividades() {
         })
         .then(data => {
             console.log('✅ Actividades cargadas:', data);
-
+            
             const actividades = Array.isArray(data) ? data : [data];
             window.actividadesGlobales = actividades;
-
+            
             prepararTipos(window.actividadesGlobales);
             pintarCards(window.actividadesGlobales);
         })
@@ -178,7 +178,7 @@ function cargarActividades() {
 // ================================
 function prepararTipos(actividades) {
     actividades.forEach(ac => {
-        switch (ac.cod_act_campo) {
+        switch(ac.cod_act_campo) {
             case 1:
             case "1":
                 ac.tipoActividad = "Siembra";
@@ -252,7 +252,7 @@ function aplicarFiltros() {
         })
         .then(data => {
             console.log('✅ Resultados filtrados:', data);
-
+            
             const actividades = Array.isArray(data) ? data : [];
             prepararTipos(actividades);
             pintarCards(actividades);
@@ -280,7 +280,7 @@ function limpiarFiltros() {
     // Mostrar todas las actividades
     prepararTipos(window.actividadesGlobales);
     pintarCards(window.actividadesGlobales);
-
+    
     console.log('✅ Filtros limpiados');
 }
 
@@ -307,14 +307,14 @@ function mostrarMensajeError() {
 // FUNCIÓN DE RESPALDO PARA PINTAR CARDS
 // ================================
 if (typeof pintarCards === 'undefined') {
-    window.pintarCards = function (actividades) {
+    window.pintarCards = function(actividades) {
         const contenedor = document.getElementById('contenedor_actividades');
-
+        
         if (!contenedor) {
             console.error('❌ Contenedor de actividades no encontrado');
             return;
         }
-
+        
         if (!actividades || actividades.length === 0) {
             contenedor.innerHTML = `
                 <div class="text-center py-12 bg-white rounded-2xl shadow-lg">
@@ -324,20 +324,20 @@ if (typeof pintarCards === 'undefined') {
             `;
             return;
         }
-
+        
         contenedor.innerHTML = '';
-
+        
         actividades.forEach(actividad => {
             const card = document.createElement('div');
             card.className = 'bg-white rounded-2xl shadow-lg p-6 hover:shadow-xl transition-all duration-300';
-
+            
             // Determinar color según tipo de actividad
             let colorClass = 'bg-emerald-100 text-emerald-700';
             if (actividad.cod_act_campo == 1) colorClass = 'bg-blue-100 text-blue-700';
             if (actividad.cod_act_campo == 2) colorClass = 'bg-purple-100 text-purple-700';
             if (actividad.cod_act_campo == 3) colorClass = 'bg-orange-100 text-orange-700';
             if (actividad.cod_act_campo == 4) colorClass = 'bg-emerald-100 text-emerald-700';
-
+            
             card.innerHTML = `
                 <div class="flex justify-between items-start mb-4">
                     <div>
@@ -367,10 +367,10 @@ if (typeof pintarCards === 'undefined') {
                     </button>
                 </div>
             `;
-
+            
             contenedor.appendChild(card);
         });
-
+        
         console.log('✅ Cards pintadas:', actividades.length);
     };
 }
@@ -379,7 +379,7 @@ if (typeof pintarCards === 'undefined') {
 // FUNCIÓN GLOBAL PARA VER DETALLE (PLACEHOLDER)
 // ================================
 if (typeof verDetalleActividad === 'undefined') {
-    window.verDetalleActividad = function (id) {
+    window.verDetalleActividad = function(id) {
         console.log('👁️ Ver detalle de actividad:', id);
         alert(`Función ver detalle para actividad ${id} - Implementar según necesidades`);
     };

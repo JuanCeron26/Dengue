@@ -51,8 +51,57 @@ function abrirSeguimiento(btn) {
     const idSiembra = btn.getAttribute('data-id-siembra');
     const codSitiodepo = btn.getAttribute('data-cod_sitiodepo');
 
+    // ✅ OBTENER EL FORM (no el div contenedor)
+    const formContainer = document.getElementById('seguimiento-formulario');
+    const form = formContainer.querySelector('form');  // ← Buscar el <form> dentro del div
+    
+    if (!form) {
+        console.error('❌ No se encontró el formulario dentro de seguimiento-formulario');
+        return;
+    }
+    
+    // IMPORTANTE: Limpiar el formulario primero
+    form.reset();  // ✅ Ahora sí funciona
+    
+    // Resetear acción a "registrar"
+    const accionInput = document.getElementById('accion_seguimiento');
+    if (accionInput) {
+        accionInput.value = 'registrar';
+        console.log('✅ Acción reseteada a: registrar');
+    }
+    
+    // Resetear ID a vacío (para nuevo registro)
+    const idInput = document.getElementById('cod_actividadtrabajocampo_seg');
+    if (idInput) {
+        idInput.value = '';
+        console.log('✅ ID reseteado a vacío');
+    }
+    
+    // Establecer datos del padre y sitio
     document.getElementById('cod_padre_seg').value = idSiembra ? parseInt(idSiembra) : 0;
     document.getElementById('cod_sitiodepo_seg').value = codSitiodepo ? parseInt(codSitiodepo) : 0;
+    
+    // Asegurar que cod_act_campo está correcto
+    const codActCampo = form.querySelector('[name="cod_act_campo"]');
+    if (codActCampo) codActCampo.value = '3';
+    
+    // Cambiar título a modo registrar
+    const titulo = form.querySelector('h3');
+    if (titulo) {
+        titulo.textContent = 'Registrar Seguimiento';
+    }
+    
+    // Cambiar botón a modo registrar
+    const btnSubmit = form.querySelector('button[type="submit"]');
+    if (btnSubmit) {
+        btnSubmit.innerHTML = '<i class="bi bi-save-fill"></i> Guardar';
+        btnSubmit.classList.remove('bg-yellow-600', 'hover:bg-yellow-700');
+        btnSubmit.classList.add('btn-verde');
+    }
+    
+    console.log('=== FORMULARIO SEGUIMIENTO ABIERTO PARA REGISTRAR ===');
+    console.log('cod_padre:', idSiembra);
+    console.log('cod_sitiodepo:', codSitiodepo);
 }
 
 // ======================================================
@@ -87,42 +136,78 @@ function abrirInspeccionDesdeResiembra(btn) {
 // ======================================================
 // ABRIR SEGUIMIENTO DE RESIEMBRA
 // ======================================================
+// ======================================================
+// ABRIR SEGUIMIENTO DE RESIEMBRA
+// ======================================================
 function abrirSeguimientoResiembra(btn) {
     ocultarConAnimacion('inspeccion-formulario');
     ocultarConAnimacion('siembra-formulario');
     ocultarConAnimacion('resiembra-formulario');
     mostrarConAnimacion('seguimiento-formulario');
 
-    const codActividadTrabajoCampo = btn.getAttribute('data-id');
-    document.getElementById('cod_actividadtrabajocampo_seg').value = codActividadTrabajoCampo ? parseInt(codActividadTrabajoCampo) : 0;
-
-    const idResiembra = btn.getAttribute('data-id-resiembra');
+    // ✅ OBTENER EL FORM (no el div)
+    const formContainer = document.getElementById('seguimiento-formulario');
+    const form = formContainer.querySelector('form');
+    
+    if (!form) {
+        console.error('❌ No se encontró el formulario');
+        return;
+    }
+    
+    // Resetear completamente el formulario
+    form.reset();
+    
+    // ✅ ESTABLECER MODO REGISTRAR (NO EDITAR)
+    const accionInput = document.getElementById('accion_seguimiento');
+    if (accionInput) {
+        accionInput.value = 'registrar';
+        console.log('✅ Acción: registrar');
+    }
+    
+    // ✅ IMPORTANTE: DEJAR EL ID VACÍO (PARA REGISTRAR NUEVO)
+    const idInput = document.getElementById('cod_actividadtrabajocampo_seg');
+    if (idInput) {
+        idInput.value = '';  // ← VACÍO para registro nuevo
+        console.log('✅ ID reseteado a vacío');
+    }
+    
+    // ✅ ESTABLECER EL PADRE (la resiembra)
+    const idResiembra = btn.getAttribute('data-id-resiembra') || btn.getAttribute('data-id');
     document.getElementById('cod_padre_seg').value = idResiembra ? parseInt(idResiembra) : 0;
     document.getElementById('cod_sitiodepo_seg').value = parseInt(btn.getAttribute('data-cod_sitiodepo')) || 0;
-
-    document.getElementById('fecha_seg').value = btn.getAttribute('data-fecha') || "";
-    document.getElementById('sitio_siembra').value = btn.getAttribute('data-sitio') || "";
-    document.getElementById('deposito_siembra').value = btn.getAttribute('data-deposito') || "";
-    document.getElementById('responsable_siembra').value = btn.getAttribute('data-responsable') || "";
-
-    document.getElementById('ph_original').value = btn.getAttribute('data-ph') || "";
-    document.getElementById('cloro_original').value = btn.getAttribute('data-cloro') || "";
-    document.getElementById('temp_original').value = btn.getAttribute('data-temperatura') || "";
-
-    document.getElementById('alevines').value = btn.getAttribute('data-alevines') || "0";
-    document.getElementById('adultos').value = btn.getAttribute('data-adultos') || "0";
+    
+    // Asegurar que cod_act_campo es 3 (seguimiento)
+    const codActCampo = form.querySelector('[name="cod_act_campo"]');
+    if (codActCampo) codActCampo.value = '3';
+    
+    // ✅ CAMBIAR TÍTULO Y BOTÓN A MODO REGISTRAR
+    const titulo = form.querySelector('h3');
+    if (titulo) {
+        titulo.textContent = 'Registrar Seguimiento de Resiembra';
+    }
+    
+    const btnSubmit = form.querySelector('button[type="submit"]');
+    if (btnSubmit) {
+        btnSubmit.innerHTML = '<i class="bi bi-save-fill"></i> Guardar';
+        btnSubmit.classList.remove('bg-yellow-600', 'hover:bg-yellow-700');
+        btnSubmit.classList.add('btn-verde');
+    }
+    
+    console.log('=== SEGUIMIENTO DE RESIEMBRA - MODO REGISTRAR ===');
+    console.log('cod_padre (resiembra):', idResiembra);
+    console.log('cod_sitiodepo:', btn.getAttribute('data-cod_sitiodepo'));
 }
-
 // =============================================
 // FUNCIÓN PARA ABRIR FORMULARIO DE EDICIÓN
 // =============================================
-function abrirFormularioEdicion(formId, btn, campos, inputId, tipoOperacionId = null) {
+// =============================================
+// FUNCIÓN PARA ABRIR FORMULARIO DE EDICIÓN
+// =============================================
+function abrirFormularioEdicion(formId, btn, campos, inputId) {
     console.log("=== ABRIENDO FORMULARIO DE EDICIÓN ===");
     console.log("Tipo:", btn.dataset.tipo);
     console.log("ID del botón:", btn.dataset.id);
     console.log("Formulario:", formId);
-    console.log("Input ID destino:", inputId);
-
 
     // Ocultar todos los formularios
     ['inspeccion-formulario', 'siembra-formulario', 'resiembra-formulario', 'seguimiento-formulario']
@@ -144,40 +229,45 @@ function abrirFormularioEdicion(formId, btn, campos, inputId, tipoOperacionId = 
     form.classList.add('fade-in');
     setTimeout(() => form.classList.remove('fade-in'), 300);
 
-    // Cambiar acción a editar
+    // ========================================
+    // CAMBIAR ACCIÓN A EDITAR
+    // ========================================
     const accionInput = form.querySelector('input[name="accion"]');
     if (accionInput) {
-        console.log("Input acción ANTES:", accionInput.value);
         accionInput.value = 'editar';
-        console.log("✅ Input acción DESPUÉS:", accionInput.value);
+        console.log("✅ Acción establecida a 'editar'");
     } else {
         console.error("❌ No se encontró input[name='accion']");
     }
 
-    // Establecer ID
+    // ========================================
+    // ESTABLECER EL ID
+    // ========================================
     const idValue = btn.dataset.id || '';
     console.log("ID a establecer:", idValue);
 
-    const idInput = document.getElementById(inputId);
+    // Buscar el input por ID o por nombre
+    let idInput = document.getElementById(inputId);
+    if (!idInput) {
+        idInput = form.querySelector(`input[name="${inputId}"]`);
+    }
+    
     if (idInput) {
-        console.log("Input encontrado:", inputId, "| Valor ANTES:", idInput.value);
         idInput.value = idValue;
-        console.log("✅ Valor DESPUÉS:", idInput.value);
+        console.log("✅ ID establecido en", inputId, ":", idValue);
     } else {
         console.error("❌ No se encontró el input:", inputId);
     }
 
-    const idInputByName = form.querySelector(`input[name="${inputId}"]`);
-    if (idInputByName && idInputByName !== idInput) {
-        console.log("Estableciendo también por name:", inputId);
-        idInputByName.value = idValue;
-    }
-
-
-    // Rellenar campos visibles
+    // ========================================
+    // RELLENAR CAMPOS DEL FORMULARIO
+    // ========================================
     Object.entries(campos).forEach(([campo, atributo]) => {
         const input = form.querySelector(`[name="${campo}"]`);
-        if (!input) return;
+        if (!input) {
+            console.warn(`Campo ${campo} no encontrado en el formulario`);
+            return;
+        }
 
         const valor = btn.getAttribute(atributo) || '';
 
@@ -204,21 +294,31 @@ function abrirFormularioEdicion(formId, btn, campos, inputId, tipoOperacionId = 
             input.value = valor;
         }
     });
-    // ===============================
-    // Hacer usuario y fecha solo lectura
-    // ===============================
-    // ===============================
-    // Hacer usuario y fecha solo lectura
-    // ===============================
+
+    // ========================================
+    // HACER USUARIO Y FECHA DE SOLO LECTURA
+    // ========================================
     const usuarioInput = form.querySelector('[name="usuario"]');
-    if (usuarioInput) usuarioInput.readOnly = true;
+    if (usuarioInput) {
+        usuarioInput.readOnly = true;
+        usuarioInput.style.backgroundColor = '#e5e7eb';
+        usuarioInput.style.cursor = 'not-allowed';
+        usuarioInput.style.opacity = '0.7';
+        console.log("✅ Campo usuario bloqueado");
+    }
 
     const fechaInput = form.querySelector('[name="fecha"], [name="fecha_seguimiento"]');
-    if (fechaInput) fechaInput.readOnly = true;
+    if (fechaInput) {
+        fechaInput.readOnly = true;
+        fechaInput.style.backgroundColor = '#e5e7eb';
+        fechaInput.style.cursor = 'not-allowed';
+        fechaInput.style.opacity = '0.7';
+        console.log("✅ Campo fecha bloqueado");
+    }
 
-
-
-    // Campos ocultos críticos
+    // ========================================
+    // CAMPOS OCULTOS PARA SITIO/DEPÓSITO
+    // ========================================
     const codSitioDepo = btn.dataset.cod_sitiodepo || '';
     const codTipoDepo = btn.dataset.cod_tipodepo || '';
     const codSitioControlBiolo = btn.dataset.cod_sitiocontrolbiolo || '';
@@ -228,15 +328,17 @@ function abrirFormularioEdicion(formId, btn, campos, inputId, tipoOperacionId = 
     console.log("- cod_tipodepo:", codTipoDepo);
     console.log("- cod_sitiocontrolbiolo:", codSitioControlBiolo);
 
-    const inputSitioDepo = document.getElementById('cod_sitiodepo');
-    const inputTipoDepo = document.getElementById('cod_tipodepo');
-    const inputSitioControl = document.getElementById('cod_sitiocontrolbiolo');
+    const inputSitioDepo = form.querySelector('[name="cod_sitiodepo"]') || document.getElementById('cod_sitiodepo');
+    const inputTipoDepo = form.querySelector('[name="cod_tipodepo"]') || document.getElementById('cod_tipodepo');
+    const inputSitioControl = form.querySelector('[name="cod_sitiocontrolbiolo"]') || document.getElementById('cod_sitiocontrolbiolo');
 
     if (inputSitioDepo) inputSitioDepo.value = codSitioDepo;
     if (inputTipoDepo) inputTipoDepo.value = codTipoDepo;
     if (inputSitioControl) inputSitioControl.value = codSitioControlBiolo;
 
-    // Cambiar título y botón
+    // ========================================
+    // CAMBIAR TÍTULO Y BOTÓN
+    // ========================================
     const titulo = form.querySelector('h3');
     if (titulo) titulo.textContent = `Editar ${btn.dataset.tipo}`;
 
@@ -244,10 +346,10 @@ function abrirFormularioEdicion(formId, btn, campos, inputId, tipoOperacionId = 
     if (btnSubmit) {
         btnSubmit.innerHTML = '<i class="bi bi-save-fill mr-2"></i> Guardar Cambios';
         btnSubmit.classList.remove('bg-green-700', 'hover:bg-green-800');
-        btnSubmit.classList.add('bg-green-600', 'hover:bg-grenn-700');
+        btnSubmit.classList.add('bg-yellow-600', 'hover:bg-yellow-700');
     }
 
-    console.log("=== FIN DE ABRIRFORMULARIOEDICION ===");
+    console.log("=== FORMULARIO LISTO PARA EDITAR ===");
 }
 
 // =============================================
@@ -280,17 +382,9 @@ document.addEventListener('click', function (e) {
                 sitio: 'data-sitio',
                 deposito: 'data-deposito'
             },
-            'cod_actividadtrabajocampo_insp',
-            'tipo_operacion_inspeccion'
+            'cod_actividadtrabajocampo_insp'
         );
-
-        const idSitio = btn.getAttribute("data-cod_sitiodepo");
-        if (idSitio) {
-            document.getElementById("cod_sitiodepo").value = idSitio;
-        }
-        document.querySelector('#inspeccion-formulario h3').textContent = "Editar Inspección";
     }
-
     else if (tipo === 'Siembra') {
         abrirFormularioEdicion(
             'siembra-formulario',
@@ -305,11 +399,9 @@ document.addEventListener('click', function (e) {
                 adultos: 'data-adultos',
                 observaciones: 'data-observaciones'
             },
-            'id_actividad',
-            'tipo_operacion_siembra'
+            'id_actividad'
         );
     }
-
     else if (tipo === 'Resiembra') {
         abrirFormularioEdicion(
             'resiembra-formulario',
@@ -324,15 +416,10 @@ document.addEventListener('click', function (e) {
                 adultos: 'data-adultos',
                 observaciones: 'data-observaciones'
             },
-            'id_resiembra',
-            'tipo_operacion_resiembra'
+            'id_resiembra'
         );
     }
-
     else if (tipo === 'Seguimiento') {
-        console.log("=== DEBUG SEGUIMIENTO ===");
-        console.log("ID del botón:", btn.dataset.id);
-
         abrirFormularioEdicion(
             'seguimiento-formulario',
             btn,
@@ -347,21 +434,8 @@ document.addEventListener('click', function (e) {
                 observaciones: 'data-observaciones',
                 usuario: 'data-usuario'
             },
-            'cod_actividadtrabajocampo_seg',
-            'tipo_operacion_seg'
+            'cod_actividadtrabajocampo_seg'
         );
-
-        const inputId = document.getElementById('cod_actividadtrabajocampo_seg');
-        const inputAccion = document.getElementById('accion_seguimiento');
-
-        if (inputId) inputId.value = btn.dataset.id || '';
-        if (inputAccion) inputAccion.value = 'editar';
-
-        console.log("Valor en cod_actividadtrabajocampo_seg:", inputId?.value);
-        console.log("Valor en accion_seguimiento:", inputAccion?.value);
-
-        const titulo = document.querySelector('#seguimiento-formulario h3');
-        if (titulo) titulo.textContent = "Editar Seguimiento";
     }
 });
 
@@ -374,59 +448,22 @@ document.addEventListener('submit', async function (e) {
 
     e.preventDefault();
 
-    console.log("🚀 SUBMIT CAPTURADO");
-
     const form = e.target;
     const formData = new FormData(form);
 
-    console.log("=== FORMULARIO ENVIADO ===");
+    console.log("=== ENVIANDO FORMULARIO ===");
     console.log("ID del formulario:", form.id);
 
-    let esEdicion = false;
-    let idValue = null;
-    let nombreCampoId = '';
+    // Verificar acción
+    const accion = formData.get('accion');
+    console.log("Acción:", accion);
 
-    const accionInput = form.querySelector('[name="accion"]');
-    console.log("Acción en input:", accionInput ? accionInput.value : 'NO EXISTE');
+    // Verificar cod_act_campo
+    const codActCampo = formData.get('cod_act_campo');
+    console.log("cod_act_campo:", codActCampo);
 
-    if (form.id === 'seguimiento-formulario') {
-        nombreCampoId = 'cod_actividadtrabajocampo_seg';
-    } else if (form.id === 'siembra-formulario') {
-        nombreCampoId = 'id_actividad';
-    } else if (form.id === 'resiembra-formulario') {
-        nombreCampoId = 'id_resiembra';
-    } else if (form.id === 'inspeccion-formulario') {
-        nombreCampoId = 'cod_actividadtrabajocampo_insp';
-    }
-
-    const inputId = form.querySelector(`[name="${nombreCampoId}"]`) || document.getElementById(nombreCampoId);
-    if (inputId) {
-        idValue = inputId.value;
-        console.log(`ID encontrado en ${nombreCampoId}:`, idValue);
-    } else {
-        console.error("❌ No se encontró el input de ID:", nombreCampoId);
-    }
-
-    if (accionInput && accionInput.value === 'editar') {
-        if (!idValue || idValue === '0' || idValue === '') {
-            console.error("❌ Modo edición pero sin ID válido");
-            Swal.fire('Error', 'No se pudo obtener el ID de la actividad para editar', 'error');
-            return;
-        }
-        esEdicion = true;
-    }
-
-    console.log("¿Es edición?", esEdicion);
-    console.log("ID a enviar:", idValue);
-
-    formData.set('accion', esEdicion ? 'editar' : 'registrar');
-
-    if (esEdicion && idValue) {
-        formData.set(nombreCampoId, idValue);
-        console.log(`✅ ID añadido a FormData como ${nombreCampoId}:`, idValue);
-    }
-
-    console.log("=== DATOS A ENVIAR ===");
+    // Mostrar todos los datos
+    console.log("=== DATOS EN FORMDATA ===");
     for (let [key, value] of formData.entries()) {
         if (value instanceof File) {
             console.log(key, ": [Archivo]", value.name);
@@ -435,8 +472,39 @@ document.addEventListener('submit', async function (e) {
         }
     }
 
+    // Validar que si es edición, tenga ID
+    if (accion === 'editar') {
+        const idFields = [
+            'cod_actividadtrabajocampo_insp',
+            'id_actividad_inspeccion',
+            'id_actividad',
+            'id_resiembra',
+            'cod_actividadtrabajocampo_seg'
+        ];
+        
+        let tieneId = false;
+        let idEncontrado = null;
+        
+        for (let field of idFields) {
+            const valor = formData.get(field);
+            if (valor && valor !== '0' && valor !== '') {
+                tieneId = true;
+                idEncontrado = valor;
+                console.log(`✅ ID encontrado en ${field}:`, valor);
+                break;
+            }
+        }
+
+        if (!tieneId) {
+            console.error("❌ Modo edición pero sin ID válido");
+            Swal.fire('Error', 'No se pudo obtener el ID de la actividad para editar', 'error');
+            return;
+        }
+    }
+
     try {
-        const url = `../controller/actividadescontrol.php`;
+        // IMPORTANTE: Agregar acción en la URL
+        const url = `actividadescontrol.php?accion=${accion}`;
         console.log("URL:", url);
 
         const response = await fetch(url, {
@@ -445,14 +513,13 @@ document.addEventListener('submit', async function (e) {
         });
 
         const text = await response.text();
-        console.log("📄 Respuesta cruda:", text);
+        console.log("📄 Respuesta del servidor:", text);
 
         let result;
         try {
             result = JSON.parse(text);
-            console.log("✅ Respuesta parseada:", result);
         } catch (parseError) {
-            console.error("❌ Error al parsear JSON:", parseError);
+            console.error("❌ Error al parsear JSON");
             console.error("Texto recibido:", text);
             Swal.fire('Error', 'El servidor devolvió una respuesta inválida', 'error');
             return;
@@ -463,27 +530,116 @@ document.addEventListener('submit', async function (e) {
                 icon: 'success',
                 title: '¡Éxito!',
                 text: result.mensaje || 'Operación exitosa',
-                timer: 2000
+                timer: 2000,
+                showConfirmButton: false
             });
 
-            form.classList.add('hidden');
+            // Resetear formulario
             form.reset();
             const accionInputReset = form.querySelector('[name="accion"]');
             if (accionInputReset) accionInputReset.value = 'registrar';
 
-            if (inputId) inputId.value = '0';
+            // Resetear IDs
+            const idInputs = form.querySelectorAll('input[type="hidden"]');
+            idInputs.forEach(input => {
+                if (input.name.includes('id_') || input.name.includes('cod_actividadtrabajocampo')) {
+                    input.value = '0';
+                }
+            });
 
-            setTimeout(() => {
-                location.reload();
-            }, 1500);
+            // Quitar readonly
+            const usuarioInput = form.querySelector('[name="usuario"]');
+            if (usuarioInput) {
+                usuarioInput.readOnly = false;
+                usuarioInput.style.backgroundColor = '';
+                usuarioInput.style.cursor = '';
+                usuarioInput.style.opacity = '';
+            }
+
+            const fechaInput = form.querySelector('[name="fecha"], [name="fecha_seguimiento"]');
+            if (fechaInput) {
+                fechaInput.readOnly = false;
+                fechaInput.style.backgroundColor = '';
+                fechaInput.style.cursor = '';
+                fechaInput.style.opacity = '';
+            }
+
+            // Ocultar formulario
+            form.classList.add('hidden');
+
+            // Recargar página
+            setTimeout(() => location.reload(), 1500);
         } else {
-            console.error("❌ Error del servidor:", result);
+            console.error("❌ Error:", result);
             Swal.fire('Error', result.error || result.mensaje || 'Error en la operación', 'error');
         }
     } catch (err) {
         console.error("❌ Error en fetch:", err);
         Swal.fire('Error', 'No se pudo conectar con el servidor: ' + err.message, 'error');
     }
+});
+
+// =============================================
+// BOTONES DE CANCELAR
+// =============================================
+document.querySelectorAll('.btn-cancelar').forEach(btn => {
+    btn.addEventListener('click', function() {
+        const form = this.closest('form');
+        if (!form) return;
+
+        // Resetear formulario
+        form.reset();
+        
+        // Resetear acción
+        const accionInput = form.querySelector('[name="accion"]');
+        if (accionInput) accionInput.value = 'registrar';
+
+        // Resetear IDs
+        const idInputs = form.querySelectorAll('input[type="hidden"]');
+        idInputs.forEach(input => {
+            if (input.name.includes('id_') || input.name.includes('cod_actividadtrabajocampo')) {
+                input.value = '0';
+            }
+        });
+
+        // Quitar readonly
+        const usuarioInput = form.querySelector('[name="usuario"]');
+        if (usuarioInput) {
+            usuarioInput.readOnly = false;
+            usuarioInput.style.backgroundColor = '';
+            usuarioInput.style.cursor = '';
+            usuarioInput.style.opacity = '';
+        }
+
+        const fechaInput = form.querySelector('[name="fecha"], [name="fecha_seguimiento"]');
+        if (fechaInput) {
+            fechaInput.readOnly = false;
+            fechaInput.style.backgroundColor = '';
+            fechaInput.style.cursor = '';
+            fechaInput.style.opacity = '';
+        }
+
+        // Restaurar título
+        const titulo = form.querySelector('h3');
+        if (titulo) {
+            const formId = form.id;
+            if (formId === 'inspeccion-formulario') titulo.textContent = 'Registrar Inspección';
+            else if (formId === 'siembra-formulario') titulo.textContent = 'Registrar Siembra';
+            else if (formId === 'resiembra-formulario') titulo.textContent = 'Registrar Resiembra';
+            else if (formId === 'seguimiento-formulario') titulo.textContent = 'Registrar Seguimiento';
+        }
+
+        // Restaurar botón
+        const btnSubmit = form.querySelector('button[type="submit"]');
+        if (btnSubmit) {
+            btnSubmit.innerHTML = '<i class="bi bi-plus-circle-fill mr-2"></i> Registrar';
+            btnSubmit.classList.remove('bg-yellow-600', 'hover:bg-yellow-700');
+            btnSubmit.classList.add('bg-green-700', 'hover:bg-green-800');
+        }
+
+        // Ocultar formulario
+        form.classList.add('hidden');
+    });
 });
 // ======================================================
 // ABRIR FORMULARIO DE NUEVA INSPECCIÓN

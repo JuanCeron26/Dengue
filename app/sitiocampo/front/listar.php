@@ -74,7 +74,7 @@ $barrios = $db->Select("SELECT cod_barrio, nombarrio FROM tblbarrios ORDER BY no
     <div class="flex flex-col items-center gap-10">
 
       <!-- Inicio -->
-      <a href="inicio.php" class="group flex flex-col items-center">
+      <a href="../../trabajo_campo_kelly/views/dashboard.php" class="group flex flex-col items-center">
         <div class="transition-all duration-300 group-hover:scale-125 group-hover:-translate-y-1">
           <img
             src="../../../src/icons/casa.png"

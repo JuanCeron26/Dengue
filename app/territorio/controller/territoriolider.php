@@ -143,9 +143,7 @@ class TerritorioLiderController
                 return ['success' => false, 'message' => '❌ La cédula solo puede contener números'];
             }
 
-            if (strlen($cedula) !== 10) {
-                return ['success' => false, 'message' => '❌ La cédula debe tener exactamente 10 dígitos'];
-            }
+
 
             if (empty($clase_liderazgo)) {
                 return ['success' => false, 'message' => '❌ La clase de liderazgo es obligatoria'];

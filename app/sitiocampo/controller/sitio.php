@@ -15,7 +15,6 @@ class SitiosController
     {
         $this->db = new BaseDatos("ceron123");
     }
-
     public function registrarNuevoResponsable($datos)
     {
         try {
@@ -111,6 +110,48 @@ class SitiosController
             return ['success' => false, 'message' => $e->getMessage()];
         }
     }
+
+
+
+    // ============================================================
+    // AGREGAR ESTE MÉTODO DENTRO DE LA CLASE SitiosController
+    // (después del método editarSitio)
+    // ============================================================
+
+    public function verificarCedulaExiste($cedula)
+    {
+        try {
+            if (empty($cedula)) {
+                return [
+                    'existe' => false,
+                    'message' => 'Debe proporcionar una cédula'
+                ];
+            }
+
+            $responsable = $this->db->verificarResponsableExiste($cedula);
+
+            if ($responsable) {
+                return [
+                    'existe' => true,
+                    'responsable' => $responsable,
+                    'message' => 'Responsable encontrado'
+                ];
+            } else {
+                return [
+                    'existe' => false,
+                    'message' => 'No existe un responsable con esta cédula'
+                ];
+            }
+        } catch (Exception $e) {
+            error_log("Error en verificarCedulaExiste: " . $e->getMessage());
+            return [
+                'existe' => false,
+                'message' => 'Error al verificar la cédula: ' . $e->getMessage()
+            ];
+        }
+    }
+
+
 
     //  TAMBIÉN ACTUALIZA EL MÉTODO asociarResponsableExistente
     public function asociarResponsableExistente($datos)
@@ -367,6 +408,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
 
         header('Content-Type: application/json');
         echo json_encode(['status' => $ok]);
+        exit();
+    }
+
+    if ($accion === 'verificar_cedula') {
+        $cedula = $_GET['cedula'] ?? '';
+
+        header('Content-Type: application/json');
+        echo json_encode($controller->verificarCedulaExiste($cedula));
         exit();
     }
 }

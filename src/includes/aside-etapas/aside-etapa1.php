@@ -11,13 +11,14 @@
 
     <div class="flex flex-col items-center gap-10">
 
-        <a href="#" class="btn-territorio-priorizado group flex flex-col items-center">
-            <i class="fa-solid fa-house text-2xl transition-all duration-300 
-                group-hover:scale-110 group-hover:rotate-3"></i>
-
-            <span class="mt-2 text-xs opacity-0 translate-y-2 text-center
-                group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300">
-                Territorio Priorizado
+        <a href="../../seg_zoocriadero/views/consulta3.php" class="group flex flex-col items-center">
+            <div class="transition-all duration-300 group-hover:scale-125 group-hover:-translate-y-1">
+                <img src="../../../src/icons/ecosalud.png" alt="" class="w-9 h-9 drop-shadow-md group-hover:drop-shadow-xl">
+            </div>
+            <span class="mt-2 text-xs font-medium opacity-0 translate-y-2 text-center leading-tight px-2
+                        group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300
+                        text-gray-700 group-hover:text-[color:var(--verde-principal)]">
+                Seguimientos
             </span>
         </a>
 

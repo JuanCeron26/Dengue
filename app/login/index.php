@@ -146,9 +146,12 @@
                 <!-- Icono decorativo -->
                 <div class="mb-8 transform hover:scale-110 transition-transform duration-500">
                     <div class="w-24 h-24 bg-gradient-to-br from-cyan-400 to-blue-500 rounded-3xl flex items-center justify-center shadow-2xl rotate-12 hover:rotate-0 transition-transform duration-500">
+                        <!--d
                         <svg class="w-14 h-14 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
                         </svg>
+                        -->
+                        <img src="../../src/img/logo-removebg-preview.png" alt="" class=" h-36 w-36">
                     </div>
                 </div>
 

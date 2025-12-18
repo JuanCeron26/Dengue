@@ -23,13 +23,6 @@
             --fondo-gris: #f0f4f8;
         }
 
-        .required-asterisk {
-            color: #ef4444;
-            /* rojo tailwind red-500 */
-            font-weight: bold;
-            margin-left: 4px;
-        }
-
         body {
             background: linear-gradient(135deg, #f0f4f8 0%, #e5e7eb 100%);
         }
@@ -189,20 +182,6 @@
             </span>
         </a>
 
-
-        <!-- Configuración -->
-        <a href="estadisticas.php" class="group flex flex-col items-center">
-            <div class="transition-all duration-300 group-hover:scale-125 group-hover:-translate-y-1">
-                <i class="fa-solid fa-gear text-2xl text-gray-600 drop-shadow-md
-                    group-hover:text-[color:var(--verde-principal)] group-hover:drop-shadow-xl group-hover:rotate-90"></i>
-            </div>
-            <span class="mt-2 text-xs font-medium opacity-0 translate-y-2 
-                group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300
-                text-gray-700 group-hover:text-[color:var(--verde-principal)]">
-                Estadisticas
-            </span>
-        </a>
-
         </div>
 
         <!-- Botón Salir -->
@@ -324,6 +303,7 @@
                 <!-- ==================== FORMULARIO DE SIEMBRA ==================== -->
                 <div id="siembra-formulario" class="hidden">
                     <div class="formulario-card rounded-3xl overflow-hidden">
+
                         <div class="header-formulario px-6 py-5">
                             <h3 class="text-2xl font-bold flex items-center gap-3">
                                 <i class="bi bi-fish text-3xl"></i> Registro de Siembra
@@ -331,17 +311,24 @@
                         </div>
 
                         <div class="p-6">
-                            <form method="POST" action="../controller/actividadescontrol.php"
-                                enctype="multipart/form-data" id="form_siembra" class="space-y-6">
 
-                                <input type="hidden" name="cod_act_campo" id="id_actividad" value="1">
-                                <input type="hidden" name="cod_padre" id="cod_padre" value="">
-                                <input type="hidden" id="cod_sitiodepo" name="cod_sitiodepo">
+                            <p class="text-sm text-gray-600 mb-4">
+                                <span class="text-red-600 font-bold">*</span> Campos obligatorios
+                            </p>
+
+                            <form method="POST" action="../controller/actividadescontrol.php"
+                                enctype="multipart/form-data"
+                                id="form_siembra"
+                                class="space-y-6">
+
+                                <input type="hidden" name="cod_act_campo" value="1">
+                                <input type="hidden" name="cod_padre" id="cod_padre">
+                                <input type="hidden" name="cod_sitiodepo" id="cod_sitiodepo">
                                 <input type="hidden" name="tipo_operacion" id="tipo_operacion_siembra" value="registrar">
                                 <input type="hidden" name="accion" value="registrar">
-                                <input type="hidden" name="id_actividad" id="id_actividad" value="">
+                                <input type="hidden" name="id_actividad" id="id_actividad">
 
-                                <!-- Datos de la Actividad -->
+                                <!-- ==================== DATOS DE LA ACTIVIDAD ==================== -->
                                 <section class="seccion-verde rounded-2xl p-5 shadow-md">
                                     <h4 class="font-bold text-lg text-emerald-800 mb-4 pb-3 border-b-2 border-emerald-300 flex items-center gap-2">
                                         <i class="bi bi-person-bounding-box"></i> Datos de la Actividad
@@ -349,23 +336,23 @@
 
                                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
 
-                                        <!-- Fecha -->
                                         <div>
                                             <label class="block text-sm font-semibold text-gray-700 mb-2">
                                                 <i class="bi bi-calendar-date mr-1"></i> Fecha
                                                 <span class="text-red-600">*</span>
                                             </label>
                                             <input type="date" name="fecha" id="fecha_siembra" required
-                                                class="w-full p-3 border-2 border-emerald-200 rounded-xl focus:ring-2 focus:ring-emerald-500 transition">
+                                                class="w-full p-3 border-2 border-emerald-200 rounded-xl
+                                   focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition">
                                         </div>
 
-                                        <!-- Responsable -->
                                         <div>
                                             <label class="block text-sm font-semibold text-gray-700 mb-2">
                                                 <i class="bi bi-person-circle mr-1"></i> Responsable
                                                 <span class="text-red-600">*</span>
                                             </label>
-                                            <select name="usuario" class="select_usuario w-full p-3 border-2 border-emerald-200 rounded-xl focus:ring-2 focus:ring-emerald-500 transition" required>
+                                            <select name="usuario" class="select_usuario w-full p-3 border-2 border-emerald-200 rounded-xl
+                                    focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition" required>
                                                 <option value="" disabled selected>-- Seleccione --</option>
                                             </select>
                                         </div>
@@ -373,7 +360,7 @@
                                     </div>
                                 </section>
 
-                                <!-- Parámetros del Agua -->
+                                <!-- ==================== PARÁMETROS DEL AGUA ==================== -->
                                 <section class="border-2 border-gray-300 rounded-2xl p-5 shadow-md bg-white">
                                     <h4 class="font-bold text-lg text-emerald-800 mb-4 pb-3 border-b-2 border-gray-300 flex items-center gap-2">
                                         <i class="bi bi-droplet-fill"></i> Parámetros del Agua
@@ -381,40 +368,40 @@
 
                                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
 
-                                        <!-- pH -->
                                         <div>
                                             <label class="block text-sm font-semibold text-gray-700 mb-2">
                                                 <i class="bi bi-water mr-1"></i> pH
                                                 <span class="text-red-600">*</span>
                                             </label>
                                             <input type="number" step="0.01" name="ph" placeholder="7.0" required
-                                                class="w-full p-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-500">
+                                                class="w-full p-3 border-2 border-gray-200 rounded-xl
+                                   focus:ring-2 focus:ring-emerald-500">
                                         </div>
 
-                                        <!-- Temperatura -->
                                         <div>
                                             <label class="block text-sm font-semibold text-gray-700 mb-2">
                                                 <i class="bi bi-thermometer-half mr-1"></i> Temp. (°C)
                                                 <span class="text-red-600">*</span>
                                             </label>
                                             <input type="number" step="0.1" name="temperatura" placeholder="26.5" required
-                                                class="w-full p-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-500">
+                                                class="w-full p-3 border-2 border-gray-200 rounded-xl
+                                   focus:ring-2 focus:ring-emerald-500">
                                         </div>
 
-                                        <!-- Cloro -->
                                         <div>
                                             <label class="block text-sm font-semibold text-gray-700 mb-2">
                                                 <i class="bi bi-bandaid mr-1"></i> Cloro (mg/L)
                                                 <span class="text-red-600">*</span>
                                             </label>
                                             <input type="number" step="0.01" name="cloro" placeholder="0.2" required
-                                                class="w-full p-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-500">
+                                                class="w-full p-3 border-2 border-gray-200 rounded-xl
+                                   focus:ring-2 focus:ring-emerald-500">
                                         </div>
 
                                     </div>
                                 </section>
 
-                                <!-- Cantidad de Guppies -->
+                                <!-- ==================== CANTIDAD DE GUPPIES ==================== -->
                                 <section class="seccion-verde rounded-2xl p-5 shadow-md">
                                     <h4 class="font-bold text-lg text-emerald-800 mb-4 pb-3 border-b-2 border-emerald-300 flex items-center gap-2">
                                         <i class="bi bi-hash"></i> Cantidad de Guppies
@@ -422,64 +409,66 @@
 
                                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
 
-                                        <!-- Alevines -->
                                         <div>
                                             <label class="block text-sm font-semibold text-gray-700 mb-2">
                                                 <i class="bi bi-chevron-bar-up mr-1"></i> Alevines
                                                 <span class="text-red-600">*</span>
                                             </label>
                                             <input type="number" name="alevines" min="0" placeholder="0" required
-                                                class="w-full p-3 border-2 border-emerald-200 rounded-xl focus:ring-2 focus:ring-emerald-500">
+                                                class="w-full p-3 border-2 border-emerald-200 rounded-xl
+                                   focus:ring-2 focus:ring-emerald-500">
                                         </div>
 
-                                        <!-- Adultos -->
                                         <div>
                                             <label class="block text-sm font-semibold text-gray-700 mb-2">
                                                 <i class="bi bi-person mr-1"></i> Adultos
                                                 <span class="text-red-600">*</span>
                                             </label>
                                             <input type="number" name="adultos" min="0" placeholder="0" required
-                                                class="w-full p-3 border-2 border-emerald-200 rounded-xl focus:ring-2 focus:ring-emerald-500">
+                                                class="w-full p-3 border-2 border-emerald-200 rounded-xl
+                                   focus:ring-2 focus:ring-emerald-500">
                                         </div>
 
                                     </div>
                                 </section>
 
-                                <!-- Observaciones y Fotos -->
+                                <!-- ==================== OBSERVACIONES Y FOTOS ==================== -->
                                 <div class="space-y-4">
 
-                                    <!-- Observaciones -->
                                     <div>
                                         <label class="block text-sm font-semibold text-gray-700 mb-2">
                                             <i class="bi bi-chat-left-text mr-1"></i> Observaciones
-                                            <span class="text-red-600">*</span>
                                         </label>
-                                        <textarea name="observaciones" placeholder="Condiciones del agua, estado del sitio..."
-                                            class="w-full p-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-500"
-                                            rows="3" required></textarea>
+                                        <textarea name="observaciones" rows="3"
+                                            placeholder="Condiciones del agua, estado del sitio..."
+                                            class="w-full p-3 border-2 border-gray-200 rounded-xl
+                                  focus:ring-2 focus:ring-emerald-500"></textarea>
                                     </div>
 
-                                    <!-- Fotos -->
                                     <div>
                                         <label class="block text-sm font-semibold text-gray-700 mb-2">
                                             <i class="bi bi-camera mr-1"></i> Fotos (opcional)
                                         </label>
                                         <input type="file" name="fotos[]" multiple accept="image/*"
                                             class="w-full text-gray-700 file:mr-4 file:py-2 file:px-4
-                                      file:rounded-full file:border-0 file:text-sm file:font-semibold
-                                      file:bg-emerald-100 file:text-emerald-700 hover:file:bg-emerald-200 transition">
+                               file:rounded-full file:border-0 file:text-sm file:font-semibold
+                               file:bg-emerald-100 file:text-emerald-700
+                               hover:file:bg-emerald-200 transition">
                                     </div>
 
                                 </div>
 
-                                <!-- Botones -->
+                                <!-- ==================== BOTONES ==================== -->
                                 <div class="flex justify-end gap-4 pt-4 border-t-2 border-gray-200">
                                     <button type="button" id="btn-cancelar-seguimiento"
-                                        class="px-6 py-3 bg-gray-400 hover:bg-gray-500 text-white font-bold rounded-xl transition shadow-md">
+                                        class="px-6 py-3 bg-gray-400 hover:bg-gray-500 text-white
+                            font-bold rounded-xl transition shadow-md">
                                         Cancelar
                                     </button>
+
                                     <button type="submit"
-                                        class="btn-verde text-white font-bold text-lg py-3 px-8 rounded-xl flex items-center gap-2">
+                                        class="btn-verde text-white font-bold text-lg py-3 px-8
+                            rounded-xl flex items-center gap-2">
                                         <i class="bi bi-save-fill"></i> Guardar
                                     </button>
                                 </div>
@@ -493,6 +482,7 @@
                 <!-- ==================== FORMULARIO DE RESIEMBRA ==================== -->
                 <div id="resiembra-formulario" class="hidden">
                     <div class="formulario-card rounded-3xl overflow-hidden">
+
                         <div class="header-formulario px-6 py-5">
                             <h3 class="text-2xl font-bold flex items-center gap-3">
                                 <i class="bi bi-fish text-3xl"></i> Resiembra de Guppies
@@ -500,16 +490,23 @@
                         </div>
 
                         <div class="p-6">
+
+                            <p class="text-sm text-gray-600 mb-4">
+                                <span class="text-red-600 font-bold">*</span> Campos obligatorios
+                            </p>
+
                             <form method="POST" action="../controller/actividadescontrol.php"
-                                enctype="multipart/form-data" id="form_siembra" class="space-y-6">
+                                enctype="multipart/form-data"
+                                id="form_resiembra"
+                                class="space-y-6">
 
                                 <input type="hidden" name="cod_act_campo" value="2">
-                                <input type="hidden" name="cod_padre" id="cod_padre_res" value="">
-                                <input type="hidden" name="cod_sitiodepo" id="cod_sitiodepo_res" value="">
+                                <input type="hidden" name="cod_padre" id="cod_padre_res">
+                                <input type="hidden" name="cod_sitiodepo" id="cod_sitiodepo_res">
                                 <input type="hidden" name="accion" value="registrar">
-                                <input type="hidden" name="id_resiembra" value="0">
+                                <input type="hidden" name="id_resiembra" id="id_resiembra" value="0">
 
-                                <!-- ==================== Datos Generales ==================== -->
+                                <!-- ==================== DATOS DE LA RESIEMBRA ==================== -->
                                 <section class="seccion-verde rounded-2xl p-5 shadow-md">
                                     <h4 class="font-bold text-lg text-emerald-800 mb-4 pb-3 border-b-2 border-emerald-300 flex items-center gap-2">
                                         <i class="bi bi-person-lines-fill"></i> Datos de la Resiembra
@@ -517,23 +514,25 @@
 
                                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
 
-                                        <!-- Fecha -->
                                         <div>
                                             <label class="block text-sm font-semibold text-gray-700 mb-2">
                                                 <i class="bi bi-calendar-date mr-1"></i> Fecha
                                                 <span class="text-red-600">*</span>
                                             </label>
-                                            <input type="date" name="fecha" id="fecha_siembra" required
-                                                class="w-full p-3 border-2 border-emerald-200 rounded-xl focus:ring-2 focus:ring-emerald-500 transition">
+                                            <input type="date" name="fecha" id="fecha_resiembra" required
+                                                class="w-full p-3 border-2 border-emerald-200 rounded-xl
+                                   focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition">
                                         </div>
 
-                                        <!-- Responsable -->
                                         <div>
                                             <label class="block text-sm font-semibold text-gray-700 mb-2">
                                                 <i class="bi bi-person-circle mr-1"></i> Responsable
                                                 <span class="text-red-600">*</span>
                                             </label>
-                                            <select name="usuario" class="select_usuario w-full p-3 border-2 border-emerald-200 rounded-xl focus:ring-2 focus:ring-emerald-500 transition" required>
+                                            <select name="usuario"
+                                                class="select_usuario w-full p-3 border-2 border-emerald-200 rounded-xl
+                                    focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition"
+                                                required>
                                                 <option value="" disabled selected>-- Seleccione --</option>
                                             </select>
                                         </div>
@@ -541,110 +540,114 @@
                                     </div>
                                 </section>
 
-                                <!-- ==================== Parámetros del Agua ==================== -->
+                                <!-- ==================== PARÁMETROS DEL AGUA ==================== -->
                                 <section class="border-2 border-gray-300 rounded-2xl p-5 shadow-md bg-white">
                                     <h4 class="font-bold text-lg text-emerald-800 mb-4 pb-3 border-b-2 border-gray-300 flex items-center gap-2">
                                         <i class="bi bi-thermometer-half"></i> Parámetros del Agua
                                     </h4>
 
-                                    <div class="grid grid-cols-3 gap-4">
+                                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
 
-                                        <!-- pH -->
                                         <div>
                                             <label class="block text-sm font-semibold text-gray-700 mb-2">
                                                 pH <span class="text-red-600">*</span>
                                             </label>
                                             <input type="number" step="0.01" name="ph" placeholder="7.0" required
-                                                class="w-full p-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-500">
+                                                class="w-full p-3 border-2 border-gray-200 rounded-xl
+                                   focus:ring-2 focus:ring-emerald-500">
                                         </div>
 
-                                        <!-- Temperatura -->
                                         <div>
                                             <label class="block text-sm font-semibold text-gray-700 mb-2">
                                                 Temp. (°C) <span class="text-red-600">*</span>
                                             </label>
                                             <input type="number" name="temperatura" placeholder="25" required
-                                                class="w-full p-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-500">
+                                                class="w-full p-3 border-2 border-gray-200 rounded-xl
+                                   focus:ring-2 focus:ring-emerald-500">
                                         </div>
 
-                                        <!-- Cloro -->
                                         <div>
                                             <label class="block text-sm font-semibold text-gray-700 mb-2">
                                                 Cloro (mg/L) <span class="text-red-600">*</span>
                                             </label>
                                             <input type="number" step="0.01" name="cloro" placeholder="0.2" required
-                                                class="w-full p-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-500">
+                                                class="w-full p-3 border-2 border-gray-200 rounded-xl
+                                   focus:ring-2 focus:ring-emerald-500">
                                         </div>
 
                                     </div>
                                 </section>
 
-                                <!-- ==================== Cantidad de Peces ==================== -->
+                                <!-- ==================== CANTIDAD DE PECES ==================== -->
                                 <section class="seccion-verde rounded-2xl p-5 shadow-md">
                                     <h4 class="font-bold text-lg text-emerald-800 mb-4 pb-3 border-b-2 border-emerald-300 flex items-center gap-2">
                                         <i class="bi bi-patch-plus-fill"></i> Cantidad de Peces
                                     </h4>
 
-                                    <div class="grid grid-cols-2 gap-4">
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
 
-                                        <!-- Alevines -->
                                         <div>
                                             <label class="block text-sm font-semibold text-gray-700 mb-2">
                                                 Alevines <span class="text-red-600">*</span>
                                             </label>
-                                            <input type="number" min="0" name="alevines" placeholder="0" required
-                                                class="w-full p-3 border-2 border-emerald-200 rounded-xl focus:ring-2 focus:ring-emerald-500">
+                                            <input type="number" name="alevines" min="0" placeholder="0" required
+                                                class="w-full p-3 border-2 border-emerald-200 rounded-xl
+                                   focus:ring-2 focus:ring-emerald-500">
                                         </div>
 
-                                        <!-- Adultos -->
                                         <div>
                                             <label class="block text-sm font-semibold text-gray-700 mb-2">
                                                 Adultos <span class="text-red-600">*</span>
                                             </label>
-                                            <input type="number" min="0" name="adultos" placeholder="0" required
-                                                class="w-full p-3 border-2 border-emerald-200 rounded-xl focus:ring-2 focus:ring-emerald-500">
+                                            <input type="number" name="adultos" min="0" placeholder="0" required
+                                                class="w-full p-3 border-2 border-emerald-200 rounded-xl
+                                   focus:ring-2 focus:ring-emerald-500">
                                         </div>
 
                                     </div>
                                 </section>
 
-                                <!-- ==================== Observaciones y Fotos ==================== -->
+                                <!-- ==================== OBSERVACIONES Y FOTOS ==================== -->
                                 <div class="space-y-4">
 
-                                    <!-- Observaciones -->
                                     <div>
                                         <label class="block text-sm font-semibold text-gray-700 mb-2">
-                                            Observaciones <span class="text-red-600">*</span>
+                                            Observaciones
                                         </label>
-                                        <textarea name="observaciones" rows="3" required
+                                        <textarea name="observaciones" rows="3"
                                             placeholder="Estado de los peces, depósito..."
-                                            class="w-full p-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-500"></textarea>
+                                            class="w-full p-3 border-2 border-gray-200 rounded-xl
+                                  focus:ring-2 focus:ring-emerald-500"></textarea>
                                     </div>
 
-                                    <!-- Fotos -->
                                     <div>
                                         <label class="block text-sm font-semibold text-gray-700 mb-2">
                                             Fotos (opcional)
                                         </label>
                                         <input type="file" name="fotos[]" multiple accept="image/*"
                                             class="w-full text-gray-700 file:mr-4 file:py-2 file:px-4
-                                   file:rounded-full file:border-0 file:text-sm file:font-semibold
-                                   file:bg-emerald-100 file:text-emerald-700 hover:file:bg-emerald-200 transition">
+                               file:rounded-full file:border-0 file:text-sm file:font-semibold
+                               file:bg-emerald-100 file:text-emerald-700
+                               hover:file:bg-emerald-200 transition">
                                     </div>
 
                                 </div>
 
-                                <!-- ==================== Botones ==================== -->
+                                <!-- ==================== BOTONES ==================== -->
                                 <div class="flex justify-end gap-4 pt-4 border-t-2 border-gray-200">
+
                                     <button type="button" onclick="cerrarFormularioSiembra()"
-                                        class="px-6 py-3 bg-gray-400 hover:bg-gray-500 text-white font-bold rounded-xl transition shadow-md">
+                                        class="px-6 py-3 bg-gray-400 hover:bg-gray-500 text-white
+                            font-bold rounded-xl transition shadow-md">
                                         Cancelar
                                     </button>
 
                                     <button type="submit"
-                                        class="btn-verde text-white font-bold text-lg py-3 px-8 rounded-xl flex items-center gap-2">
+                                        class="btn-verde text-white font-bold text-lg py-3 px-8
+                            rounded-xl flex items-center gap-2">
                                         <i class="bi bi-save-fill"></i> Guardar
                                     </button>
+
                                 </div>
 
                             </form>
@@ -655,6 +658,7 @@
                 <!-- ==================== FORMULARIO DE SEGUIMIENTO ==================== -->
                 <div id="seguimiento-formulario" class="hidden">
                     <div class="formulario-card rounded-3xl overflow-hidden">
+
                         <div class="header-formulario px-6 py-5">
                             <h3 class="text-2xl font-bold flex items-center gap-3">
                                 <i class="bi bi-journal-check text-3xl"></i> Seguimiento
@@ -662,90 +666,108 @@
                         </div>
 
                         <div class="p-6">
-                            <form class="space-y-6" method="POST" action="../controller/actividadescontrol.php" enctype="multipart/form-data">
-                                <input type="hidden" id="accion_seguimiento" name="accion" value="registrar">
-                                <input type="hidden" id="cod_actividadtrabajocampo_seg" name="cod_actividadtrabajocampo_seg" value="">
-                                <input type="hidden" name="cod_act_campo" value="3">
-                                <input type="hidden" id="cod_padre_seg" name="cod_padre" value="">
-                                <input type="hidden" id="cod_sitiodepo_seg" name="cod_sitiodepo" value="">
 
-                                <!-- Datos del Seguimiento -->
+                            <p class="text-sm text-gray-600 mb-4">
+                                <span class="text-red-600 font-bold">*</span> Campos obligatorios
+                            </p>
+
+                            <form class="space-y-6"
+                                method="POST"
+                                action="../controller/actividadescontrol.php"
+                                enctype="multipart/form-data">
+
+                                <input type="hidden" id="accion_seguimiento" name="accion" value="registrar">
+                                <input type="hidden" id="cod_actividadtrabajocampo_seg" name="cod_actividadtrabajocampo_seg">
+                                <input type="hidden" name="cod_act_campo" value="3">
+                                <input type="hidden" id="cod_padre_seg" name="cod_padre">
+                                <input type="hidden" id="cod_sitiodepo_seg" name="cod_sitiodepo">
+
+                                <!-- ==================== DATOS DEL SEGUIMIENTO ==================== -->
                                 <section class="seccion-verde rounded-2xl p-5 shadow-md">
                                     <h4 class="font-bold text-lg text-emerald-800 mb-4 pb-3 border-b-2 border-emerald-300 flex items-center gap-2">
                                         <i class="bi bi-calendar-check"></i> Datos del Seguimiento
                                     </h4>
+
                                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
 
-                                        <!-- FECHA -->
                                         <div>
                                             <label class="block text-sm font-semibold text-gray-700 mb-2">
-                                                <i class="bi bi-calendar-date mr-1"></i> Fecha <span class="text-red-600">*</span>
+                                                <i class="bi bi-calendar-date mr-1"></i> Fecha
+                                                <span class="text-red-600">*</span>
                                             </label>
-                                            <input type="date" name="fecha_seguimiento" id="fecha_seguimiento"
-                                                class="w-full p-3 border-2 border-emerald-200 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition"
-                                                required>
+                                            <input type="date" name="fecha_seguimiento" id="fecha_seguimiento" required
+                                                class="w-full p-3 border-2 border-emerald-200 rounded-xl
+                                   focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition">
                                         </div>
 
-                                        <!-- RESPONSABLE -->
                                         <div>
                                             <label class="block text-sm font-semibold text-gray-700 mb-2">
-                                                <i class="bi bi-person-circle mr-1"></i> Responsable <span class="text-red-600">*</span>
+                                                <i class="bi bi-person-circle mr-1"></i> Responsable
+                                                <span class="text-red-600">*</span>
                                             </label>
-                                            <select name="usuario" class="select_usuario w-full p-3 border-2 border-emerald-200 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition"
+                                            <select name="usuario"
+                                                class="select_usuario w-full p-3 border-2 border-emerald-200 rounded-xl
+                                    focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition"
                                                 required>
                                                 <option value="" disabled selected>-- Seleccione --</option>
                                             </select>
                                         </div>
+
                                     </div>
                                 </section>
 
-                                <!-- Presencia de Vectores -->
+                                <!-- ==================== PRESENCIA DE VECTORES ==================== -->
                                 <section class="border-2 border-gray-300 rounded-2xl p-5 shadow-md bg-white">
                                     <h4 class="font-bold text-lg text-emerald-800 mb-4 pb-3 border-b-2 border-gray-300 flex items-center gap-2">
-                                        <i class="bi bi-bug-fill"></i> Presencia de Vectores <span class="text-red-600">*</span>
+                                        <i class="bi bi-bug-fill"></i> Presencia de Vectores
+                                        <span class="text-red-600">*</span>
                                     </h4>
+
                                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4 p-4 bg-emerald-50 rounded-xl border-2 border-emerald-200">
 
-                                        <!-- LARVAS AEDES -->
                                         <div class="text-center">
-                                            <p class="font-semibold text-sm text-gray-700 mb-3">Larvas Aedes <span class="text-red-600">*</span></p>
+                                            <p class="font-semibold text-sm text-gray-700 mb-3">Larvas Aedes</p>
                                             <div class="flex justify-center gap-4">
                                                 <label class="inline-flex items-center cursor-pointer">
-                                                    <input type="radio" name="larvas_aedes" value="1" required class="form-radio h-5 w-5 text-emerald-600 focus:ring-emerald-500">
+                                                    <input type="radio" name="larvas_aedes" value="1" required
+                                                        class="form-radio h-5 w-5 text-emerald-600 focus:ring-emerald-500">
                                                     <span class="ml-2 font-medium">Sí</span>
                                                 </label>
                                                 <label class="inline-flex items-center cursor-pointer">
-                                                    <input type="radio" name="larvas_aedes" value="0" checked class="form-radio h-5 w-5 text-emerald-600 focus:ring-emerald-500">
+                                                    <input type="radio" name="larvas_aedes" value="0" checked
+                                                        class="form-radio h-5 w-5 text-emerald-600 focus:ring-emerald-500">
                                                     <span class="ml-2 font-medium">No</span>
                                                 </label>
                                             </div>
                                         </div>
 
-                                        <!-- PUPAS (NO obligatorio) -->
                                         <div class="text-center">
                                             <p class="font-semibold text-sm text-gray-700 mb-3">Pupas</p>
                                             <div class="flex justify-center gap-4">
                                                 <label class="inline-flex items-center cursor-pointer">
-                                                    <input type="radio" name="pupas" value="1" class="form-radio h-5 w-5 text-emerald-600 focus:ring-emerald-500">
+                                                    <input type="radio" name="pupas" value="1"
+                                                        class="form-radio h-5 w-5 text-emerald-600 focus:ring-emerald-500">
                                                     <span class="ml-2 font-medium">Sí</span>
                                                 </label>
                                                 <label class="inline-flex items-center cursor-pointer">
-                                                    <input type="radio" name="pupas" value="0" checked class="form-radio h-5 w-5 text-emerald-600 focus:ring-emerald-500">
+                                                    <input type="radio" name="pupas" value="0" checked
+                                                        class="form-radio h-5 w-5 text-emerald-600 focus:ring-emerald-500">
                                                     <span class="ml-2 font-medium">No</span>
                                                 </label>
                                             </div>
                                         </div>
 
-                                        <!-- LARVAS CULEX (NO obligatorio) -->
                                         <div class="text-center">
                                             <p class="font-semibold text-sm text-gray-700 mb-3">Larvas Culex</p>
                                             <div class="flex justify-center gap-4">
                                                 <label class="inline-flex items-center cursor-pointer">
-                                                    <input type="radio" name="larvas_culex" value="1" class="form-radio h-5 w-5 text-emerald-600 focus:ring-emerald-500">
+                                                    <input type="radio" name="larvas_culex" value="1"
+                                                        class="form-radio h-5 w-5 text-emerald-600 focus:ring-emerald-500">
                                                     <span class="ml-2 font-medium">Sí</span>
                                                 </label>
                                                 <label class="inline-flex items-center cursor-pointer">
-                                                    <input type="radio" name="larvas_culex" value="0" checked class="form-radio h-5 w-5 text-emerald-600 focus:ring-emerald-500">
+                                                    <input type="radio" name="larvas_culex" value="0" checked
+                                                        class="form-radio h-5 w-5 text-emerald-600 focus:ring-emerald-500">
                                                     <span class="ml-2 font-medium">No</span>
                                                 </label>
                                             </div>
@@ -754,77 +776,91 @@
                                     </div>
                                 </section>
 
-                                <!-- Parámetros del Agua -->
+                                <!-- ==================== PARÁMETROS DEL AGUA ==================== -->
                                 <section class="seccion-verde rounded-2xl p-5 shadow-md">
                                     <h4 class="font-bold text-lg text-emerald-800 mb-4 pb-3 border-b-2 border-emerald-300 flex items-center gap-2">
                                         <i class="bi bi-droplet-fill"></i> Parámetros del Agua
                                     </h4>
-                                    <div class="grid grid-cols-3 gap-4">
 
-                                        <!-- pH -->
+                                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+
                                         <div>
                                             <label class="block text-sm font-semibold text-gray-700 mb-2">
                                                 pH <span class="text-red-600">*</span>
                                             </label>
-                                            <input type="number" step="0.1" name="ph_actual" placeholder="7.0"
-                                                class="w-full p-3 border-2 border-emerald-200 rounded-xl focus:ring-2 focus:ring-emerald-500"
-                                                required>
+                                            <input type="number" step="0.1" name="ph_actual" placeholder="7.0" required
+                                                class="w-full p-3 border-2 border-emerald-200 rounded-xl
+                                   focus:ring-2 focus:ring-emerald-500">
                                         </div>
 
-                                        <!-- cloro NO obligatorio -->
                                         <div>
                                             <label class="block text-sm font-semibold text-gray-700 mb-2">
                                                 Cloro (mg/L)
                                             </label>
                                             <input type="number" step="0.1" name="cloro_actual" placeholder="0.2"
-                                                class="w-full p-3 border-2 border-emerald-200 rounded-xl focus:ring-2 focus:ring-emerald-500">
+                                                class="w-full p-3 border-2 border-emerald-200 rounded-xl
+                                   focus:ring-2 focus:ring-emerald-500">
                                         </div>
 
-                                        <!-- temperatura -->
                                         <div>
                                             <label class="block text-sm font-semibold text-gray-700 mb-2">
                                                 Temp. (°C) <span class="text-red-600">*</span>
                                             </label>
-                                            <input type="number" step="0.1" name="temperatura_actual" placeholder="26.5"
-                                                class="w-full p-3 border-2 border-emerald-200 rounded-xl focus:ring-2 focus:ring-emerald-500"
-                                                required>
+                                            <input type="number" step="0.1" name="temperatura_actual" placeholder="26.5" required
+                                                class="w-full p-3 border-2 border-emerald-200 rounded-xl
+                                   focus:ring-2 focus:ring-emerald-500">
                                         </div>
 
                                     </div>
                                 </section>
 
-                                <!-- Observaciones y Foto -->
+                                <!-- ==================== OBSERVACIONES Y FOTO ==================== -->
                                 <div class="space-y-4">
+
                                     <div>
-                                        <label class="block text-sm font-semibold text-gray-700 mb-2">Observaciones</label>
-                                        <textarea name="observaciones" rows="3" placeholder="Estado de los peces, mortalidad..."
-                                            class="w-full p-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-500"></textarea>
+                                        <label class="block text-sm font-semibold text-gray-700 mb-2">
+                                            Observaciones
+                                        </label>
+                                        <textarea name="observaciones" rows="3"
+                                            placeholder="Estado de los peces, mortalidad..."
+                                            class="w-full p-3 border-2 border-gray-200 rounded-xl
+                                  focus:ring-2 focus:ring-emerald-500"></textarea>
                                     </div>
+
                                     <div>
-                                        <label class="block text-sm font-semibold text-gray-700 mb-2">Foto (opcional)</label>
+                                        <label class="block text-sm font-semibold text-gray-700 mb-2">
+                                            Foto (opcional)
+                                        </label>
                                         <input type="file" name="foto_seguimiento" accept="image/*"
                                             class="w-full text-gray-700 file:mr-4 file:py-2 file:px-4
-                            file:rounded-full file:border-0 file:text-sm file:font-semibold
-                            file:bg-emerald-100 file:text-emerald-700 hover:file:bg-emerald-200 transition">
+                               file:rounded-full file:border-0 file:text-sm file:font-semibold
+                               file:bg-emerald-100 file:text-emerald-700
+                               hover:file:bg-emerald-200 transition">
                                     </div>
+
                                 </div>
 
-                                <!-- Botones -->
+                                <!-- ==================== BOTONES ==================== -->
                                 <div class="flex justify-end gap-4 pt-4 border-t-2 border-gray-200">
+
                                     <button type="button" id="btn-cancelar-seguimiento"
-                                        class="px-6 py-3 bg-gray-400 hover:bg-gray-500 text-white font-bold rounded-xl transition shadow-md">
+                                        class="px-6 py-3 bg-gray-400 hover:bg-gray-500 text-white
+                            font-bold rounded-xl transition shadow-md">
                                         Cancelar
                                     </button>
+
                                     <button type="submit"
-                                        class="btn-verde text-white font-bold text-lg py-3 px-8 rounded-xl flex items-center gap-2">
+                                        class="btn-verde text-white font-bold text-lg py-3 px-8
+                            rounded-xl flex items-center gap-2">
                                         <i class="bi bi-save-fill"></i> Guardar
                                     </button>
+
                                 </div>
+
                             </form>
                         </div>
                     </div>
                 </div>
-
 
                 <!-- ==================== FORMULARIO DE INSPECCIÓN ==================== -->
                 <div id="inspeccion-formulario" class="formulario-card rounded-3xl overflow-hidden">
@@ -835,7 +871,13 @@
                     </div>
 
                     <div class="p-6">
-                        <form class="space-y-6" method="POST" action="../controller/actividadescontrol.php" id="form_actividad" enctype="multipart/form-data">
+                        <p class="text-sm text-gray-600 mb-4">
+                            <span class="text-red-600 font-bold">*</span> Campos obligatorios
+                        </p>
+
+                        <form class="space-y-6" method="POST" action="../controller/actividadescontrol.php"
+                            id="form_actividad" enctype="multipart/form-data">
+
                             <input type="hidden" name="accion" value="registrar" id="accion_inspeccion">
                             <input type="hidden" name="id_actividad_inspeccion" id="cod_actividadtrabajocampo_insp" value="0">
                             <input type="hidden" name="cod_act_campo" value="4">
@@ -843,47 +885,50 @@
                             <input type="hidden" name="cod_tipodepo" id="cod_tipodepo">
                             <input type="hidden" name="cod_sitiocontrolbiolo" id="cod_sitiocontrolbiolo">
 
-                            <!-- Datos Generales -->
+                            <!-- ==================== DATOS GENERALES ==================== -->
                             <section class="seccion-verde rounded-2xl p-5 shadow-md">
                                 <h4 class="font-bold text-lg text-emerald-800 mb-4 pb-3 border-b-2 border-emerald-300 flex items-center gap-2">
                                     <i class="bi bi-person-lines-fill"></i> Datos Generales
                                 </h4>
-                                <div class="space-y-4">
 
+                                <div class="space-y-4">
                                     <div>
                                         <label class="block text-sm font-semibold text-gray-700 mb-2">
-                                            <span class="text-red-600">*</span>
                                             <i class="bi bi-calendar-date mr-1"></i> Fecha de Inspección
+                                            <span class="text-red-600">*</span>
                                         </label>
                                         <input type="date" name="fecha" required
-                                            class="w-full p-3 border-2 border-emerald-200 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition">
+                                            class="w-full p-3 border-2 border-emerald-200 rounded-xl
+                               focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition">
                                     </div>
 
                                     <div>
                                         <label class="block text-sm font-semibold text-gray-700 mb-2">
-                                            <span class="text-red-600">*</span>
                                             <i class="bi bi-person-circle mr-1"></i> Responsable
+                                            <span class="text-red-600">*</span>
                                         </label>
-                                        <select name="usuario" class="select_usuario w-full p-3 border-2 border-emerald-200 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition" required>
+                                        <select name="usuario" required
+                                            class="select_usuario w-full p-3 border-2 border-emerald-200 rounded-xl
+                                focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition">
                                             <option value="" disabled selected>-- Seleccione --</option>
                                         </select>
                                     </div>
 
                                     <div>
                                         <label class="block text-sm font-semibold text-gray-700 mb-2">
-                                            <span class="text-red-600">*</span>
                                             <i class="bi bi-geo-alt-fill mr-1"></i> Sitio de Inspección
+                                            <span class="text-red-600">*</span>
                                         </label>
                                         <select name="sitio" id="select_sitio" required
-                                            class="w-full p-3 border-2 border-emerald-200 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition">
+                                            class="w-full p-3 border-2 border-emerald-200 rounded-xl
+                                focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition">
                                             <option value="">Seleccione un sitio...</option>
                                         </select>
                                     </div>
-
                                 </div>
                             </section>
 
-                            <!-- Resultados Biológicos -->
+                            <!-- ==================== RESULTADOS BIOLÓGICOS ==================== -->
                             <section class="border-2 border-gray-300 rounded-2xl p-5 shadow-md bg-white">
                                 <h4 class="font-bold text-lg text-emerald-800 mb-4 pb-3 border-b-2 border-gray-300 flex items-center gap-2">
                                     <i class="bi bi-bug-fill"></i> Resultados Biológicos
@@ -892,148 +937,153 @@
                                 <div class="space-y-5">
                                     <div>
                                         <label class="block text-sm font-semibold text-gray-700 mb-2">
-                                            <span class="text-red-600">*</span> Tipo de Depósito
+                                            Tipo de Depósito <span class="text-red-600">*</span>
                                         </label>
                                         <select name="deposito" id="select_deposito" required
-                                            class="w-full p-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition">
+                                            class="w-full p-3 border-2 border-gray-200 rounded-xl
+                                focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition">
                                             <option value="">Seleccione...</option>
                                         </select>
                                     </div>
 
                                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4 p-4 bg-emerald-50 rounded-xl border-2 border-emerald-200">
+
                                         <div>
                                             <label class="block text-sm font-semibold mb-2 text-gray-700">
-                                                <span class="text-red-600">*</span> Larvas Aedes
+                                                Larvas Aedes <span class="text-red-600">*</span>
                                             </label>
-                                            <select name="positivo_larvas" required class="w-full p-3 border-2 border-emerald-200 rounded-xl focus:ring-emerald-500">
+                                            <select name="positivo_larvas" required
+                                                class="w-full p-3 border-2 border-emerald-200 rounded-xl focus:ring-emerald-500">
+                                                <option value="" disabled selected>Seleccione...</option>
                                                 <option value="Sí">Sí (Positivo)</option>
-                                                <option value="No" selected>No (Negativo)</option>
+                                                <option value="No">No (Negativo)</option>
                                             </select>
                                         </div>
 
                                         <div>
                                             <label class="block text-sm font-semibold mb-2 text-gray-700">
-                                                <span class="text-red-600">*</span> Pupas
+                                                Pupas <span class="text-red-600">*</span>
                                             </label>
-                                            <select name="positivo_pupas" required class="w-full p-3 border-2 border-emerald-200 rounded-xl focus:ring-emerald-500">
+                                            <select name="positivo_pupas" required
+                                                class="w-full p-3 border-2 border-emerald-200 rounded-xl focus:ring-emerald-500">
+                                                <option value="" disabled selected>Seleccione...</option>
                                                 <option value="Sí">Sí (Positivo)</option>
-                                                <option value="No" selected>No (Negativo)</option>
+                                                <option value="No">No (Negativo)</option>
                                             </select>
                                         </div>
 
                                         <div>
                                             <label class="block text-sm font-semibold mb-2 text-gray-700">
-                                                <span class="text-red-600">*</span> Larvas Culex
+                                                Larvas Culex <span class="text-red-600">*</span>
                                             </label>
-                                            <select name="positivo_culex" required class="w-full p-3 border-2 border-emerald-200 rounded-xl focus:ring-emerald-500">
+                                            <select name="positivo_culex" required
+                                                class="w-full p-3 border-2 border-emerald-200 rounded-xl focus:ring-emerald-500">
+                                                <option value="" disabled selected>Seleccione...</option>
                                                 <option value="Sí">Sí (Positivo)</option>
-                                                <option value="No" selected>No (Negativo)</option>
+                                                <option value="No">No (Negativo)</option>
                                             </select>
                                         </div>
+
                                     </div>
+
+
+                                    <!-- ==================== MEDICIONES ==================== -->
+                                    <section class="seccion-verde rounded-2xl p-5 shadow-md">
+                                        <h4 class="font-bold text-lg text-emerald-800 mb-4 pb-3 border-b-2 border-emerald-300 flex items-center gap-2">
+                                            <i class="bi bi-thermometer-half"></i> Mediciones
+                                        </h4>
+
+                                        <h5 class="font-semibold text-emerald-700 mb-3">
+                                            Parámetros del Agua <span class="text-red-600">*</span>
+                                        </h5>
+
+                                        <div class="grid grid-cols-3 gap-4 mb-6">
+                                            <div>
+                                                <label class="block text-sm font-medium mb-1">pH *</label>
+                                                <input type="number" step="0.1" name="ph" required
+                                                    class="w-full p-3 border-2 border-emerald-200 rounded-xl focus:ring-emerald-500">
+                                            </div>
+
+                                            <div>
+                                                <label class="block text-sm font-medium mb-1">Cloro (mg/L) *</label>
+                                                <input type="number" step="0.1" name="cloro" required
+                                                    class="w-full p-3 border-2 border-emerald-200 rounded-xl focus:ring-emerald-500">
+                                            </div>
+
+                                            <div>
+                                                <label class="block text-sm font-medium mb-1">Temp. (°C) *</label>
+                                                <input type="number" step="0.1" name="temperatura" required
+                                                    class="w-full p-3 border-2 border-emerald-200 rounded-xl focus:ring-emerald-500">
+                                            </div>
+                                        </div>
+
+                                        <div class="pt-4 border-t-2 border-emerald-300">
+                                            <h5 class="font-semibold text-emerald-700 mb-3">
+                                                Medidas del Depósito (cm) <span class="text-red-600">*</span>
+                                            </h5>
+                                            <p class="text-sm text-gray-600 mb-4">Todas las medidas son obligatorias</p>
+
+                                            <div class="grid grid-cols-3 gap-4">
+                                                <div>
+                                                    <label class="block text-sm font-semibold text-gray-700 mb-2">
+                                                        Ancho <span class="text-red-600">*</span>
+                                                    </label>
+                                                    <input type="number" name="ancho" placeholder="Ancho" required
+                                                        class="w-full p-3 border-2 border-emerald-200 rounded-xl
+                       focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition">
+                                                </div>
+
+                                                <div>
+                                                    <label class="block text-sm font-semibold text-gray-700 mb-2">
+                                                        Largo <span class="text-red-600">*</span>
+                                                    </label>
+                                                    <input type="number" name="largo" placeholder="Largo" required
+                                                        class="w-full p-3 border-2 border-emerald-200 rounded-xl
+                       focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition">
+                                                </div>
+
+                                                <div>
+                                                    <label class="block text-sm font-semibold text-gray-700 mb-2">
+                                                        Profundidad <span class="text-red-600">*</span>
+                                                    </label>
+                                                    <input type="number" name="profundidad" placeholder="Profundidad" required
+                                                        class="w-full p-3 border-2 border-emerald-200 rounded-xl
+                       focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition">
+                                                </div>
+                                            </div>
+                                        </div>
                                 </div>
                             </section>
 
-                            <!-- Mediciones -->
-                            <section class="seccion-verde rounded-2xl p-5 shadow-md">
-                                <h4 class="font-bold text-lg text-emerald-800 mb-4 pb-3 border-b-2 border-emerald-300 flex items-center gap-2">
-                                    <i class="bi bi-thermometer-half"></i> Mediciones
-                                </h4>
-
-                                <div class="mb-6">
-                                    <h5 class="font-semibold text-emerald-700 mb-3">Parámetros del Agua</h5>
-
-                                    <div class="grid grid-cols-3 gap-4">
-                                        <div>
-                                            <label class="block text-sm font-medium mb-1">
-                                                <span class="text-red-600">*</span> pH
-                                            </label>
-                                            <input type="number" step="0.1" name="ph" required placeholder="7.2"
-                                                class="w-full p-3 border-2 border-emerald-200 rounded-xl focus:ring-emerald-500">
-                                        </div>
-
-                                        <div>
-                                            <label class="block text-sm font-medium mb-1">
-                                                <span class="text-red-600">*</span> Cloro (mg/L)
-                                            </label>
-                                            <input type="number" step="0.1" name="cloro" required placeholder="0.5"
-                                                class="w-full p-3 border-2 border-emerald-200 rounded-xl focus:ring-emerald-500">
-                                        </div>
-
-                                        <div>
-                                            <label class="block text-sm font-medium mb-1">
-                                                <span class="text-red-600">*</span> Temp. (°C)
-                                            </label>
-                                            <input type="number" step="0.1" name="temperatura" required placeholder="28.5"
-                                                class="w-full p-3 border-2 border-emerald-200 rounded-xl focus:ring-emerald-500">
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="pt-4 border-t-2 border-emerald-300">
-                                    <h5 class="font-semibold text-emerald-700 mb-3">Medidas del Depósito (cm)</h5>
-                                    <p class="text-sm text-gray-600 mb-4">Ingrese 0 si no aplica</p>
-
-                                    <div class="grid grid-cols-3 gap-4">
-
-                                        <div>
-                                            <label class="block text-sm font-medium mb-1">
-                                                <span class="text-red-600">*</span> Ancho
-                                            </label>
-                                            <input type="number" name="ancho" required placeholder="cm"
-                                                class="w-full p-3 border-2 border-emerald-200 rounded-xl focus:ring-emerald-500">
-                                        </div>
-
-                                        <div>
-                                            <label class="block text-sm font-medium mb-1">
-                                                <span class="text-red-600">*</span> Largo
-                                            </label>
-                                            <input type="number" name="largo" required placeholder="cm"
-                                                class="w-full p-3 border-2 border-emerald-200 rounded-xl focus:ring-emerald-500">
-                                        </div>
-
-                                        <div>
-                                            <label class="block text-sm font-medium mb-1">
-                                                <span class="text-red-600">*</span> Profundidad
-                                            </label>
-                                            <input type="number" name="profundidad" required placeholder="cm"
-                                                class="w-full p-3 border-2 border-emerald-200 rounded-xl focus:ring-emerald-500">
-                                        </div>
-
-                                    </div>
-                                </div>
-                            </section>
-
-                            <!-- Observaciones y Foto -->
+                            <!-- ==================== OBSERVACIONES Y FOTO ==================== -->
                             <div class="space-y-4">
                                 <div>
-                                    <label class="block text-sm font-semibold text-gray-700 mb-2">
-                                        Observaciones (opcional)
-                                    </label>
-                                    <textarea name="observaciones" rows="3" placeholder="Comentarios sobre el depósito..."
-                                        class="w-full p-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-500"></textarea>
+                                    <label class="block text-sm font-semibold text-gray-700 mb-2">Observaciones</label>
+                                    <textarea name="observaciones" rows="3"
+                                        class="w-full p-3 border-2 border-gray-200 rounded-xl
+                              focus:ring-2 focus:ring-emerald-500"></textarea>
                                 </div>
 
                                 <div>
-                                    <label class="block text-sm font-semibold text-gray-700 mb-2">
-                                        Foto (opcional)
-                                    </label>
+                                    <label class="block text-sm font-semibold text-gray-700 mb-2">Foto (opcional)</label>
                                     <input type="file" name="foto"
                                         class="w-full text-gray-700 file:mr-4 file:py-2 file:px-4
-                        file:rounded-full file:border-0 file:text-sm file:font-semibold
-                        file:bg-emerald-100 file:text-emerald-700 hover:file:bg-emerald-200 transition">
+                           file:rounded-full file:border-0 file:text-sm file:font-semibold
+                           file:bg-emerald-100 file:text-emerald-700 hover:file:bg-emerald-200 transition">
                                 </div>
                             </div>
 
-                            <!-- Botón -->
+                            <!-- ==================== BOTÓN ==================== -->
                             <button type="submit" id="btn-submit-inspeccion"
-                                class="w-full btn-verde text-white font-bold text-lg py-4 rounded-xl flex items-center justify-center gap-2">
+                                class="w-full btn-verde text-white font-bold text-lg py-4 rounded-xl
+                    flex items-center justify-center gap-2">
                                 <i class="bi bi-save-fill text-xl"></i> Registrar Inspección
                             </button>
 
                         </form>
                     </div>
                 </div>
+
 
                 <!-- Modal Informe -->
                 <div id="modalInforme" class="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 hidden backdrop-blur-sm">
@@ -1050,7 +1100,7 @@
                     </div>
                 </div>
 
-                <script src="../../../src/js/iziToast.min.js"></script>
+                <script src="../js/iziToast.min.js"></script>
                 <script src="../js/cards.js"></script>
 
                 <script src="../js/modal.js"></script>
@@ -1068,4 +1118,4 @@
 
 </body>
 
-</html>>
+</html>

@@ -424,7 +424,7 @@ $permiso = $_SESSION["permiso"] ?? '1';
           Registro y monitoreo de controladores biológicos en terreno.
         </p>
 
-        <a href="./trabajo_campo_kely/views/dashboard.php" class="relative inline-block px-10 py-3 text-white rounded-full transition-all duration-400 text-sm font-bold uppercase tracking-wider
+        <a href="./trabajo_campo_kelly/views/dashboard.php" class="relative inline-block px-10 py-3 text-white rounded-full transition-all duration-400 text-sm font-bold uppercase tracking-wider
               btn-campo shadow-md hover:shadow-xl border-2 border-white/30 z-10">
           <span class="relative z-10">Ingresar</span>
         </a>
